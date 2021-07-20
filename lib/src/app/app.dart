@@ -46,8 +46,8 @@ const _envVIQCoreBuild = String.fromEnvironment("VIQCORE_BUILD");
 // ignore: non_constant_identifier_names
 AppService get App => Get.find();
 
-class CoreMaterialApp extends StatelessWidget {
-  CoreMaterialApp({
+class MaterialAppCore extends StatelessWidget {
+  MaterialAppCore({
     Key? key,
     //this.designSize = ScreenUtil.defaultSize,
     // Widget home,
@@ -136,7 +136,7 @@ class CoreMaterialApp extends StatelessWidget {
   //Screen Utils
   // final Size designSize;
 
-  CoreMaterialApp.router({
+  MaterialAppCore.router({
     Key? key,
     this.routeInformationProvider,
     required RouteInformationParser<Object> this.routeInformationParser,

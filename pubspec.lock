@@ -76,13 +76,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.0.0"
-  flutter_linkify:
-    dependency: "direct main"
-    description:
-      name: flutter_linkify
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "5.0.2"
   flutter_spinkit:
     dependency: transitive
     description:
@@ -137,13 +130,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.6.3"
-  linkify:
-    dependency: "direct main"
-    description:
-      name: linkify
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "4.0.0"
   matcher:
     dependency: transitive
     description:
