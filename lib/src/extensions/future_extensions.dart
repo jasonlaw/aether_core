@@ -1,4 +1,3 @@
-import 'package:aether_core/aether_core.dart';
 import 'package:flutter/foundation.dart';
 
 extension AetherFutureExtensions on Future {

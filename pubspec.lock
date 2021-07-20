@@ -98,7 +98,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: aefbfe5514d24ceaf91a703edbb3ba91b4a33554
+      resolved-ref: "7a19080697386807271a52df501c46d57baafa36"
       url: "https://github.com/jonataslaw/getx.git"
     source: git
     version: "4.1.4"
