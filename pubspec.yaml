@@ -1,0 +1,113 @@
+name: aether_core
+description: Aether Core
+version: 0.0.1
+homepage: https://github.com/jasonlaw/aether_core.git
+
+# The following line prevents the package from being accidentally published to
+# pub.dev using `pub publish`. This is preferred for private packages.
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+environment:
+  sdk: ">=2.12.0 <3.0.0"
+  flutter: ">=1.17.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # The following adds the Cupertino Icons font to your application.
+  # Use with the CupertinoIcons class for iOS style icons.
+  #cupertino_icons: ^0.1.3
+
+  # https://pub.dev/packages/get 
+  get: #^4.1.4
+    git: https://github.com/jonataslaw/getx.git
+  # https://pub.dev/packages/mime_type 
+  mime_type: ^1.0.0
+
+  # https://pub.dev/packages/get_storage 
+  get_storage: ^2.0.2
+
+  # https://pub.dev/packages/package_info_plus 
+  package_info_plus: ^1.0.3
+  
+  # https://pub.dev/packages/flutter_linkify 
+  flutter_linkify: ^5.0.2
+  # https://pub.dev/packages/linkify 
+  linkify: ^4.0.0
+
+  # https://pub.dev/packages/url_launcher 
+  url_launcher: ^6.0.9
+
+  # https://pub.dev/packages/flutter_easyloading 
+  flutter_easyloading: ^3.0.0
+
+  # https://pub.flutter-io.cn/packages/version
+  version: ^2.0.0
+
+  # # https://pub.dev/packages/cached_network_image
+  # cached_network_image: ^3.1.0-alpha.1
+
+  # https://pub.dev/packages/responsive_framework
+  # responsive_framework: ^0.1.4
+
+  # # https://pub.dev/packages/flutter_form_builder/versions/7.0.0-alpha.2
+  # flutter_form_builder: ^7.0.0-alpha.2
+  # # https://pub.dev/packages/form_builder_fields
+  # form_builder_fields: ^7.0.0-alpha.2
+
+  # # https://pub.dev/packages/flex_color_scheme
+  # flex_color_scheme: ^3.0.1
+
+  
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+dependency_overrides:
+  get:
+    git: https://github.com/jonataslaw/getx.git
+  
+  # pointycastle: ^3.2.0-rc0
+
+# For information on the generic Dart part of this file, see the
+# following page: https://dart.dev/tools/pub/pubspec
+
+# The following section is specific to Flutter.
+flutter:
+
+  # The following line ensures that the Material Icons font is
+  # included with your application, so that you can use the icons in
+  # the material Icons class.
+  uses-material-design: true
+
+  # To add assets to your application, add an assets section, like this:
+  # assets:
+  #   - assets/
+  #   - assets/images/
+
+  # An image asset can refer to one or more resolution-specific "variants", see
+  # https://flutter.dev/assets-and-images/#resolution-aware.
+
+  # For details regarding adding assets from package dependencies, see
+  # https://flutter.dev/assets-and-images/#from-packages
+
+  # To add custom fonts to your application, add a fonts section here,
+  # in this "flutter" section. Each entry in this list should have a
+  # "family" key with the font family name, and a "fonts" key with a
+  # list giving the asset and other descriptors for the font. For
+  # example:
+  # fonts:
+  #   - family: Schyler
+  #     fonts:
+  #       - asset: fonts/Schyler-Regular.ttf
+  #       - asset: fonts/Schyler-Italic.ttf
+  #         style: italic
+  #   - family: Trajan Pro
+  #     fonts:
+  #       - asset: fonts/TrajanPro.ttf
+  #       - asset: fonts/TrajanPro_Bold.ttf
+  #         weight: 700
+  #
+  # For details regarding fonts from package dependencies,
+  # see https://flutter.dev/custom-fonts/#from-packages
