@@ -6,6 +6,4 @@ export "int_extensions.dart";
 export "file_extensions.dart";
 export "iterable_extensions.dart";
 export 'getstorage_extensions.dart';
-export 'map_extensions.dart';
-export 'list_extensions.dart';
 export 'snackbar_extensions.dart';
