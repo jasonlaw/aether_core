@@ -5,7 +5,7 @@ extension AetherRxEntityFieldExtensions<E> on Rx<EntityField<E>> {
 }
 
 extension AetherEntityFieldExtensions<E> on EntityField<E> {
-  void onLoading({required ValueTransform<E> transform}) =>
+  void onLoading(ValueTransform<E> transform) =>
       this._fieldOnLoading = (value) => transform(value);
 }
 
