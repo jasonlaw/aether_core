@@ -59,10 +59,11 @@ class Entity {
     }
   }
 
-  EntityField<T> field<T>(String name, {T? defaultValue}) {
+  EntityField<T> field<T>(String name, {String? label, T? defaultValue}) {
     var instance = fields[name] as EntityField<T>?;
     if (instance == null) {
-      instance = EntityField<T>._(this, name: name, defaultValue: defaultValue);
+      instance = EntityField<T>._(this,
+          name: name, label: label, defaultValue: defaultValue);
     }
     return instance;
   }

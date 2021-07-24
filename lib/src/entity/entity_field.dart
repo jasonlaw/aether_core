@@ -10,14 +10,18 @@ class EntityField<T> {
   EntityField._(
     this.entity, {
     required this.name,
+    String? label,
     T? defaultValue,
-  }) : _defaultValue = defaultValue ?? T.defaultValue() {
+  })  : _label = label ?? name,
+        _defaultValue = defaultValue ?? T.defaultValue() {
     entity.fields[name] = this;
   }
 
   final Entity entity;
   final T? _defaultValue;
   final String name;
+  final String _label;
+  String get label => _label.tr;
 
   T Function()? _defaultListBuilder;
 
