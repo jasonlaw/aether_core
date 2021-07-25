@@ -10,22 +10,25 @@ extension AetherGetxHttpGQLResponseExtensions on GraphQLResponse {
 }
 
 extension AetherGetxHttpResponseExtensions on Response {
-  String? get errorText {
-    if (this.isOk) return null;
+  String get errorText {
+    if (this.isOk) return '';
     var body = this.body;
-    if (body == null || body.toString() == "") return this.statusText;
+    if (body == null || body.toString() == "")
+      return this.statusText ?? 'Unknown error'.tr;
     if (body is List) body = body.first;
     if (body is! Map) return "$body";
-    return body["message"] ?? "Unknown error occur".tr;
+    return body["message"] ?? "Unknown error".tr;
   }
 
-  E? toEntity<E extends Entity>(EntityBuilder<E> createEntity) {
-    if (this.hasError || this.statusCode != 200) return null;
+  E toEntity<E extends Entity>(EntityBuilder<E> createEntity) {
+    if (this.hasError || this.statusCode != 200)
+      throw new Exception(this.errorText);
     return createEntity()..load(this.body);
   }
 
-  List<T>? toList<T extends Entity>(EntityBuilder<T> createEntity) {
-    if (this.hasError || this.statusCode != 200) return null;
+  List<T> toList<T extends Entity>(EntityBuilder<T> createEntity) {
+    if (this.hasError || this.statusCode != 200)
+      throw new Exception(this.errorText);
     var list = this.body.addMap((data) => createEntity()..load(data));
     return <T>[]..assignAll(list);
   }

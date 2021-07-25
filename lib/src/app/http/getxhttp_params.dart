@@ -13,15 +13,15 @@ class RestBody {
   RestBody({bool formData: false}) : _formDataMode = formData;
 
   RestBody addField(EntityField field) {
-    if (field is EntityField<List<UploadFileEntity>>) {
+    if (field is EntityListField<UploadFile>) {
       _formDataMode = true;
       if (!field.any((x) => x.isNew)) return this;
-      return addParam(field.name, field()!.map((e) => e.file).toList());
+      return addParam(field.name, field().map((e) => e.file).toList());
     }
-    if (field is EntityField<UploadFileEntity>) {
+    if (field is EntityField<UploadFile>) {
       _formDataMode = true;
-      if (field() == null || !field()!.isNew) return this;
-      return addParam(field.name, field()!.file);
+      if (field.valueIsNull || !field().isNew) return this;
+      return addParam(field.name, field().file);
     }
     return addParam(field.name, field());
   }

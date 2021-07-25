@@ -25,7 +25,7 @@ class Entity {
 
   Map<String, dynamic>? _committedData;
 
-  Rx<Entity>? get rx => _rx ??= Rx<Entity>(this);
+  Rx<Entity> get rx => _rx ??= Rx<Entity>(this);
   Rx<Entity>? _rx;
 
   final Map<String, EntityField> fields = {};
@@ -41,8 +41,9 @@ class Entity {
 
   dynamic operator [](String fieldName) => data[fieldName];
 
-  /// This entity is onwed by a field
-  EntityField? _fieldOwner;
+  /// This entity is onwed by a list field
+  EntityListField? _listFieldRef;
+  EntityListField? get hostListField => _listFieldRef;
 
   void operator []=(String fieldName, dynamic value) {
     final oldValue = data[fieldName];
@@ -59,11 +60,20 @@ class Entity {
     }
   }
 
-  EntityField<T> field<T>(String name, {String? label, T? defaultValue}) {
+  EntityField<T> field<T>(String name,
+      {String? label, T Function()? defaultValue}) {
     var instance = fields[name] as EntityField<T>?;
     if (instance == null) {
       instance = EntityField<T>._(this,
           name: name, label: label, defaultValue: defaultValue);
+    }
+    return instance;
+  }
+
+  EntityListField<E> fieldList<E extends Entity>(String name, {String? label}) {
+    var instance = fields[name] as EntityListField<E>?;
+    if (instance == null) {
+      instance = EntityListField<E>._(this, name: name, label: label);
     }
     return instance;
   }
@@ -120,7 +130,7 @@ class Entity {
       return;
     }
     _rx?.refresh();
-    _fieldOwner?.updateState();
+    _listFieldRef?.updateState();
     //_rxRefresh();
   }
 
@@ -184,9 +194,9 @@ class Entity {
   @override
   String toString() => toMap().toString();
   // static Future<SearchResults<T>> search<T extends Entity>(
-  //     {@required String api,
-  //     @required SearchParams params,
-  //     @required EntityBuilder<T> createEntity}) async {
+  //     {required String api,
+  //     required SearchParams params,
+  //     required EntityBuilder<T> createEntity}) async {
   //   final result = await AppConnect.get(api, query: params.queryData);
   //   if (result.hasError) return Future.error(result.errorText);
   //   return result.toSearchResults(createEntity, searchParams: params);

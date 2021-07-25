@@ -2,12 +2,12 @@ part of 'getxhttp.dart';
 
 class RestQuery {
   // final String action;
-  final String api;
+  final String url;
   final dynamic body;
   final Map<String, dynamic>? query;
   GetxHttp? _http;
 
-  RestQuery(this.api, {this.body, this.query});
+  RestQuery(this.url, {this.body, this.query});
 
   RestQuery use(GetxHttp http) {
     _http ??= http;
@@ -53,7 +53,7 @@ class RestQuery {
     if (disableLoadingIndicator) _http!.disableLoadingIndicator();
     var result = await _http!.request(
       method,
-      api,
+      url,
       body: body is List<dynamic> ? RestBody.params(body) : body,
       query: query,
       headers: headers,

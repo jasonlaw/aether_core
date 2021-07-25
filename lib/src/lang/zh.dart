@@ -16,7 +16,7 @@ final Map<String, String> zh = {
   "Press again to exit": "再按一次退出",
   "Connection timeout": "连接超时",
   "Connection socket error: %s": "连接插座错误：%s",
-  "Unknown error occur": "发生未知错误",
+  "Unknown error": "未知错误",
   "Inactive account": "无效的帐户",
   "Failed authentication": "认证失败",
   "Light": "浅色",

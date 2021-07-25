@@ -11,41 +11,46 @@ class EntityField<T> {
     this.entity, {
     required this.name,
     String? label,
-    T? defaultValue,
-  })  : _label = label ?? name,
-        _defaultValue = defaultValue ?? T.defaultValue() {
+    T Function()? defaultValue,
+  })  : assert(T is! List || defaultValue == null),
+        _label = label ?? name {
     entity.fields[name] = this;
+    if (defaultValue == null) {
+      final val = T.defaultValue();
+      if (val != null) {
+        this._defaultValue = () => val as T;
+      } else {
+        this._defaultValue = () => null;
+      }
+    } else {
+      this._defaultValue = defaultValue;
+    }
   }
 
   final Entity entity;
-  final T? _defaultValue;
   final String name;
-  final String _label;
+  String _label;
   String get label => _label.tr;
+  set label(String val) => _label = val;
 
-  T Function()? _defaultListBuilder;
+  late final T? Function() _defaultValue;
 
-  Rx<EntityField<T>>? get rx => _rx ??= Rx<EntityField<T>>(this);
+  Rx<EntityField<T>> get rx => _rx ??= Rx<EntityField<T>>(this);
   Rx<EntityField<T>>? _rx;
 
   ValueTransform<T>? _fieldOnLoading;
   ValueChanged<T?>? _fieldOnLoaded;
   ValueChanged<T?>? _fieldOnChanged;
 
-  Computed<T>? _compute;
+  Computed<T?>? _compute;
   Set<EntityField>? _computeBindings;
   bool get isComputed => _compute != null;
-
-  @protected
-  T? defaultBuilder() =>
-      _defaultListBuilder != null ? _defaultListBuilder!() : _defaultValue;
 
   T? get value {
     defaultValue() {
       if (entity.hasField(name)) return null;
-      final val = entity.data[name] =
-          _compute == null ? defaultBuilder() : _compute!.call();
-      return val;
+      return entity.data[name] =
+          _compute == null ? _defaultValue() : _compute!.call();
     }
 
     return entity[name] ?? defaultValue();
@@ -53,15 +58,19 @@ class EntityField<T> {
 
   set value(T? value) {
     assert(!isComputed, "Not allowed to set value into a computed field $name");
+    assert(T is! List, "Not allowed to set value for ListField");
 
     entity[name] = value;
   }
 
   @protected
-  T? call([T? value]) {
+  T call([T? value]) {
     if (value != null) this.value = value;
-    return this.value;
+    return this.value!;
   }
+
+  bool get valueIsNull => this.value == null;
+  bool get valueIsNotNull => this.value != null;
 
   void onLoaded({required ValueChanged<T?> action}) => _fieldOnLoaded = action;
 
@@ -70,7 +79,7 @@ class EntityField<T> {
 
   void computed({
     required List<EntityField> bindings,
-    required Computed<T> compute,
+    required Computed<T?> compute,
   }) {
     bindings.forEach((bindingField) {
       var list = bindingField._computeBindings ??= Set();
@@ -88,7 +97,7 @@ class EntityField<T> {
   void _load(dynamic rawData, {bool copy = false}) {
     if (isComputed) return;
     if (rawData == null) {
-      entity[name] = defaultBuilder();
+      entity[name] = _defaultValue();
     } else {
       final transformer = _fieldOnLoading ?? ValueTransformers.system();
       entity[name] = transformer(rawData);
@@ -124,5 +133,110 @@ class EntityField<T> {
       computedField.propagate();
     });
     //entity.updateState();
+  }
+}
+
+class EntityListField<E extends Entity> extends EntityField<List<E>> {
+  EntityListField._(
+    Entity entity, {
+    required String name,
+    String? label,
+  }) : super._(
+          entity,
+          name: name,
+          label: label,
+          defaultValue: () => <E>[],
+        );
+
+  void onLoading(
+    EntityBuilder<E> createEntity,
+  ) {
+    this._fieldOnLoading = (rawData) {
+      final list = <E>[];
+      rawData.forEach((data) {
+        final E entity = createEntity();
+        entity.load(data);
+        entity._listFieldRef = this;
+        list.add(entity);
+      });
+      return list;
+    };
+  }
+
+  void load(List rawData) {
+    assert(!isComputed, "Not allowed to load data into a computed field $name");
+    this._load(rawData);
+  }
+
+  E operator [](int index) => this.value![index];
+
+  int get length => this.value!.length;
+  E get first => this.value!.first;
+  E? get firstOrDefault => this.value!.firstOrDefault;
+  E get last => this.value!.last;
+  void sort([int compare(E a, E b)?]) {
+    this.value!.sort(compare);
+    this.updateState();
+  }
+
+  bool get isEmpty => this.value!.isEmpty;
+
+  void clear() {
+    this.value!.clear();
+    this.updateState();
+  }
+
+  void add(E entity) {
+    this.value!.add(entity);
+    entity._listFieldRef = this;
+    this.updateState();
+  }
+
+  void addAll(Iterable<E> entities) {
+    entities.forEach((entity) => entity._listFieldRef = this);
+    this.value!.addAll(entities);
+    this.updateState();
+  }
+
+  void assignAll(Iterable<E> entities) {
+    this.value!.clear();
+    this.addAll(entities);
+  }
+
+  void insert(int index, E entity) {
+    this.value!.insert(index, entity);
+    entity._listFieldRef = this;
+    this.updateState();
+  }
+
+  bool remove(E entity) {
+    var foundAndRemoved = this.value!.remove(entity);
+    if (foundAndRemoved) {
+      entity._listFieldRef = null;
+      this.updateState();
+    }
+    return foundAndRemoved;
+  }
+
+  void removeAt(int index) {
+    this.value!.removeAt(index);
+    this.updateState();
+  }
+
+  void removeLast() {
+    this.value!.removeLast();
+    this.updateState();
+  }
+
+  Iterable<E> where(bool Function(E) test) {
+    return value!.where(test);
+  }
+
+  bool any(bool Function(E) test) {
+    return value!.any(test);
+  }
+
+  E firstWhere(bool test(E element), {E orElse()?}) {
+    return value!.firstWhere(test, orElse: orElse);
   }
 }

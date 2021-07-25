@@ -4,7 +4,7 @@ class AppSettings extends Entity {
   late final EntityField<String> apiBaseUrl = this.field("ApiBaseUrl");
   late final EntityField<String> apiKey = this.field("ApiKey");
   late final EntityField<int> apiConnectTimeoutInSec =
-      this.field("ApiConnectTimeoutInSec", defaultValue: 5);
+      this.field("ApiConnectTimeoutInSec", defaultValue: () => 5);
   late final EntityField<String?> appStoreURL = this.field("AppStoreURL");
 
   EasyLoading get easyLoading => EasyLoading.instance;
@@ -18,9 +18,9 @@ class AppSettings extends Entity {
         bindings: [_google, _apple, _huawei],
         compute: () {
           if (kIsWeb) return null;
-          if (Platform.isIOS) return _apple()!;
-          if (kHuaweiAppGallery) return _huawei()!;
-          return _google()!;
+          if (Platform.isIOS) return _apple();
+          if (kHuaweiAppGallery) return _huawei();
+          return _google();
         });
   }
 

@@ -36,8 +36,8 @@ class SnackbarService {
   // @Deprecated(
   //     'Prefer to use the registerCustomSnackbarConfig() method. Will be removed in future release')
   // void registerCustomSnackbarconfig({
-  //   @required dynamic customData,
-  //   @required SnackbarConfig? config,
+  //   required dynamic customData,
+  //   required SnackbarConfig? config,
   // }) =>
   //     registerCustomSnackbarConfig(
   //       variant: customData,
@@ -48,8 +48,8 @@ class SnackbarService {
   /// function takes in a [String] to display as the title and a `Function` to be used to the
   /// onTap callback
   void registerCustomMainButtonBuilder({
-    @required dynamic variant,
-    @required Widget Function(String?, Function?)? builder,
+    required dynamic variant,
+    required Widget Function(String?, Function?)? builder,
   }) =>
       _mainButtonBuilder[variant] = builder;
 

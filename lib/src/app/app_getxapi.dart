@@ -4,7 +4,7 @@ class GetxApi extends GetxHttp {
   final CookieManager cookie = CookieManager();
 
   GetxApi._() {
-    client.timeout = Duration(seconds: App.settings.apiConnectTimeoutInSec()!);
+    client.timeout = Duration(seconds: App.settings.apiConnectTimeoutInSec());
 
     client.baseUrl = App.settings.apiBaseUrl();
 
@@ -16,7 +16,7 @@ class GetxApi extends GetxHttp {
           "languagecode":
               "${Get.locale!.languageCode}_${Get.locale!.countryCode}",
         if (App.settings.apiKey().isNotNullOrEmpty)
-          "appkey": App.settings.apiKey()!,
+          "appkey": App.settings.apiKey(),
       });
 
       await cookie.loadForRequest(request);
