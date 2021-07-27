@@ -7,9 +7,10 @@ class EntityListField<E extends Entity> extends EntityFieldBase<List<E>> {
     Entity entity, {
     required String name,
     String? label,
-  }) : super(entity, name: name, label: label) {
-    this.defaultBuilder = () => <E>[];
-  }
+  }) : super(entity, name: name, label: label);
+
+  @override
+  List<E> getDefaultValue() => <E>[];
 
   List<E> call() => this.value!;
 
@@ -26,7 +27,8 @@ class EntityListField<E extends Entity> extends EntityFieldBase<List<E>> {
     EntityBuilder<E> createEntity,
   ) {
     this._fieldOnLoading = (rawData) {
-      final list = <E>[];
+      final list = this.value!;
+      list.clear();
       rawData.forEach((data) {
         final E entity = createEntity();
         entity.load(data);

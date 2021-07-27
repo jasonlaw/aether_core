@@ -1,0 +1,50 @@
+import 'package:flutter_test/flutter_test.dart';
+
+import 'model.dart';
+
+const companyData = {
+  'name': 'Company1',
+  'machines': machinesData,
+};
+
+const machinesData = [
+  {'name': 'Machine A', 'capacity': 2},
+  {'name': 'Machine B', 'capacity': 3},
+  {'name': 'Machine C', 'capacity': 5}
+];
+
+void main() {
+  group('Entity Test =>', () {
+    final company = Company();
+
+    test('Company is empty', () {
+      expect(company.isEmpty, true);
+    });
+    test('Machine is empty', () {
+      expect(company.machines.isEmpty, true);
+    });
+    test('Company is loaded', () {
+      company.load(companyData);
+      expect(company.isNotEmpty, true);
+    });
+    test('Company.time is null', () {
+      expect(company.time.valueIsNull, true);
+    });
+    test('Company.capacity() == 10', () {
+      expect(company.capacity(), 10);
+    });
+    test('Company.kpi() == 0', () {
+      expect(company.kpi(), 0);
+    });
+    test('Machine.length == 3', () {
+      expect(company.machines.length, 3);
+    });
+    test('Settings is null', () {
+      expect(company.settings.valueIsNull, true);
+    });
+    test('Settings.minCapacity == 10', () {
+      company.settings(Settings());
+      expect(company.settings().minCapacity(), 10);
+    });
+  });
+}

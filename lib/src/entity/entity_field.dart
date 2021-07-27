@@ -10,10 +10,13 @@ class EntityField<T> extends EntityFieldBase<T> {
     T? defaultValue,
   })  : assert(T is! List),
         assert(T is! Entity || defaultValue == null),
-        super(entity, name: name, label: label) {
-    final defVal = defaultValue ?? T.getDefault();
-    if (defVal != null) this.defaultBuilder = () => defaultValue;
-  }
+        _defaultValue = defaultValue ?? T.getDefault(),
+        super(entity, name: name, label: label);
+
+  final T? _defaultValue;
+
+  @override
+  T? getDefaultValue() => _defaultValue;
 
   set value(T? value) {
     assert(!isComputed, "Not allowed to set value into a computed field $name");

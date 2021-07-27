@@ -9,7 +9,9 @@ abstract class EntityFieldBase<T> {
     this.entity, {
     required this.name,
     String? label,
-  }) : _label = label ?? name;
+  }) : _label = label ?? name {
+    entity.fields[name] = this;
+  }
 
   final Entity entity;
   final String name;
@@ -21,6 +23,9 @@ abstract class EntityFieldBase<T> {
   @protected
   late final T? Function()? defaultBuilder;
 
+  @protected
+  T? getDefaultValue() => null;
+
   ValueTransform<T>? _fieldOnLoading;
   ValueChanged<T?>? _fieldOnLoaded;
   ValueChanged<T?>? _fieldOnChanged;
@@ -30,13 +35,13 @@ abstract class EntityFieldBase<T> {
   bool get isComputed => _compute != null;
 
   T? get value {
-    defaultValue() {
+    _getDefault() {
       if (entity.hasField(name)) return null;
       return entity.data[name] =
-          _compute == null ? defaultBuilder?.call() : _compute!.call();
+          _compute == null ? getDefaultValue() : _compute!.call();
     }
 
-    return entity[name] ?? defaultValue();
+    return entity[name] ?? _getDefault();
   }
 
   void onLoaded({required ValueChanged<T?> action}) => _fieldOnLoaded = action;
@@ -64,7 +69,7 @@ abstract class EntityFieldBase<T> {
   void _load(dynamic rawData, {bool copy = false}) {
     if (isComputed) return;
     if (rawData == null) {
-      entity[name] = defaultBuilder?.call();
+      if (copy && T is! List<Entity>) entity[name] = null;
     } else {
       final transformer = _fieldOnLoading ?? ValueTransformers.system();
       entity[name] = transformer(rawData);
@@ -75,16 +80,16 @@ abstract class EntityFieldBase<T> {
   @override
   String toString() => "$value";
 
-  /// This equality override works for EntityField instances and the internal values.
-  bool operator ==(o) {
-    // Todo, find a common implementation for the hashCode of different Types.
-    if (o is T) return this.value == o;
-    if (o is EntityField<T>) return this.value == o.value;
-    return false;
-  }
+  // /// This equality override works for EntityField instances and the internal values.
+  // bool operator ==(o) {
+  //   // Todo, find a common implementation for the hashCode of different Types.
+  //   if (o is T) return this.value == o;
+  //   if (o is EntityField<T>) return this.value == o.value;
+  //   return false;
+  // }
 
-  @override
-  int get hashCode => this.value.hashCode;
+  // @override
+  // int get hashCode => this.value.hashCode;
 
   void reset() {
     if (isComputed) return;
