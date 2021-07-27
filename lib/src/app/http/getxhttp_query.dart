@@ -49,7 +49,7 @@ class RestQuery {
     Duration? timeout,
     bool disableLoadingIndicator = false,
   }) async {
-    _http ??= App.api;
+    _http ??= App.connect;
     if (disableLoadingIndicator) _http!.disableLoadingIndicator();
     var result = await _http!.request(
       method,
@@ -178,7 +178,7 @@ class GraphQLQuery {
     T Function(dynamic)? decoder,
     bool disableLoadingIndicator = false,
   }) async {
-    _http ??= App.api;
+    _http ??= App.connect;
     if (disableLoadingIndicator) _http!.disableLoadingIndicator();
     var result = await _http!.gql(
       method,

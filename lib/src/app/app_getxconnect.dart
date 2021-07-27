@@ -1,9 +1,9 @@
 part of 'app.dart';
 
-class GetxApi extends GetxHttp {
+class GetxConnect extends GetxHttp {
   final CookieManager cookie = CookieManager();
 
-  GetxApi._() {
+  GetxConnect._() {
     client.timeout = Duration(seconds: App.settings.apiConnectTimeoutInSec());
 
     client.baseUrl = App.settings.apiBaseUrl();

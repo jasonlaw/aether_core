@@ -30,7 +30,7 @@ export 'http/getxhttp.dart';
 
 part 'app_service.dart';
 part 'app_settings.dart';
-part 'app_getxapi.dart';
+part 'app_getxconnect.dart';
 part 'app_credential.dart';
 
 const String kSystemPath = 'assets/system';

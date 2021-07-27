@@ -4,7 +4,7 @@ import 'package:url_launcher/url_launcher.dart';
 extension AetherNullableStringExtensions on String? {
   bool get isNullOrEmpty => this == null || this!.isEmpty;
 
-  bool get isNotNullOrEmpty => !this.isNullOrEmpty;
+  bool get isNotNullOrEmpty => this != null && this!.isNotEmpty;
 }
 
 extension AetherStringExtensions on String {

@@ -13,7 +13,7 @@ class AppService extends GetxService {
   late final CredentialIdentity identity =
       Get.isRegistered() ? Get.find() : CredentialIdentity();
   late final AppSettings settings;
-  late final GetxApi api = GetxApi._();
+  late final GetxConnect connect = GetxConnect._();
   late final GetxHttp http = GetxHttp();
 
   static Future startup({bool useLocalTimezoneInHttp = true}) async {

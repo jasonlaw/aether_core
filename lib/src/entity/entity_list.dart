@@ -9,7 +9,7 @@ class EntityList<E extends Entity> extends Entity {
   @protected
   late final EntityListField<E> list = this.fieldList("data");
 
-  Iterator<E> get iterator => list().iterator;
+  Iterator<E> get iterator => list.iterator;
   int get length => list.length;
   E get first => list.first;
   E? get firstOrDefault => list.firstOrDefault;

@@ -3,12 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:aether_core/aether_core.dart';
 
 //part 'entity_member.dart';
+part 'entity_field_base.dart';
 part 'entity_field.dart';
-part 'entity_field_extensions.dart';
+part 'entity_field_list.dart';
 part 'entity_utils.dart';
 part 'entity_list.dart';
 part 'entity_graphql.dart';
-part 'entity_extensions.dart';
+part 'extensions.dart';
 
 typedef EntityBuilder<E extends Entity> = E Function();
 
@@ -16,10 +17,6 @@ typedef EntityBuilder<E extends Entity> = E Function();
 // Equality checking => https://pub.dev/packages/equatable
 
 class Entity {
-  // Entity({Map<String, dynamic> data}) {
-  //   if (data != null) this.data.addAll(data);
-  // }
-
   @protected
   final Map<String, dynamic> data = {};
 
@@ -28,7 +25,7 @@ class Entity {
   Rx<Entity> get rx => _rx ??= Rx<Entity>(this);
   Rx<Entity>? _rx;
 
-  final Map<String, EntityField> fields = {};
+  final Map<String, EntityFieldBase> fields = {};
 
   /// Flag for empty content.
   bool get isEmpty => data.isEmpty;
@@ -60,8 +57,7 @@ class Entity {
     }
   }
 
-  EntityField<T> field<T>(String name,
-      {String? label, T Function()? defaultValue}) {
+  EntityField<T> field<T>(String name, {String? label, T? defaultValue}) {
     var instance = fields[name] as EntityField<T>?;
     if (instance == null) {
       instance = EntityField<T>._(this,
@@ -193,14 +189,6 @@ class Entity {
 
   @override
   String toString() => toMap().toString();
-  // static Future<SearchResults<T>> search<T extends Entity>(
-  //     {required String api,
-  //     required SearchParams params,
-  //     required EntityBuilder<T> createEntity}) async {
-  //   final result = await AppConnect.get(api, query: params.queryData);
-  //   if (result.hasError) return Future.error(result.errorText);
-  //   return result.toSearchResults(createEntity, searchParams: params);
-  // }
 
   T of<T extends Entity>() => this as T;
 }

@@ -12,7 +12,7 @@ class RestBody {
 
   RestBody({bool formData: false}) : _formDataMode = formData;
 
-  RestBody addField(EntityField field) {
+  RestBody addField(EntityFieldBase field) {
     if (field is EntityListField<UploadFile>) {
       _formDataMode = true;
       if (!field.any((x) => x.isNew)) return this;
@@ -23,7 +23,7 @@ class RestBody {
       if (field.valueIsNull || !field().isNew) return this;
       return addParam(field.name, field().file);
     }
-    return addParam(field.name, field());
+    return addParam(field.name, field.value);
   }
 
   // RestBody addFormField(FormInputField field) {
