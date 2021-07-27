@@ -1,6 +1,7 @@
 extension AetherTypeExtensions on Type {
   bool isTypeOf<T>() => this == T;
-  defaultValue() {
+
+  getDefault() {
     if (this.isTypeOf<String>()) return '';
     if (this.isTypeOf<bool>()) return false;
     if (this.isTypeOf<int>() || this.isTypeOf<num>()) return 0;

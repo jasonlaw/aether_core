@@ -1,6 +1,6 @@
 part of 'getxhttp.dart';
 
-extension AetherGetxHttpGQLResponseExtensions on GraphQLResponse {
+extension GetxGQLResponseExtensions on GraphQLResponse {
   String? get errorText {
     if (this.isOk) return null;
     if (this.graphQLErrors == null || this.graphQLErrors!.isEmpty)
@@ -9,7 +9,7 @@ extension AetherGetxHttpGQLResponseExtensions on GraphQLResponse {
   }
 }
 
-extension AetherGetxHttpResponseExtensions on Response {
+extension GetxResponseExtensions on Response {
   String get errorText {
     if (this.isOk) return '';
     var body = this.body;

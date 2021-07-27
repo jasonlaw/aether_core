@@ -11,7 +11,7 @@ class EntityField<T> extends EntityFieldBase<T> {
   })  : assert(T is! List),
         assert(T is! Entity || defaultValue == null),
         super(entity, name: name, label: label) {
-    final defVal = defaultValue ?? T.defaultValue();
+    final defVal = defaultValue ?? T.getDefault();
     if (defVal != null) this.defaultBuilder = () => defaultValue;
   }
 
