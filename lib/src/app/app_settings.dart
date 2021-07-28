@@ -1,11 +1,11 @@
 part of 'app.dart';
 
 class AppSettings extends Entity {
-  late final EntityField<String> apiBaseUrl = this.field("ApiBaseUrl");
-  late final EntityField<String> apiKey = this.field("ApiKey");
-  late final EntityField<int> apiConnectTimeoutInSec =
+  late final Field<String> apiBaseUrl = this.field("ApiBaseUrl");
+  late final Field<String> apiKey = this.field("ApiKey");
+  late final Field<int> apiConnectTimeoutInSec =
       this.field("ApiConnectTimeoutInSec", defaultValue: 5);
-  late final EntityField<String?> appStoreURL = this.field("AppStoreURL");
+  late final Field<String?> appStoreURL = this.field("AppStoreURL");
 
   EasyLoading get easyLoading => EasyLoading.instance;
 

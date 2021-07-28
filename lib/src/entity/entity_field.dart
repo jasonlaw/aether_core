@@ -2,21 +2,31 @@ part of 'entity.dart';
 
 /// Example:
 /// late final EntityField<String> someField = this.field("someFieldName");
-class EntityField<T> extends EntityFieldBase<T> {
-  EntityField._(
+class Field<T> extends FieldBase<T> {
+  Field._(
     Entity entity, {
     required String name,
     String? label,
     T? defaultValue,
   })  : assert(T is! List),
         assert(T is! Entity || defaultValue == null),
-        _defaultValue = defaultValue ?? T.getDefault(),
-        super(entity, name: name, label: label);
+        super(entity, name: name, label: label) {
+    final _value = defaultValue ?? T.getDefault();
+    if (_value != null) _createDefault = () => _value;
+  }
 
-  final T? _defaultValue;
+  T Function()? _createDefault;
 
   @override
-  T? getDefaultValue() => _defaultValue;
+  T? get value {
+    _getDefault() {
+      if (entity.hasField(name)) return null;
+      return entity.data[name] =
+          _compute == null ? _createDefault?.call() : _compute!.call();
+    }
+
+    return entity[name] ?? _getDefault();
+  }
 
   set value(T? value) {
     assert(!isComputed, "Not allowed to set value into a computed field $name");
@@ -30,8 +40,8 @@ class EntityField<T> extends EntityFieldBase<T> {
     return this.value!;
   }
 
-  Rx<EntityField<T>> get rx => _rx ??= Rx<EntityField<T>>(this);
-  Rx<EntityField<T>>? _rx;
+  Rx<Field<T>> get rx => _rx ??= Rx<Field<T>>(this);
+  Rx<Field<T>>? _rx;
 
   @override
   void updateState() {
@@ -39,27 +49,44 @@ class EntityField<T> extends EntityFieldBase<T> {
     _rx?.refresh();
   }
 
+  void computed({
+    required List<FieldBase> bindings,
+    required Computed<T?> compute,
+  }) {
+    bindings.forEach((bindingField) {
+      var list = bindingField._computeBindings ??= Set();
+      list.add(this);
+    });
+    _compute = compute;
+  }
+
   bool get valueIsNull => this.value == null;
   bool get valueIsNotNull => this.value != null;
 }
 
 // Specific for standard EntityField
-extension EntityFieldExtensions<T> on EntityField<T> {
+extension FieldExtensions<T> on Field<T> {
   void onLoading({required ValueTransform<T> transform}) =>
       this._fieldOnLoading = (value) => transform(value);
 }
 
 // Specific for EntityField of Entity
-extension EntityFieldOfEntityExtensions<E extends Entity> on EntityField<E> {
-  void onLoading(
-    EntityBuilder<E> createEntity,
-  ) {
-    this._fieldOnLoading = (value) => createEntity()..load(value);
+extension FieldOfEntityExtensions<E extends Entity> on Field<E> {
+  Field<E> register(
+    EntityBuilder<E> createEntity, {
+    bool auto = false,
+  }) {
+    if (auto) _createDefault = () => createEntity();
+    this._fieldOnLoading = (rawData) {
+      final instance = this.value ?? createEntity();
+      return instance..load(rawData);
+    };
+    return this;
   }
 
   void load(Map<String, dynamic> rawData) {
     assert(!isComputed, "Not allowed to load data into a computed field $name");
-    this._load(rawData);
+    this.innerLoad(rawData);
   }
 
   void nil() {

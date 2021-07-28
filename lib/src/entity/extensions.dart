@@ -4,13 +4,12 @@ extension RxEntityExtensions on Rx<Entity> {
   T of<T extends Entity>() => this.value as T;
 }
 
-extension RxEntityFieldExtensions<E> on Rx<EntityField<E>> {
+extension RxEntityFieldExtensions<E> on Rx<Field<E>> {
   E? get field => this.value.value;
 }
 
-extension RxEntityListFieldExtensions<E extends Entity>
-    on Rx<EntityListField<E>> {
-  List<E> get list => this.value.value!;
+extension RxEntityListFieldExtensions<E extends Entity> on Rx<ListField<E>> {
+  List<E> get list => this.value.value;
 }
 
 extension EntityExtensions<E extends Entity> on E {

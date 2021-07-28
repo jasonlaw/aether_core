@@ -6,6 +6,7 @@ import 'package:aether_core/aether_core.dart';
 part 'entity_field_base.dart';
 part 'entity_field.dart';
 part 'entity_field_list.dart';
+// part 'entity_field_entity.dart';
 part 'entity_utils.dart';
 part 'entity_list.dart';
 part 'entity_graphql.dart';
@@ -25,7 +26,7 @@ class Entity {
   Rx<Entity> get rx => _rx ??= Rx<Entity>(this);
   Rx<Entity>? _rx;
 
-  final Map<String, EntityFieldBase> fields = {};
+  final Map<String, FieldBase> fields = {};
 
   /// Flag for empty content.
   bool get isEmpty => data.isEmpty;
@@ -39,8 +40,8 @@ class Entity {
   dynamic operator [](String fieldName) => data[fieldName];
 
   /// This entity is onwed by a list field
-  EntityListField? _listFieldRef;
-  EntityListField? get hostListField => _listFieldRef;
+  FieldBase? _hostFieldRef;
+  FieldBase? get hostField => _hostFieldRef;
 
   void operator []=(String fieldName, dynamic value) {
     final oldValue = data[fieldName];
@@ -57,19 +58,28 @@ class Entity {
     }
   }
 
-  EntityField<T> field<T>(String name, {String? label, T? defaultValue}) {
-    var instance = fields[name] as EntityField<T>?;
+  Field<T> field<T>(String name, {String? label, T? defaultValue}) {
+    var instance = fields[name] as Field<T>?;
     if (instance == null) {
-      instance = EntityField<T>._(this,
+      instance = Field<T>._(this,
           name: name, label: label, defaultValue: defaultValue);
     }
     return instance;
   }
 
-  EntityListField<E> fieldList<E extends Entity>(String name, {String? label}) {
-    var instance = fields[name] as EntityListField<E>?;
+  // EntityFieldEntity<E> fieldEntity<E extends Entity>(String name,
+  //     {String? label}) {
+  //   var instance = fields[name] as EntityFieldEntity<E>?;
+  //   if (instance == null) {
+  //     instance = EntityFieldEntity<E>._(this, name: name, label: label);
+  //   }
+  //   return instance;
+  // }
+
+  ListField<E> fieldList<E extends Entity>(String name, {String? label}) {
+    var instance = fields[name] as ListField<E>?;
     if (instance == null) {
-      instance = EntityListField<E>._(this, name: name, label: label);
+      instance = ListField<E>._(this, name: name, label: label);
     }
     return instance;
   }
@@ -78,14 +88,18 @@ class Entity {
   /// After loading, the entity's isNew flag will be switched to false.
   /// Normally this is called to set the data from repository.
   bool _isLoading = false;
-  void load(Map<String, dynamic> rawData) {
+  void load(Map<String, dynamic> rawData, {bool clearState = false}) {
     //_isRaw = true;
     _isLoading = true;
+    if (clearState) {
+      this.commit();
+      this.data.clear();
+    }
     rawData.forEach((fieldName, value) {
       this.data.remove(fieldName);
       var field = fields[fieldName];
       if (field != null) {
-        field._load(value);
+        field.innerLoad(value);
       } else {
         final transformer = ValueTransformers.system();
         this[fieldName] = transformer(value);
@@ -106,7 +120,7 @@ class Entity {
       source.toMap().forEach((key, value) {
         final field = fields[key];
         if (field != null) {
-          field._load(value, copy: true);
+          field.innerLoad(value, copy: true);
         } else {
           this[key] = value;
         }
@@ -126,7 +140,7 @@ class Entity {
       return;
     }
     _rx?.refresh();
-    _listFieldRef?.updateState();
+    _hostFieldRef?.updateState();
     //_rxRefresh();
   }
 

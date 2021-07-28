@@ -4,8 +4,8 @@ typedef ValueTransform<T> = T Function(dynamic value);
 typedef ValueChanging<T> = T Function(T value);
 typedef Computed<T> = T Function();
 
-abstract class EntityFieldBase<T> {
-  EntityFieldBase(
+abstract class FieldBase<T> {
+  FieldBase(
     this.entity, {
     required this.name,
     String? label,
@@ -31,34 +31,15 @@ abstract class EntityFieldBase<T> {
   ValueChanged<T?>? _fieldOnChanged;
 
   Computed<T?>? _compute;
-  Set<EntityFieldBase>? _computeBindings;
+  Set<FieldBase>? _computeBindings;
   bool get isComputed => _compute != null;
 
-  T? get value {
-    _getDefault() {
-      if (entity.hasField(name)) return null;
-      return entity.data[name] =
-          _compute == null ? getDefaultValue() : _compute!.call();
-    }
-
-    return entity[name] ?? _getDefault();
-  }
+  T? get value;
 
   void onLoaded({required ValueChanged<T?> action}) => _fieldOnLoaded = action;
 
   void onChanged({required ValueChanged<T?> action}) =>
       _fieldOnChanged = action;
-
-  void computed({
-    required List<EntityFieldBase> bindings,
-    required Computed<T?> compute,
-  }) {
-    bindings.forEach((bindingField) {
-      var list = bindingField._computeBindings ??= Set();
-      list.add(this);
-    });
-    _compute = compute;
-  }
 
   void propagate() {
     if (this.isComputed) {
@@ -66,7 +47,8 @@ abstract class EntityFieldBase<T> {
     }
   }
 
-  void _load(dynamic rawData, {bool copy = false}) {
+  @protected
+  void innerLoad(dynamic rawData, {bool copy = false}) {
     if (isComputed) return;
     if (rawData == null) {
       if (copy && T is! List<Entity>) entity[name] = null;
@@ -90,7 +72,7 @@ abstract class EntityFieldBase<T> {
 
   // @override
   // int get hashCode => this.value.hashCode;
-
+  @mustCallSuper
   void reset() {
     if (isComputed) return;
     entity.data.remove(name);

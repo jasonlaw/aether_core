@@ -39,12 +39,35 @@ void main() {
     test('Machine.length == 3', () {
       expect(company.machines.length, 3);
     });
-    test('Settings is null', () {
-      expect(company.settings.valueIsNull, true);
+    test('Settings is not null', () {
+      expect(company.settings.valueIsNotNull, true);
     });
-    test('Settings.minCapacity == 10', () {
-      company.settings(Settings());
+    test('Settings.minCapacity default 10', () {
       expect(company.settings().minCapacity(), 10);
+    });
+    test('Settings.minCapacity changed 30', () {
+      company.settings().minCapacity(30);
+      expect(company.settings().minCapacity(), 30);
+    });
+    test('PlanQuality is null', () {
+      expect(company.planQuality.valueIsNull, true);
+    });
+    test('PlanQuality is not null', () {
+      company.planQuality(PlanQuality());
+      expect(company.planQuality.valueIsNotNull, true);
+    });
+    test('Company.Reset()', () {
+      company.reset();
+      expect(company.isEmpty, true);
+    });
+    test('Machine empty', () {
+      expect(company.machines.length, 0);
+    });
+    test('Settings back to default', () {
+      expect(company.settings().minCapacity(), 10);
+    });
+    test('PlanQuality is cleared', () {
+      expect(company.planQuality.valueIsNull, true);
     });
   });
 }

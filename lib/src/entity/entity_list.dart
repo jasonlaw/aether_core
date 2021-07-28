@@ -3,11 +3,11 @@ part of 'entity.dart';
 class EntityList<E extends Entity> extends Entity {
   final EntityBuilder<E> createEntity;
   EntityList(this.createEntity) {
-    list.onLoading(createEntity);
+    list.register(createEntity);
   }
 
   @protected
-  late final EntityListField<E> list = this.fieldList("data");
+  late final ListField<E> list = this.fieldList("data");
 
   Iterator<E> get iterator => list.iterator;
   int get length => list.length;

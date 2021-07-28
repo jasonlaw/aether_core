@@ -12,13 +12,13 @@ class RestBody {
 
   RestBody({bool formData: false}) : _formDataMode = formData;
 
-  RestBody addField(EntityFieldBase field) {
-    if (field is EntityListField<UploadFile>) {
+  RestBody addField(FieldBase field) {
+    if (field is ListField<MediaFile>) {
       _formDataMode = true;
       if (!field.any((x) => x.isNew)) return this;
       return addParam(field.name, field().map((e) => e.file).toList());
     }
-    if (field is EntityField<UploadFile>) {
+    if (field is Field<MediaFile>) {
       _formDataMode = true;
       if (field.valueIsNull || !field().isNew) return this;
       return addParam(field.name, field().file);
@@ -47,10 +47,10 @@ class RestBody {
     return this;
   }
 
-  /// param can be [EntityField], [Map<String, dynamic>] or [MapEntry<String, dynamic>]
+  /// param can be [Field], [Map<String, dynamic>] or [MapEntry<String, dynamic>]
   RestBody addParams(List<dynamic> params) {
     params.forEach((item) {
-      if (item is EntityField) {
+      if (item is Field) {
         this.addField(item);
       }
       // else if (item is FormInputField) {

@@ -2,20 +2,39 @@ part of 'entity.dart';
 
 /// Example:
 /// late final EntityListField<Entity> entities = this.fieldList("entities");
-class EntityListField<E extends Entity> extends EntityFieldBase<List<E>> {
-  EntityListField._(
+class ListField<E extends Entity> extends FieldBase<List<E>> {
+  ListField._(
     Entity entity, {
     required String name,
     String? label,
-  }) : super(entity, name: name, label: label);
+  })  : _list = <E>[],
+        super(entity, name: name, label: label);
+
+  final List<E> _list;
+  late final EntityBuilder<E> _createEntity;
+
+  List<E> call() => this.value;
+
+  Rx<ListField<E>> get rx => _rx ??= Rx<ListField<E>>(this);
+  Rx<ListField<E>>? _rx;
 
   @override
-  List<E> getDefaultValue() => <E>[];
+  List<E> get value {
+    _getDefault() {
+      return entity.data[name] = entity.data[name] = _list;
+    }
 
-  List<E> call() => this.value!;
+    return entity[name] ?? _getDefault();
+  }
 
-  Rx<EntityListField<E>> get rx => _rx ??= Rx<EntityListField<E>>(this);
-  Rx<EntityListField<E>>? _rx;
+  @override
+  void innerLoad(dynamic rawData, {bool copy = false}) {
+    if (isComputed) return;
+    if (rawData != null) {
+      entity[name] = _fieldOnLoading!.call(rawData);
+    }
+    if (!copy) _fieldOnLoaded?.call(value);
+  }
 
   @override
   void updateState() {
@@ -23,91 +42,98 @@ class EntityListField<E extends Entity> extends EntityFieldBase<List<E>> {
     _rx?.refresh();
   }
 
-  void onLoading(
+  @override
+  void reset() {
+    _list.clear();
+    super.reset();
+  }
+
+  ListField<E> register(
     EntityBuilder<E> createEntity,
   ) {
+    _createEntity = createEntity;
     this._fieldOnLoading = (rawData) {
-      final list = this.value!;
-      list.clear();
+      _list.clear();
       rawData.forEach((data) {
-        final E entity = createEntity();
+        final E entity = _createEntity();
         entity.load(data);
-        entity._listFieldRef = this;
-        list.add(entity);
+        entity._hostFieldRef = this;
+        _list.add(entity);
       });
-      return list;
+      return _list;
     };
+    return this;
   }
 
   void load(List rawData) {
     assert(!isComputed, "Not allowed to load data into a computed field $name");
-    this._load(rawData);
+    this.innerLoad(rawData);
   }
 
-  E operator [](int index) => this.value![index];
+  E operator [](int index) => this.value[index];
 
   void sort([int compare(E a, E b)?]) {
-    this.value!.sort(compare);
+    this.value.sort(compare);
     this.updateState();
   }
 
-  bool get isEmpty => this.value!.isEmpty;
-  bool get isNotEmpty => this.value!.isNotEmpty;
+  bool get isEmpty => this.value.isEmpty;
+  bool get isNotEmpty => this.value.isNotEmpty;
 
   void clear() {
-    this.value!.clear();
+    this.value.clear();
     this.updateState();
   }
 
   void add(E entity) {
-    this.value!.add(entity);
-    entity._listFieldRef = this;
+    this.value.add(entity);
+    entity._hostFieldRef = this;
     this.updateState();
   }
 
   void addAll(Iterable<E> entities) {
-    entities.forEach((entity) => entity._listFieldRef = this);
-    this.value!.addAll(entities);
+    entities.forEach((entity) => entity._hostFieldRef = this);
+    this.value.addAll(entities);
     this.updateState();
   }
 
   void assignAll(Iterable<E> entities) {
-    this.value!.clear();
+    this.value.clear();
     this.addAll(entities);
   }
 
   void insert(int index, E entity) {
-    this.value!.insert(index, entity);
-    entity._listFieldRef = this;
+    this.value.insert(index, entity);
+    entity._hostFieldRef = this;
     this.updateState();
   }
 
   bool remove(E entity) {
-    var foundAndRemoved = this.value!.remove(entity);
+    var foundAndRemoved = this.value.remove(entity);
     if (foundAndRemoved) {
-      entity._listFieldRef = null;
+      entity._hostFieldRef = null;
       this.updateState();
     }
     return foundAndRemoved;
   }
 
   void removeAt(int index) {
-    this.value!.removeAt(index);
+    this.value.removeAt(index);
     this.updateState();
   }
 
   void removeLast() {
-    this.value!.removeLast();
+    this.value.removeLast();
     this.updateState();
   }
 
-  Iterator<E> get iterator => this.value!.iterator;
-  int get length => this.value!.length;
-  E get first => this.value!.first;
-  E? get firstOrDefault => this.value!.firstOrDefault;
-  E get last => this.value!.last;
-  Iterable<E> where(bool Function(E) test) => value!.where(test);
-  bool any(bool Function(E) test) => value!.any(test);
+  Iterator<E> get iterator => this.value.iterator;
+  int get length => this.value.length;
+  E get first => this.value.first;
+  E? get firstOrDefault => this.value.firstOrDefault;
+  E get last => this.value.last;
+  Iterable<E> where(bool Function(E) test) => value.where(test);
+  bool any(bool Function(E) test) => value.any(test);
   E firstWhere(bool test(E element), {E orElse()?}) =>
-      value!.firstWhere(test, orElse: orElse);
+      value.firstWhere(test, orElse: orElse);
 }
