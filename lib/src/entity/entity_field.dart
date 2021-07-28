@@ -30,6 +30,9 @@ class Field<T> extends FieldBase<T> {
 
   set value(T? value) {
     assert(!isComputed, "Not allowed to set value into a computed field $name");
+    if (value is Entity?) {
+      value?._parentRef = this;
+    }
     entity[name] = value;
   }
 
@@ -76,9 +79,10 @@ extension FieldOfEntityExtensions<E extends Entity> on Field<E> {
     EntityBuilder<E> createEntity, {
     bool auto = false,
   }) {
-    if (auto) _createDefault = () => createEntity();
+    if (auto) _createDefault = () => createEntity().._parentRef = this;
     this._fieldOnLoading = (rawData) {
-      final instance = this.value ?? createEntity();
+      final instance = this.value ?? createEntity()
+        .._parentRef = this;
       return instance..load(rawData);
     };
     return this;

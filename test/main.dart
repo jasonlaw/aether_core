@@ -39,8 +39,18 @@ void main() {
     test('Machine.length == 3', () {
       expect(company.machines.length, 3);
     });
+    test('Machine children has parent', () {
+      expect(
+          company
+              .machines()
+              .every((element) => element.parent == company.machines),
+          true);
+    });
     test('Settings is not null', () {
       expect(company.settings.valueIsNotNull, true);
+    });
+    test('Settings has parent', () {
+      expect(company.settings().parent == company.settings, true);
     });
     test('Settings.minCapacity default 10', () {
       expect(company.settings().minCapacity(), 10);
@@ -55,6 +65,9 @@ void main() {
     test('PlanQuality is not null', () {
       company.planQuality(PlanQuality());
       expect(company.planQuality.valueIsNotNull, true);
+    });
+    test('PlanQuality has parent', () {
+      expect(company.planQuality().parent == company.planQuality, true);
     });
     test('Company.Reset()', () {
       company.reset();

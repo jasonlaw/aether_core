@@ -57,7 +57,7 @@ class ListField<E extends Entity> extends FieldBase<List<E>> {
       rawData.forEach((data) {
         final E entity = _createEntity();
         entity.load(data);
-        entity._hostFieldRef = this;
+        entity._parentRef = this;
         _list.add(entity);
       });
       return _list;
@@ -87,12 +87,12 @@ class ListField<E extends Entity> extends FieldBase<List<E>> {
 
   void add(E entity) {
     this.value.add(entity);
-    entity._hostFieldRef = this;
+    entity._parentRef = this;
     this.updateState();
   }
 
   void addAll(Iterable<E> entities) {
-    entities.forEach((entity) => entity._hostFieldRef = this);
+    entities.forEach((entity) => entity._parentRef = this);
     this.value.addAll(entities);
     this.updateState();
   }
@@ -104,14 +104,14 @@ class ListField<E extends Entity> extends FieldBase<List<E>> {
 
   void insert(int index, E entity) {
     this.value.insert(index, entity);
-    entity._hostFieldRef = this;
+    entity._parentRef = this;
     this.updateState();
   }
 
   bool remove(E entity) {
     var foundAndRemoved = this.value.remove(entity);
     if (foundAndRemoved) {
-      entity._hostFieldRef = null;
+      entity._parentRef = null;
       this.updateState();
     }
     return foundAndRemoved;

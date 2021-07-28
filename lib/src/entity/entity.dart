@@ -40,8 +40,8 @@ class Entity {
   dynamic operator [](String fieldName) => data[fieldName];
 
   /// This entity is onwed by a list field
-  FieldBase? _hostFieldRef;
-  FieldBase? get hostField => _hostFieldRef;
+  FieldBase? _parentRef;
+  FieldBase? get parent => _parentRef;
 
   void operator []=(String fieldName, dynamic value) {
     final oldValue = data[fieldName];
@@ -140,7 +140,7 @@ class Entity {
       return;
     }
     _rx?.refresh();
-    _hostFieldRef?.updateState();
+    _parentRef?.updateState();
     //_rxRefresh();
   }
 
