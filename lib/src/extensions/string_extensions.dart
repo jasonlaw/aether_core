@@ -1,5 +1,4 @@
 import 'package:aether_core/aether_core.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 extension AetherStringNullableExtensions on String? {
   bool get isNullOrEmpty => this == null || this!.isEmpty;
@@ -8,14 +7,6 @@ extension AetherStringNullableExtensions on String? {
 }
 
 extension AetherStringExtensions on String {
-  /// Parses the specified URL string and delegates handling of it to the
-  /// underlying platform.
-  ///
-  /// Returned false on invalid URLs and schemes which cannot be handled,
-  /// that is when [canLaunch] would complete with false.
-  Future<bool> launchUrl() async =>
-      await canLaunch(this) ? await launch(this) : false;
-
   /// check if the string is a date
   bool get isDate {
     try {
