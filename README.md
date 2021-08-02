@@ -4,6 +4,11 @@ Aether Core for flutter
 
 ## Getting Started
 
+For authentication server, download [keycloak](https://www.keycloak.org/downloads).
+
+Follow the [instruction](https://www.keycloak.org/docs/latest/getting_started/index.html) to create an admin account and realm.
+
+
 This project is a starting point for a Dart
 [package](https://flutter.dev/developing-packages/),
 a library module containing code that can be shared easily across
