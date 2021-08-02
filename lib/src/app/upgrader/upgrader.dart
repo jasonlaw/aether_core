@@ -277,7 +277,7 @@ class Upgrader {
       print('upgrader: launching: $_appStoreListingURL');
     }
 
-    App.launchUrl(_appStoreListingURL!);
+    launchUrl(_appStoreListingURL!);
   }
 }
 
