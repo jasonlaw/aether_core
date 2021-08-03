@@ -1,6 +1,8 @@
 import 'package:meta/meta.dart';
 import 'package:flutter/material.dart';
-import 'package:aether_core/aether_core.dart';
+
+import '../app.dart';
+import '../extensions.dart';
 
 //part 'entity_member.dart';
 part 'entity_field_base.dart';

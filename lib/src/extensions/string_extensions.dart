@@ -1,4 +1,4 @@
-import 'package:aether_core/aether_core.dart';
+import '../app.dart';
 
 extension AetherStringNullableExtensions on String? {
   bool get isNullOrEmpty => this == null || this!.isEmpty;

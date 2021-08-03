@@ -1,8 +1,10 @@
 import 'dart:async';
-import 'package:aether_core/aether_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:version/version.dart';
+
+import '../../services.dart';
+import '../../app.dart';
 
 /// Signature of callbacks that have no arguments and return bool.
 typedef BoolCallback = bool Function();

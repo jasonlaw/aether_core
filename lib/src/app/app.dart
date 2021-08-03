@@ -14,9 +14,11 @@ import 'package:get/get_connect/http/src/interceptors/get_modifiers.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
-import 'package:aether_core/aether_core.dart';
-
+import 'http/getxhttp.dart';
 import 'upgrader/upgrader.dart';
+import '../services/services.dart';
+import '../entity.dart';
+import '../extensions.dart';
 
 //part 'app_service.dart';
 part 'app_settings.dart';

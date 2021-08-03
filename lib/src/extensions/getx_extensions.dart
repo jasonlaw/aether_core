@@ -1,4 +1,5 @@
-import 'package:aether_core/aether_core.dart';
+import 'package:get/get_rx/src/rx_types/rx_types.dart';
+import 'package:get_storage/get_storage.dart';
 
 extension GetxGetStorageExtensions on GetStorage {
   Future removeAll(List<String> keys) async {

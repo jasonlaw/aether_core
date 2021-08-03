@@ -1,9 +1,11 @@
 import 'dart:io';
 
-import 'package:aether_core/aether_core.dart';
 import 'package:get/get_connect/http/src/exceptions/exceptions.dart';
-import 'package:get/get_connect/http/src/status/http_status.dart';
-import 'package:get/get_connect/http/src/response/response.dart';
+
+import '../../extensions.dart';
+import '../../entity.dart';
+import '../../models.dart';
+import '../../app.dart';
 
 export 'cookie/cookie_manager.dart';
 
