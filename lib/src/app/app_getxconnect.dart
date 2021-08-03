@@ -1,7 +1,7 @@
 part of 'app.dart';
 
 class GetxConnect extends GetxHttp {
-  final CookieManager cookie = CookieManager();
+  final CookieManager _cookie = CookieManager();
 
   GetxConnect._() {
     client.timeout = Duration(seconds: App.settings.apiConnectTimeoutInSec());
@@ -19,17 +19,21 @@ class GetxConnect extends GetxHttp {
           "appkey": App.settings.apiKey(),
       });
 
-      await cookie.loadForRequest(request);
+      await _cookie.loadForRequest(request);
       return request;
     });
 
     client.httpClient.addResponseModifier<void>((request, response) async {
-      await cookie.saveFromResponse(response);
+      await _cookie.saveFromResponse(response);
       return response;
     });
   }
 
   void addAuthenticator<T>(RequestModifier<T> auth) {
     client.httpClient.addAuthenticator(auth);
+  }
+
+  void clearCookies() {
+    _cookie.deleteAll();
   }
 }

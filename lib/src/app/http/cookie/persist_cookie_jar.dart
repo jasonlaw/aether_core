@@ -31,14 +31,14 @@ class PersistCookieJar extends DefaultCookieJar {
 
   bool _initialized = false;
 
-  late final GetStorage _storage = GetStorage();
+  //late final GetStorage _storage = GetStorage();
 
   Future<void> forceInit() => _checkInitialized(force: true);
 
   Future<void> _checkInitialized({bool force = false}) async {
     if (force || !_initialized) {
       // Load domain cookies
-      var str = _storage.read<String>(_domainsKey);
+      var str = App.storage.read<String>(_domainsKey);
       if (str != null && str.isNotEmpty) {
         try {
           final Map<String, dynamic> jsonData = json.decode(str);
@@ -72,17 +72,17 @@ class PersistCookieJar extends DefaultCookieJar {
             ..clear()
             ..addAll(cookies);
         } catch (e) {
-          await _storage.remove(_domainsKey);
+          await App.storage.remove(_domainsKey);
         }
       }
 
-      str = _storage.read(_indexKey);
+      str = App.storage.read(_indexKey);
       if ((str != null && str.isNotEmpty)) {
         try {
           final list = json.decode(str);
           _hostSet = Set<String>.from(list);
         } catch (e) {
-          await GetStorage().remove(_indexKey);
+          await App.storage.remove(_indexKey);
         }
       } else {
         _hostSet = <String>{};
@@ -119,7 +119,7 @@ class PersistCookieJar extends DefaultCookieJar {
         .map((String path, Map<String, dynamic> _cookies) {
       final cookies = _cookies.map((String cookieName, dynamic cookie) {
         final isSession =
-            cookie.cookie.expires == null && cookie.cookie.maxAge == null;
+            cookie._cookie.expires == null && cookie._cookie.maxAge == null;
         if ((isSession && persistSession) ||
             (persistSession && !cookie.isExpired())) {
           return MapEntry<String, SerializableCookie>(cookieName, cookie);
@@ -147,13 +147,13 @@ class PersistCookieJar extends DefaultCookieJar {
     await super.delete(uri, withDomainSharedCookie);
     final host = uri.host;
     if (_hostSet.remove(host)) {
-      await _storage.write(_indexKey, json.encode(_hostSet.toList()));
+      await App.storage.write(_indexKey, json.encode(_hostSet.toList()));
     }
 
-    await _storage.remove(host);
+    await App.storage.remove(host);
 
     if (withDomainSharedCookie) {
-      await _storage.write(_domainsKey, json.encode(domainCookies));
+      await App.storage.write(_domainsKey, json.encode(domainCookies));
     }
   }
 
@@ -165,7 +165,7 @@ class PersistCookieJar extends DefaultCookieJar {
     final keys = _hostSet.toList(growable: true)
       ..addAll([_indexKey, _domainsKey]);
 
-    await _storage.removeAll(keys);
+    await App.storage.removeAll(keys);
     _hostSet.clear();
   }
 
@@ -174,25 +174,25 @@ class PersistCookieJar extends DefaultCookieJar {
 
     if (!_hostSet.contains(host)) {
       _hostSet.add(host);
-      await _storage.write(_indexKey, json.encode(_hostSet.toList()));
+      await App.storage.write(_indexKey, json.encode(_hostSet.toList()));
     }
     final cookies = hostCookies[host];
 
     if (cookies != null) {
-      await _storage.write(host, json.encode(_filter(cookies)));
+      await App.storage.write(host, json.encode(_filter(cookies)));
     }
 
     if (withDomainSharedCookie) {
       final filterDomainCookies =
           domainCookies.map((key, value) => MapEntry(key, _filter(value)));
-      await _storage.write(_domainsKey, json.encode(filterDomainCookies));
+      await App.storage.write(_domainsKey, json.encode(filterDomainCookies));
     }
   }
 
   Future<void> _load(Uri uri) async {
     final host = uri.host;
     if (_hostSet.contains(host) && hostCookies[host] == null) {
-      final str = _storage.read(host);
+      final str = App.storage.read(host);
 
       if (str != null && str.isNotEmpty) {
         Map<String, Map<String, dynamic>> cookies;
@@ -208,7 +208,7 @@ class PersistCookieJar extends DefaultCookieJar {
           hostCookies[host] =
               cookies.cast<String, Map<String, SerializableCookie>>();
         } catch (e) {
-          await _storage.remove(host);
+          await App.storage.remove(host);
         }
       }
     }

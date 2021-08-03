@@ -53,6 +53,7 @@ class AppService extends GetxService {
   late final AppSettings settings;
   late final GetxConnect connect = GetxConnect._();
   late final GetxHttp http = GetxHttp();
+  late final GetStorage storage = GetStorage();
 
   static Future startup({bool useLocalTimezoneInHttp = true}) async {
     if (kDebugMode) print('Startup AppService...');
@@ -73,7 +74,7 @@ class AppService extends GetxService {
 
     Get.put(appService);
 
-    await GetStorage.init(packageInfo.appName);
+    await GetStorage.init();
 
     appService.settings = await AppSettings._init();
 

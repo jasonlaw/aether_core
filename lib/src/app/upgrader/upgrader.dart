@@ -236,8 +236,8 @@ class Upgrader {
   }
 
   Future<bool> clearSavedSettings() async {
-    GetStorage().remove('lastTimeAlerted');
-    GetStorage().remove('lastVersionAlerted');
+    App.storage.remove('lastTimeAlerted');
+    App.storage.remove('lastVersionAlerted');
 
     _lastTimeAlerted = null;
     _lastVersionAlerted = null;
@@ -247,22 +247,22 @@ class Upgrader {
 
   Future<bool> saveLastAlerted() async {
     _lastTimeAlerted = DateTime.now();
-    GetStorage().write('lastTimeAlerted', _lastTimeAlerted.toString());
+    App.storage.write('lastTimeAlerted', _lastTimeAlerted.toString());
 
     _lastVersionAlerted = this.updateVersion;
-    GetStorage().write('lastVersionAlerted', _lastVersionAlerted);
+    App.storage.write('lastVersionAlerted', _lastVersionAlerted);
 
     _hasAlerted = true;
     return true;
   }
 
   Future<bool> _getSavedPrefs() async {
-    final lastTimeAlerted = GetStorage().read<String>('lastTimeAlerted');
+    final lastTimeAlerted = App.storage.read<String>('lastTimeAlerted');
     if (lastTimeAlerted != null && lastTimeAlerted.isNotEmpty) {
       _lastTimeAlerted = DateTime.parse(lastTimeAlerted);
     }
 
-    _lastVersionAlerted = GetStorage().read<String>('lastVersionAlerted');
+    _lastVersionAlerted = App.storage.read<String>('lastVersionAlerted');
 
     return true;
   }

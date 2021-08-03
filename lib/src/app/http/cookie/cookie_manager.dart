@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:get/get.dart';
 import 'package:get/get_connect/http/src/request/request.dart';
 import 'package:get/get_connect/http/src/response/response.dart';
 
@@ -25,7 +26,9 @@ class CookieManager {
 
   Future saveFromResponse(Response response) async {
     if (kIsWeb) return;
-    await _saveCookies(response);
+    await _saveCookies(response).catchError((err) {
+      Get.log(err.toString(), isError: true);
+    });
   }
 
   Future<void> _saveCookies(Response response) async {
@@ -37,11 +40,17 @@ class CookieManager {
     if (setCookie != null) {
       var uri = response.request!.url;
       var cookies = setCookie
+          .replaceAll(', ', '`COMMA_SPACE`')
           .split(',')
-          .map((str) => Cookie.fromSetCookieValue(str))
+          .map((str) =>
+              Cookie.fromSetCookieValue(str.replaceAll('`COMMA_SPACE`', ', ')))
           .toList();
       await _cookieJar.saveFromResponse(uri, cookies);
     }
+  }
+
+  void deleteAll() {
+    _cookieJar.deleteAll();
   }
 
   static String getCookies(List<Cookie> cookies) {
