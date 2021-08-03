@@ -1,7 +1,8 @@
-export 'src/app/app.dart';
-export 'src/extensions/extensions.dart';
-export 'src/entity/entity.dart';
-export 'src/models/models.dart';
+export 'src/app.dart';
+export 'src/extensions.dart';
+export 'src/entity.dart';
+export 'src/models.dart';
+export 'src/services.dart';
 export 'package:get/get.dart';
 export 'package:get_storage/get_storage.dart';
 // export 'package:flutter_screenutil/flutter_screenutil.dart' show SizeExtension;

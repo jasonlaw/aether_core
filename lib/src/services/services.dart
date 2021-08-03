@@ -1,3 +1,3 @@
 // https://github.com/FilledStacks/stacked
-export 'snackbar/snackbar_config.dart';
-export 'launcher/launcher.dart';
+export 'snackbar/snackbar_service.dart';
+export 'dialog/dialog_service.dart';

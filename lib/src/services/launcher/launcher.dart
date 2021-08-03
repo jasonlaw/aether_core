@@ -1,6 +1,5 @@
 import 'package:aether_core/src/app/app.dart';
 import 'package:url_launcher/url_launcher.dart';
-export 'package:url_launcher/url_launcher.dart';
 
 Future<void> launchUrl(String url,
     {bool showError: false, String? defaultErrorText}) async {
