@@ -219,7 +219,7 @@ class DialogService {
   }
 
   /// Shows a confirmation dialog with title and description
-  Future<DialogResponse?> showConfirmationDialog({
+  Future<bool> showConfirmationDialog({
     String? title,
     String? description,
     String? cancelTitle,
@@ -230,15 +230,18 @@ class DialogService {
     ///
     /// When not set a Platform specific dialog will be shown
     DialogPlatform? dialogPlatform,
-  }) =>
-      showDialog(
-        title: title,
-        description: description,
-        buttonTitle: confirmationTitle ?? 'Ok'.tr,
-        cancelTitle: cancelTitle ?? 'Cancel'.tr,
-        dialogPlatform: dialogPlatform,
-        barrierDismissible: barrierDismissible,
-      );
+  }) async {
+    final response = await showDialog(
+      title: title,
+      description: description,
+      buttonTitle: confirmationTitle ?? 'Ok'.tr,
+      cancelTitle: cancelTitle ?? 'Cancel'.tr,
+      dialogPlatform: dialogPlatform,
+      barrierDismissible: barrierDismissible,
+    );
+
+    return response?.confirmed ?? false;
+  }
 
   /// Completes the dialog and passes the [response] to the caller
   void completeDialog(DialogResponse response) {

@@ -119,7 +119,7 @@ class PersistCookieJar extends DefaultCookieJar {
         .map((String path, Map<String, dynamic> _cookies) {
       final cookies = _cookies.map((String cookieName, dynamic cookie) {
         final isSession =
-            cookie._cookie.expires == null && cookie._cookie.maxAge == null;
+            cookie.cookie.expires == null && cookie.cookie.maxAge == null;
         if ((isSession && persistSession) ||
             (persistSession && !cookie.isExpired())) {
           return MapEntry<String, SerializableCookie>(cookieName, cookie);
