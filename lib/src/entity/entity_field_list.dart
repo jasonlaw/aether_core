@@ -7,10 +7,9 @@ class ListField<E extends Entity> extends FieldBase<List<E>> {
     Entity entity, {
     required String name,
     String? label,
-  })  : _list = <E>[],
-        super(entity, name: name, label: label);
+  }) : super(entity, name: name, label: label);
 
-  final List<E> _list;
+  //final List<E> _list;
   late final EntityBuilder<E> _createEntity;
 
   List<E> call() => this.value;
@@ -21,7 +20,7 @@ class ListField<E extends Entity> extends FieldBase<List<E>> {
   @override
   List<E> get value {
     _getDefault() {
-      return entity.data[name] = entity.data[name] = _list;
+      return entity.data[name] = entity.data[name] = <E>[];
     }
 
     return entity[name] ?? _getDefault();
@@ -42,25 +41,25 @@ class ListField<E extends Entity> extends FieldBase<List<E>> {
     _rx?.refresh();
   }
 
-  @override
-  void reset() {
-    _list.clear();
-    super.reset();
-  }
+  // @override
+  // void reset() {
+  //   _list.clear();
+  //   super.reset();
+  // }
 
   ListField<E> register(
     EntityBuilder<E> createEntity,
   ) {
     _createEntity = createEntity;
     this._fieldOnLoading = (rawData) {
-      _list.clear();
+      final list = <E>[];
       rawData.forEach((data) {
         final E entity = _createEntity();
         entity.load(data);
         entity._parentRef = this;
-        _list.add(entity);
+        list.add(entity);
       });
-      return _list;
+      return list;
     };
     return this;
   }

@@ -106,7 +106,7 @@ class GraphQLQuery {
 
     final _fields = fields
         .map((x) {
-          if (x is Field) {
+          if (x is FieldBase) {
             return x.name;
           }
           if (x is GraphQLQuery) {

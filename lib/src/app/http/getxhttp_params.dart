@@ -47,10 +47,10 @@ class RestBody {
     return this;
   }
 
-  /// param can be [Field], [Map<String, dynamic>] or [MapEntry<String, dynamic>]
+  /// param can be [FieldBase], [Map<String, dynamic>] or [MapEntry<String, dynamic>]
   RestBody addParams(List<dynamic> params) {
     params.forEach((item) {
-      if (item is Field) {
+      if (item is FieldBase) {
         this.addField(item);
       }
       // else if (item is FormInputField) {
