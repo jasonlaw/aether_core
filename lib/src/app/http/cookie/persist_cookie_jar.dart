@@ -174,18 +174,24 @@ class PersistCookieJar extends DefaultCookieJar {
 
     if (!_hostSet.contains(host)) {
       _hostSet.add(host);
-      await App.storage.write(_indexKey, json.encode(_hostSet.toList()));
+      // do not need to wait for the data completely stored in physical for performance sake
+      //await App.storage.write(_indexKey, json.encode(_hostSet.toList()));
+      App.storage.write(_indexKey, json.encode(_hostSet.toList()));
     }
     final cookies = hostCookies[host];
 
     if (cookies != null) {
-      await App.storage.write(host, json.encode(_filter(cookies)));
+      // do not need to wait for the data completely stored in physical for performance sake
+      //await App.storage.write(host, json.encode(_filter(cookies)));
+      App.storage.write(host, json.encode(_filter(cookies)));
     }
 
     if (withDomainSharedCookie) {
       final filterDomainCookies =
           domainCookies.map((key, value) => MapEntry(key, _filter(value)));
-      await App.storage.write(_domainsKey, json.encode(filterDomainCookies));
+      // do not need to wait for the data completely stored in physical for performance sake
+      //await App.storage.write(_domainsKey, json.encode(filterDomainCookies));
+      App.storage.write(_domainsKey, json.encode(filterDomainCookies));
     }
   }
 

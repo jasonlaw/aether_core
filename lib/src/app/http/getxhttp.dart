@@ -14,7 +14,10 @@ part 'getxhttp_query.dart';
 part 'getxhttp_extensions.dart';
 
 class GetxHttp {
-  final GetConnect client = GetConnect();
+  final GetConnect client = GetConnect(
+    allowAutoSignedCert: true,
+    withCredentials: true,
+  );
 
   bool _disableLoadingIndicator = false;
   bool _disableLoadingIndicatorPermanent = false;

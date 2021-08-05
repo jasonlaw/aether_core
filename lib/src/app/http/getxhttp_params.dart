@@ -15,13 +15,15 @@ class RestBody {
   RestBody addField(FieldBase field) {
     if (field is ListField<MediaFile>) {
       _formDataMode = true;
-      if (!field.any((x) => x.isNew)) return this;
-      return addParam(field.name, field().map((e) => e.file).toList());
+      final _uploads =
+          field().where((e) => e.canUpload).map((e) => e.file!).toList();
+      if (_uploads.isEmpty) return this;
+      return addParam(field.name, _uploads);
     }
     if (field is Field<MediaFile>) {
       _formDataMode = true;
-      if (field.valueIsNull || !field().isNew) return this;
-      return addParam(field.name, field().file);
+      if (field.valueIsNull || !field().canUpload) return this;
+      return addParam(field.name, field().file!);
     }
     return addParam(field.name, field.value);
   }
