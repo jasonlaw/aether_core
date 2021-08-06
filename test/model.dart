@@ -13,7 +13,7 @@ class Company extends Entity {
     print('Company constructor');
     this.capacity.computed(
       bindings: [machines],
-      compute: () => machines().fold(0, (p, e) => p! + e.capacity()),
+      compute: () => machines.fold(0, (p, e) => p! + e.capacity()),
     );
     this.machines.register(() => Machine());
     this.settings.register(() => Settings(), auto: true);

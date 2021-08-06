@@ -4,13 +4,10 @@ import 'package:flutter/material.dart';
 import '../app.dart';
 import '../extensions.dart';
 
-//part 'entity_member.dart';
 part 'entity_field_base.dart';
 part 'entity_field.dart';
 part 'entity_field_list.dart';
-// part 'entity_field_entity.dart';
 part 'entity_utils.dart';
-part 'entity_list.dart';
 part 'entity_graphql.dart';
 part 'extensions.dart';
 
@@ -18,14 +15,13 @@ typedef EntityBuilder<E extends Entity> = E Function();
 
 // RECOMMENDED:
 // Equality checking => https://pub.dev/packages/equatable
-
 class Entity {
   @protected
   final Map<String, dynamic> data = {};
 
   Map<String, dynamic>? _committedData;
 
-  //@Deprecated('Use field instead, this is not safe')
+  // @Deprecated('Use field instead')
   Rx<Entity> get rx => _rx ??= Rx<Entity>(this);
   Rx<Entity>? _rx;
 
@@ -70,15 +66,6 @@ class Entity {
     return instance;
   }
 
-  // EntityFieldEntity<E> fieldEntity<E extends Entity>(String name,
-  //     {String? label}) {
-  //   var instance = fields[name] as EntityFieldEntity<E>?;
-  //   if (instance == null) {
-  //     instance = EntityFieldEntity<E>._(this, name: name, label: label);
-  //   }
-  //   return instance;
-  // }
-
   ListField<E> fieldList<E extends Entity>(String name, {String? label}) {
     var instance = fields[name] as ListField<E>?;
     if (instance == null) {
@@ -99,6 +86,7 @@ class Entity {
       this.data.clear();
     }
     rawData.forEach((fieldName, value) {
+      // don't remove, to allow trigger field updateState
       this.data.remove(fieldName);
       var field = fields[fieldName];
       if (field != null) {

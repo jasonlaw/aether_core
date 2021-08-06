@@ -20,12 +20,6 @@ abstract class FieldBase<T> {
   String get label => _label.tr;
   set label(String val) => _label = val;
 
-  @protected
-  late final T? Function()? defaultBuilder;
-
-  @protected
-  T? getDefaultValue() => null;
-
   ValueTransform<T>? _fieldOnLoading;
   ValueChanged<T?>? _fieldOnLoaded;
   ValueChanged<T?>? _fieldOnChanged;
@@ -51,7 +45,13 @@ abstract class FieldBase<T> {
   void innerLoad(dynamic rawData, {bool copy = false}) {
     if (isComputed) return;
     if (rawData == null) {
-      if (copy && T is! List<Entity>) entity[name] = null;
+      if (copy) {
+        entity[name] = null;
+      } else {
+        final defaultValue = this.value;
+        entity.data.remove(name);
+        entity[name] = defaultValue;
+      }
     } else {
       final transformer = _fieldOnLoading ?? ValueTransformers.system();
       entity[name] = transformer(rawData);
@@ -66,17 +66,20 @@ abstract class FieldBase<T> {
   // bool operator ==(o) {
   //   // Todo, find a common implementation for the hashCode of different Types.
   //   if (o is T) return this.value == o;
-  //   if (o is EntityField<T>) return this.value == o.value;
+  //   if (o is FieldBase<T>) return this.value == o.value;
   //   return false;
   // }
 
   // @override
-  // int get hashCode => this.value.hashCode;
+  // int get hashCode => this.hashCode;
+
   @mustCallSuper
   void reset() {
     if (isComputed) return;
-    entity.data.remove(name);
-    updateState();
+    if (entity.hasField(name)) {
+      entity.data.remove(name);
+      updateState();
+    }
   }
 
   @mustCallSuper

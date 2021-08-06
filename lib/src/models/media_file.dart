@@ -8,5 +8,6 @@ class MediaFile extends Entity {
 
   MediaFile([this.file]);
 
-  bool get canUpload => id.value.isNullOrEmpty && file != null;
+  bool get isNew => id.value.isNullOrEmpty;
+  bool get canUpload => isNew && file != null;
 }

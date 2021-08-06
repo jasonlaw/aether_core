@@ -16,7 +16,7 @@ class RestBody {
     if (field is ListField<MediaFile>) {
       _formDataMode = true;
       final _uploads =
-          field().where((e) => e.canUpload).map((e) => e.file!).toList();
+          field.where((e) => e.canUpload).map((e) => e.file!).toList();
       if (_uploads.isEmpty) return this;
       return addParam(field.name, _uploads);
     }
@@ -50,17 +50,11 @@ class RestBody {
   }
 
   /// param can be [FieldBase], [Map<String, dynamic>] or [MapEntry<String, dynamic>]
-  RestBody addParams(List<dynamic> params) {
+  RestBody addParams(List params) {
     params.forEach((item) {
       if (item is FieldBase) {
         this.addField(item);
-      }
-      // else if (item is FormInputField) {
-      //   this.addFormField(item);
-      // } else if (item is InputField) {
-      //   this.addInputField(item);
-      // }
-      else if (item is Map<String, dynamic>) {
+      } else if (item is Map<String, dynamic>) {
         this.addMap(item);
       } else if (item is MapEntry<String, dynamic>) {
         this.addParam(item.key, item.value);

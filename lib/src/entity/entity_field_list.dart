@@ -12,7 +12,7 @@ class ListField<E extends Entity> extends FieldBase<List<E>> {
   //final List<E> _list;
   late final EntityBuilder<E> _createEntity;
 
-  List<E> call() => this.value;
+  //List<E> call() => this.value;
 
   Rx<ListField<E>> get rx => _rx ??= Rx<ListField<E>>(this);
   Rx<ListField<E>>? _rx;
@@ -126,7 +126,12 @@ class ListField<E extends Entity> extends FieldBase<List<E>> {
     this.updateState();
   }
 
-  Iterator<E> get iterator => this.value.iterator;
+  void removeWhere(bool test(E element)) {
+    this.value.removeWhere(test);
+    this.updateState();
+  }
+
+  Iterator<E> get i => this.value.iterator;
   int get length => this.value.length;
   E get first => this.value.first;
   E? get firstOrDefault => this.value.firstOrDefault;
@@ -135,4 +140,18 @@ class ListField<E extends Entity> extends FieldBase<List<E>> {
   bool any(bool Function(E) test) => value.any(test);
   E firstWhere(bool test(E element), {E orElse()?}) =>
       value.firstWhere(test, orElse: orElse);
+  bool every(bool test(E element)) => value.every(test);
+  T fold<T>(T initialValue, T combine(T previousValue, E element)) =>
+      value.fold<T>(initialValue, combine);
+  void forEach(void f(E element)) => forEach(f);
+
+  static ListField<E> create<E extends Entity>() {
+    return Entity().fieldList(E.runtimeType.toString());
+  }
+
+  static ListField<E>? of<E extends Entity>(E child) {
+    final lf = child._parentRef;
+    if (lf is ListField<E>) return lf;
+    return null;
+  }
 }

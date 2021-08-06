@@ -41,8 +41,7 @@ void main() {
     });
     test('Machine children has parent', () {
       expect(
-          company
-              .machines()
+          company.machines
               .every((element) => element.parent == company.machines),
           true);
     });
