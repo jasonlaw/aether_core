@@ -92,12 +92,11 @@ class GetxHttp {
     }
 
     _showProgressIndicator();
+    final encodedVariables = _encodeJson(_variables);
     client.httpClient.timeout = timeout ?? client.timeout;
     return client
         .query<T>(_queryBody,
-            url: '/graphql',
-            variables: _encodeJson(_variables),
-            headers: headers)
+            url: '/graphql', variables: encodedVariables, headers: headers)
         .onError((error, stackTrace) {
       return GraphQLResponse<T>(graphQLErrors: [
         GraphQLError(
@@ -161,12 +160,15 @@ class GetxHttp {
       Map<String, String>? headers,
       T Function(dynamic)? decoder,
       Duration? timeout}) async {
+    final encodedBody = _encodeBody(body);
+    final encodedQuery = _encodeQuery(query);
+
     _showProgressIndicator();
     client.httpClient.timeout = timeout ?? client.timeout;
     var result = await client
         .request(api, method,
-            body: _encodeBody(body),
-            query: _encodeQuery(query),
+            body: encodedBody,
+            query: encodedQuery,
             headers: headers,
             decoder: decoder)
         .whenComplete(() => _dismissProgressIndicator());
@@ -219,7 +221,7 @@ dynamic _encodeJson(dynamic payload) {
       encoded[key] = value.map((e) => e.toIso8601String()).toList();
     else if (value is DateTime)
       encoded[key] = value.toIso8601String();
-    else if (value! is File) {
+    else if (value is File) {
       encoded[key] = MultipartFile(value.readAsBytesSync(),
           filename: value.name, contentType: value.mimeType);
     } else if (value is List<File>) {

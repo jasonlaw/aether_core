@@ -40,6 +40,9 @@ class Field<T> extends FieldBase<T> {
   /// In order to assign null value, use [value] instead.
   T call([T? value]) {
     if (value != null) this.value = value;
+    final _value = this.value;
+    assert(
+        _value != null, '${this.entity.runtimeType}.$name() has a null value!');
     return this.value!;
   }
 

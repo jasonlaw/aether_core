@@ -29,7 +29,8 @@ extension GetxResponseExtensions on Response {
   List<T> toList<T extends Entity>(EntityBuilder<T> createEntity) {
     if (this.hasError || this.statusCode != 200)
       throw new Exception(this.errorText);
-    var list = this.body.addMap((data) => createEntity()..load(data));
-    return <T>[]..assignAll(list);
+    return (this.body as List)
+        .map((data) => createEntity()..load(data))
+        .toList();
   }
 }
