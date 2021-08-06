@@ -8,7 +8,7 @@ extension GetxGetStorageExtensions on GetStorage {
 }
 
 extension GetxRxnExtensions on Rxn {
-  void nil() => this(null);
+  void nil() => this.value = null;
   bool get isValueNull => this.value == null;
   bool get isValueNotNull => this.value != null;
 }

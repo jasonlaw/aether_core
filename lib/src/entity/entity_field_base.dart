@@ -37,7 +37,12 @@ abstract class FieldBase<T> {
 
   void propagate() {
     if (this.isComputed) {
-      entity[name] = _compute!();
+      try {
+        entity[name] = _compute!();
+      } on Exception catch (_) {
+        printError(info: 'ComputedError on ${this.runtimeType}.$name');
+        rethrow;
+      }
     }
   }
 
