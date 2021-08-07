@@ -131,11 +131,11 @@ class ListField<E extends Entity> extends FieldBase<List<E>> {
     this.updateState();
   }
 
-  Iterator<E> get i => this.value.iterator;
-  int get length => this.value.length;
-  E get first => this.value.first;
-  E? get firstOrDefault => this.value.firstOrDefault;
-  E get last => this.value.last;
+  Iterator<E> get i => value.iterator;
+  int get length => value.length;
+  E get first => value.first;
+  E? get firstOrDefault => value.firstOrDefault;
+  E get last => value.last;
   Iterable<E> where(bool Function(E) test) => value.where(test);
   bool any(bool Function(E) test) => value.any(test);
   E firstWhere(bool test(E element), {E orElse()?}) =>
@@ -143,7 +143,7 @@ class ListField<E extends Entity> extends FieldBase<List<E>> {
   bool every(bool test(E element)) => value.every(test);
   T fold<T>(T initialValue, T combine(T previousValue, E element)) =>
       value.fold<T>(initialValue, combine);
-  void forEach(void f(E element)) => forEach(f);
+  void forEach(void f(E element)) => value.forEach(f);
 
   static ListField<E> create<E extends Entity>() {
     return Entity().fieldList(E.runtimeType.toString());

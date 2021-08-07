@@ -21,14 +21,12 @@ extension GetxResponseExtensions on Response {
   }
 
   E toEntity<E extends Entity>(EntityBuilder<E> createEntity) {
-    if (this.hasError || this.statusCode != 200)
-      throw new Exception(this.errorText);
+    if (this.hasError) throw new Exception(this.errorText);
     return createEntity()..load(this.body);
   }
 
   List<T> toList<T extends Entity>(EntityBuilder<T> createEntity) {
-    if (this.hasError || this.statusCode != 200)
-      throw new Exception(this.errorText);
+    if (this.hasError) throw new Exception(this.errorText);
     return (this.body as List)
         .map((data) => createEntity()..load(data))
         .toList();
