@@ -57,7 +57,9 @@ class DialogService {
         title: title,
         description: description,
         cancelTitle: cancelTitle,
+        cancelTitleColor: cancelTitleColor,
         buttonTitle: buttonTitle,
+        buttonTitleColor: buttonTitleColor,
         dialogPlatform: dialogPlatform,
         barrierDismissible: barrierDismissible,
       );
