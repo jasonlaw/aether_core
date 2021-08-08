@@ -96,9 +96,11 @@ packages:
   get:
     dependency: "direct main"
     description:
-      name: get
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: "."
+      ref: HEAD
+      resolved-ref: "1d2320173e1ceb26e35876809ff89ab283482b77"
+      url: "https://github.com/jasonlaw/getx.git"
+    source: git
     version: "4.3.4"
   get_storage:
     dependency: "direct main"

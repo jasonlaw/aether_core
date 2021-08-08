@@ -91,7 +91,7 @@ class DialogService {
     bool barrierDismissible = false,
   }) {
     var isConfirmationDialog = cancelTitle != null;
-    buttonTitle ??= 'Ok'.tr;
+    buttonTitle ??= 'OK'.tr;
     return Get.dialog<DialogResponse>(
       PlatformDialog(
         key: Key('dialog_view'),
@@ -236,7 +236,7 @@ class DialogService {
     final response = await showDialog(
       title: title,
       description: description,
-      buttonTitle: confirmationTitle ?? 'Ok'.tr,
+      buttonTitle: confirmationTitle ?? 'OK'.tr,
       cancelTitle: cancelTitle ?? 'Cancel'.tr,
       dialogPlatform: dialogPlatform,
       barrierDismissible: barrierDismissible,
