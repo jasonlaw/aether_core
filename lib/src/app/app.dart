@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:aether_core/src/app/app_theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -54,6 +55,7 @@ class AppService extends GetxService {
   late final GetxConnect connect = GetxConnect._();
   late final GetxHttp http = GetxHttp();
   late final GetStorage storage = GetStorage();
+  late final AppTheme theme = AppTheme();
 
   static Future startup({bool useLocalTimezoneInHttp = true}) async {
     if (kDebugMode) print('Startup AppService...');
@@ -77,6 +79,8 @@ class AppService extends GetxService {
     await GetStorage.init();
 
     appService.settings = await AppSettings._init();
+
+    //Get.lazyPut(() => AppTheme());
 
     if (kDebugMode) print('Startup AppService Done.');
   }

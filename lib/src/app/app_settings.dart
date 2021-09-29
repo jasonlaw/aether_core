@@ -27,6 +27,8 @@ class AppSettings extends Entity {
   static Future<AppSettings> _init() async {
     var settings = AppSettings._();
 
+    _configLoading();
+
     /// Loading a json configuration file from a custom [path] into the current app config./
     Future loadFromPath(String path) async {
       String content = await rootBundle.loadString(path);
@@ -34,7 +36,12 @@ class AppSettings extends Entity {
       settings.load(configAsMap);
     }
 
-    await loadFromPath(kSettingsFilePath);
+    try {
+      await loadFromPath(kSettingsFilePath);
+    } catch (_) {
+      return settings;
+    }
+
     if (kStagingMode) {
       try {
         await loadFromPath(kSettingsFilePathStaging);
@@ -46,7 +53,7 @@ class AppSettings extends Entity {
       } catch (_) {}
     }
     if (kDebugMode) print(settings.toMap());
-    _configLoading();
+
     return settings;
   }
 
