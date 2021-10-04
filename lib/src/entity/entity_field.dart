@@ -20,7 +20,7 @@ class Field<T> extends FieldBase<T> {
   @override
   T? get value {
     _getDefault() {
-      if (entity.hasField(name)) return null;
+      if (this.isLoaded) return null;
       return entity.data[name] =
           _compute == null ? _createDefault?.call() : _compute!.call();
     }

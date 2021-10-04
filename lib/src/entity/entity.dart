@@ -33,8 +33,8 @@ class Entity {
   /// Flag for non-empty content.
   bool get isNotEmpty => data.isNotEmpty;
 
-  bool hasField(String fieldName) => data.containsKey(fieldName);
-  Iterable<String> get fieldNames => data.keys;
+  bool hasDataField(String fieldName) => data.containsKey(fieldName);
+  //Iterable<String> get fieldNames => data.keys;
 
   dynamic operator [](String fieldName) => data[fieldName];
 
