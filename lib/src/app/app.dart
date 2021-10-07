@@ -115,6 +115,11 @@ class AppService extends GetxService {
 
   final isProgressIndicatorShowing = false.obs;
 
+  void configureProgressIndicator(
+      void Function(EasyLoading easyLoading) configure) {
+    configure(EasyLoading.instance);
+  }
+
   void showProgressIndicator({String? status}) {
     if (EasyLoading.instance.overlayEntry != null) {
       EasyLoading.addStatusCallback((value) =>

@@ -7,7 +7,7 @@ class AppSettings extends Entity {
       this.field("ApiConnectTimeoutInSec", defaultValue: 5);
   late final Field<String?> appStoreURL = this.field("AppStoreURL");
 
-  EasyLoading get easyLoading => EasyLoading.instance;
+  // EasyLoading get easyLoading => EasyLoading.instance;
 
   AppSettings._() {
     final _google = this.field<String>("GooglePlayURL");
