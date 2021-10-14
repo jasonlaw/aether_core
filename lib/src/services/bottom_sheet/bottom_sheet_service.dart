@@ -28,6 +28,7 @@ class BottomSheetService {
     bool isScrollControlled = false,
     Duration? exitBottomSheetDuration,
     Duration? enterBottomSheetDuration,
+    bool? ignoreSafeArea,
   }) {
     return Get.bottomSheet<SheetResponse?>(
       Material(
@@ -55,6 +56,7 @@ class BottomSheetService {
       enableDrag: barrierDismissible && enableDrag,
       exitBottomSheetDuration: exitBottomSheetDuration,
       enterBottomSheetDuration: enterBottomSheetDuration,
+      ignoreSafeArea: ignoreSafeArea,
     );
   }
 
@@ -91,6 +93,7 @@ class BottomSheetService {
     bool enableDrag = true,
     Duration? exitBottomSheetDuration,
     Duration? enterBottomSheetDuration,
+    bool? ignoreSafeArea,
   }) {
     assert(
       _sheetBuilders != null,
@@ -134,6 +137,7 @@ class BottomSheetService {
       enableDrag: barrierDismissible && enableDrag,
       exitBottomSheetDuration: exitBottomSheetDuration,
       enterBottomSheetDuration: enterBottomSheetDuration,
+      ignoreSafeArea: ignoreSafeArea,
     );
   }
 
