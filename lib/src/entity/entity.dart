@@ -75,25 +75,22 @@ class Entity {
   }
 
   /// Load entity data.
-  /// After loading, the entity's isNew flag will be switched to false.
   /// Normally this is called to set the data from repository.
   bool _isLoading = false;
-  void load(Map<String, dynamic> rawData, {bool clearState = false}) {
+  void load(Map<String, dynamic> rawData, {bool ignoreNullField = false}) {
     //_isRaw = true;
     _isLoading = true;
-    if (clearState) {
-      this.commit();
-      this.data.clear();
-    }
     rawData.forEach((fieldName, value) {
-      // don't remove, to allow trigger field updateState
-      this.data.remove(fieldName);
-      var field = fields[fieldName];
-      if (field != null) {
-        field.innerLoad(value);
-      } else {
-        final transformer = ValueTransformers.system();
-        this[fieldName] = transformer(value);
+      if (!ignoreNullField || value != null) {
+        // don't remove, to allow trigger field updateState
+        this.data.remove(fieldName);
+        var field = fields[fieldName];
+        if (field != null) {
+          field.innerLoad(value);
+        } else {
+          final transformer = ValueTransformers.system();
+          this[fieldName] = transformer(value);
+        }
       }
     });
     _isLoading = false;
