@@ -237,7 +237,7 @@ class DialogService {
       title: title,
       description: description,
       buttonTitle: confirmationTitle ?? 'OK'.tr,
-      cancelTitle: cancelTitle ?? 'Cancel'.tr,
+      cancelTitle: cancelTitle ?? 'CANCEL'.tr,
       dialogPlatform: dialogPlatform,
       barrierDismissible: barrierDismissible,
     );
