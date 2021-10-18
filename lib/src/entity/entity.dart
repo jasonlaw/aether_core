@@ -42,6 +42,12 @@ class Entity {
   FieldBase? _parentRef;
   FieldBase? get parent => _parentRef;
 
+  static void removeFromParentList(Entity entity) {
+    if (entity.parent == null) return;
+    var list = entity.parent as ListField?;
+    list?.remove(entity);
+  }
+
   void operator []=(String fieldName, dynamic value) {
     final oldValue = data[fieldName];
 
