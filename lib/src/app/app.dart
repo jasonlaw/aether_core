@@ -14,6 +14,7 @@ import 'package:get/get.dart';
 import 'package:get/get_connect/http/src/interceptors/get_modifiers.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 
 import 'http/getxhttp.dart';
 import 'upgrader/upgrader.dart';
@@ -45,6 +46,8 @@ class AppService extends GetxService {
   final String version;
   final String buildNumber;
   final String packageName;
+  final String platform;
+  final bool isPhysicalDevice;
   final bool useLocalTimezoneInHttp;
 
   final SnackbarService snackbar = SnackbarService();
@@ -58,7 +61,7 @@ class AppService extends GetxService {
   late final AppTheme theme = AppTheme();
 
   static Future startup({bool useLocalTimezoneInHttp = true}) async {
-    if (kDebugMode) print('Startup AppService...');
+    Get.log('Startup AppService...');
 
     WidgetsFlutterBinding.ensureInitialized();
 
@@ -66,11 +69,38 @@ class AppService extends GetxService {
 
     final packageInfo = await PackageInfo.fromPlatform();
 
+    String? deviceName;
+    bool isPhysicalDevice = true;
+    final deviceInfo = DeviceInfoPlugin();
+    if (Platform.isAndroid) {
+      final androidInfo = await deviceInfo.androidInfo;
+      deviceName = androidInfo.model;
+      isPhysicalDevice = androidInfo.isPhysicalDevice ?? !kDebugMode;
+    } else if (Platform.isIOS) {
+      final iosInfo = await deviceInfo.iosInfo;
+      deviceName = iosInfo.utsname.machine;
+      isPhysicalDevice = iosInfo.isPhysicalDevice;
+    } else if (kIsWeb) {
+      final webBrowserInfo = await deviceInfo.webBrowserInfo;
+      deviceName = webBrowserInfo.userAgent;
+    }
+// DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+// AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+// print('Running on ${androidInfo.model}');  // e.g. "Moto G (4)"
+
+// IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+// print('Running on ${iosInfo.utsname.machine}');  // e.g. "iPod7,1"
+
+// WebBrowserInfo webBrowserInfo = await deviceInfo.webBrowserInfo;
+// print('Running on ${webBrowserInfo.userAgent}');  // e.g. "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:61.0) Gecko/20100101 Firefox/61.0"
+
     final appService = AppService._(
       name: packageInfo.appName,
       version: packageInfo.version,
       buildNumber: packageInfo.buildNumber,
       packageName: packageInfo.packageName,
+      platform: deviceName ?? 'Unknown',
+      isPhysicalDevice: isPhysicalDevice,
       useLocalTimezoneInHttp: useLocalTimezoneInHttp,
     );
 
@@ -82,21 +112,25 @@ class AppService extends GetxService {
 
     //Get.lazyPut(() => AppTheme());
 
-    if (kDebugMode) print('Startup AppService Done.');
+    Get.log('Startup AppService Done.');
   }
 
-  AppService._(
-      {required String name,
-      required this.version,
-      required this.buildNumber,
-      required this.packageName,
-      required this.useLocalTimezoneInHttp})
-      : this.name = name + (kDebugMode ? "*" : "") {
-    if (kDebugMode) print("              App Name : ${this.name}");
-    if (kDebugMode) print("           App Version : $version");
-    if (kDebugMode) print("          Build Number : $buildNumber");
-    if (kDebugMode) print("          Package Name : $packageName");
-    if (kDebugMode) print("Local Timezone in Http : $useLocalTimezoneInHttp");
+  AppService._({
+    required String name,
+    required this.version,
+    required this.buildNumber,
+    required this.packageName,
+    required this.platform,
+    required this.isPhysicalDevice,
+    required this.useLocalTimezoneInHttp,
+  }) : this.name = name + (kDebugMode ? "*" : "") {
+    Get.log("              App Name : ${this.name}");
+    Get.log("           App Version : $version");
+    Get.log("          Build Number : $buildNumber");
+    Get.log("          Package Name : $packageName");
+    Get.log("              Platform : $platform");
+    Get.log("       Physical Device : $isPhysicalDevice");
+    Get.log("Local Timezone in Http : $useLocalTimezoneInHttp");
   }
 
   Future<void> initUpgrader({
