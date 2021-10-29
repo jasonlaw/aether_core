@@ -1,7 +1,10 @@
-part of 'app.dart';
+import 'package:aether_core/aether_core.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 
-class AppCustom {
-  Future<void> Function(dynamic error, {String? title}) _notifyError =
+class Custom {
+  static Future<void> Function(dynamic error, {String? title}) notifyError =
       (dynamic error, {String? title}) async {
     if (error == null) return;
     var errorText = error.toString();
@@ -14,7 +17,7 @@ class AppCustom {
     );
   };
 
-  Future<void> Function(String info, {String? title}) _notifyInfo =
+  static Future<void> Function(String info, {String? title}) notifyInfo =
       (String info, {String? title}) async {
     return Get.snackbar(
       title ?? "Info".tr,
@@ -23,12 +26,12 @@ class AppCustom {
     );
   };
 
-  Future<bool> Function(
+  static Future<bool> Function(
     String question, {
     String? title,
     String? okButtonTitle,
     String? cancelButtonTitle,
-  }) _confirm = (
+  }) askConfirm = (
     String question, {
     String? title,
     String? okButtonTitle,
@@ -52,11 +55,11 @@ class AppCustom {
 
   void error(
       Future<void> Function(dynamic error, {String? title}) notifyError) {
-    _notifyError = notifyError;
+    notifyError = notifyError;
   }
 
   void info(Future<void> Function(String info, {String? title}) notifyInfo) {
-    _notifyInfo = notifyInfo;
+    notifyInfo = notifyInfo;
   }
 
   void confirm(
@@ -67,6 +70,6 @@ class AppCustom {
     String? cancelButtonTitle,
   })
           confirm) {
-    _confirm = confirm;
+    askConfirm = confirm;
   }
 }

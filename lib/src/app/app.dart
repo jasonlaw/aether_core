@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:aether_core/src/app/app_theme.dart';
-import 'package:aether_core/src/utils/uuid.dart';
+import 'package:aether_core/src/utils/custom.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -26,7 +26,6 @@ import '../extensions.dart';
 part 'app_settings.dart';
 part 'app_getxconnect.dart';
 part 'app_credential.dart';
-part 'app_custom.dart';
 
 const String kSystemPath = 'assets/system';
 const String kImagesPath = 'assets/images';
@@ -60,7 +59,7 @@ class AppService extends GetxService {
   late final GetxHttp http = GetxHttp();
   late final GetStorage storage = GetStorage();
   late final AppTheme theme = AppTheme();
-  final AppCustom custom = AppCustom();
+  final Custom custom = Custom();
 
   static Future startup({bool useLocalTimezoneInHttp = true}) async {
     Get.log('Startup AppService...');
@@ -138,44 +137,15 @@ class AppService extends GetxService {
     Upgrader().debugDisplayAlways = debugDisplayAlways;
   }
 
-  final isProgressIndicatorShowing = false.obs;
+  // void showProgressIndicator({String? status}) {
+  //   if (EasyLoading.instance.overlayEntry != null) {
+  //     EasyLoading.addStatusCallback((value) =>
+  //         isProgressIndicatorShowing(value == EasyLoadingStatus.show));
+  //     EasyLoading.show(status: status);
+  //   }
+  // }
 
-  @Deprecated('Use [App.custom.progressIndicator] instead')
-  void configureProgressIndicator(
-      void Function(EasyLoading easyLoading) configure) {
-    configure(EasyLoading.instance);
-  }
-
-  void showProgressIndicator({String? status}) {
-    if (EasyLoading.instance.overlayEntry != null) {
-      EasyLoading.addStatusCallback((value) =>
-          isProgressIndicatorShowing(value == EasyLoadingStatus.show));
-      EasyLoading.show(status: status);
-    }
-  }
-
-  void dismissProgressIndicator() => EasyLoading.dismiss();
-
-  Future<void> error(dynamic error, {String? title}) =>
-      this.custom._notifyError(error, title: title);
-
-  Future<void> info(String info, {String? title}) =>
-      this.custom._notifyInfo(info, title: title);
-
-  Future<bool> confirm(
-    String question, {
-    String? title,
-    String? okButtonTitle,
-    String? cancelButtonTitle,
-  }) =>
-      this.custom._confirm(question,
-          title: title,
-          okButtonTitle: okButtonTitle,
-          cancelButtonTitle: cancelButtonTitle);
-
-  String newUuid() => Uuid().v1();
-  String newDigits(int size, {int seed = -1}) =>
-      Uuid().digits(size, seed: seed);
+  // void dismissProgressIndicator() => EasyLoading.dismiss();
 
   Widget builder(BuildContext contxet, Widget? widget) => UpgradeAlert(
         child: FlutterEasyLoading(
