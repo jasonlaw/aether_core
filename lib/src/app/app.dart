@@ -23,10 +23,10 @@ import '../services/services.dart';
 import '../entity.dart';
 import '../extensions.dart';
 
-//part 'app_service.dart';
 part 'app_settings.dart';
 part 'app_getxconnect.dart';
 part 'app_credential.dart';
+part 'app_custom.dart';
 
 const String kSystemPath = 'assets/system';
 const String kImagesPath = 'assets/images';
@@ -60,6 +60,7 @@ class AppService extends GetxService {
   late final GetxHttp http = GetxHttp();
   late final GetStorage storage = GetStorage();
   late final AppTheme theme = AppTheme();
+  final AppCustom custom = AppCustom();
 
   static Future startup({bool useLocalTimezoneInHttp = true}) async {
     Get.log('Startup AppService...');
@@ -85,15 +86,6 @@ class AppService extends GetxService {
       final webBrowserInfo = await deviceInfo.webBrowserInfo;
       deviceName = webBrowserInfo.userAgent;
     }
-// DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-// AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-// print('Running on ${androidInfo.model}');  // e.g. "Moto G (4)"
-
-// IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
-// print('Running on ${iosInfo.utsname.machine}');  // e.g. "iPod7,1"
-
-// WebBrowserInfo webBrowserInfo = await deviceInfo.webBrowserInfo;
-// print('Running on ${webBrowserInfo.userAgent}');  // e.g. "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:61.0) Gecko/20100101 Firefox/61.0"
 
     final appService = AppService._(
       name: packageInfo.appName,
@@ -111,8 +103,6 @@ class AppService extends GetxService {
 
     appService.settings = await AppSettings._init();
 
-    //Get.lazyPut(() => AppTheme());
-
     Get.log('Startup AppService Done.');
   }
 
@@ -124,14 +114,14 @@ class AppService extends GetxService {
     required this.platform,
     required this.isPhysicalDevice,
     required this.useLocalTimezoneInHttp,
-  }) : this.name = name + (kDebugMode ? "*" : "") {
-    Get.log("              App Name : ${this.name}");
-    Get.log("           App Version : $version");
-    Get.log("          Build Number : $buildNumber");
-    Get.log("          Package Name : $packageName");
-    Get.log("              Platform : $platform");
-    Get.log("       Physical Device : $isPhysicalDevice");
-    Get.log("Local Timezone in Http : $useLocalTimezoneInHttp");
+  }) : this.name = name + (kDebugMode ? '*' : '') {
+    Get.log('              App Name : ${this.name}');
+    Get.log('           App Version : $version');
+    Get.log('          Build Number : $buildNumber');
+    Get.log('          Package Name : $packageName');
+    Get.log('              Platform : $platform');
+    Get.log('       Physical Device : $isPhysicalDevice');
+    Get.log('Local Timezone in Http : $useLocalTimezoneInHttp');
   }
 
   Future<void> initUpgrader({
@@ -150,6 +140,7 @@ class AppService extends GetxService {
 
   final isProgressIndicatorShowing = false.obs;
 
+  @Deprecated('Use [App.custom.progressIndicator] instead')
   void configureProgressIndicator(
       void Function(EasyLoading easyLoading) configure) {
     configure(EasyLoading.instance);
@@ -163,17 +154,30 @@ class AppService extends GetxService {
     }
   }
 
-  void dismissProgressIndicator() {
-    EasyLoading.dismiss();
-  }
+  void dismissProgressIndicator() => EasyLoading.dismiss();
+
+  Future<void> error(dynamic error, {String? title}) =>
+      this.custom._notifyError(error, title: title);
+
+  Future<void> info(String info, {String? title}) =>
+      this.custom._notifyInfo(info, title: title);
+
+  Future<bool> confirm(
+    String question, {
+    String? title,
+    String? okButtonTitle,
+    String? cancelButtonTitle,
+  }) =>
+      this.custom._confirm(question,
+          title: title,
+          okButtonTitle: okButtonTitle,
+          cancelButtonTitle: cancelButtonTitle);
 
   String newUuid() => Uuid().v1();
 
-  Widget builder(BuildContext contxet, Widget? widget) {
-    return UpgradeAlert(
-      child: FlutterEasyLoading(
-        child: widget,
-      ),
-    );
-  }
+  Widget builder(BuildContext contxet, Widget? widget) => UpgradeAlert(
+        child: FlutterEasyLoading(
+          child: widget,
+        ),
+      );
 }
