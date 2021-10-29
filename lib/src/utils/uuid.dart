@@ -157,6 +157,12 @@ class Uuid {
     return unparse(buf);
   }
 
+  String digits(int size, {int seed = -1}) {
+    final rand = (seed == -1) ? _random : Random(seed);
+    final maxNr = pow(10, size) - 1;
+    return rand.nextInt(maxNr.toInt()).toString().padLeft(size, '0');
+  }
+
   static Uint8List _mathRNG({int seed = -1}) {
     final b = Uint8List(16);
     final rand = (seed == -1) ? _random : Random(seed);

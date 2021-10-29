@@ -174,6 +174,8 @@ class AppService extends GetxService {
           cancelButtonTitle: cancelButtonTitle);
 
   String newUuid() => Uuid().v1();
+  String newDigits(int size, {int seed = -1}) =>
+      Uuid().digits(size, seed: seed);
 
   Widget builder(BuildContext contxet, Widget? widget) => UpgradeAlert(
         child: FlutterEasyLoading(
