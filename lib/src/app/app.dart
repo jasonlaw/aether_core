@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:aether_core/src/app/app_theme.dart';
+import 'package:aether_core/src/utils/uuid.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -165,6 +166,8 @@ class AppService extends GetxService {
   void dismissProgressIndicator() {
     EasyLoading.dismiss();
   }
+
+  String newUuid() => Uuid().v1();
 
   Widget builder(BuildContext contxet, Widget? widget) {
     return UpgradeAlert(
