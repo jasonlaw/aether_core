@@ -8,6 +8,7 @@ import 'uuid.dart';
 
 extension AppServiceUtils on AppService {
   String newUuid() => Uuid().v1();
+
   String newDigits(int size, {int seed = -1}) =>
       Uuid().digits(size, seed: seed);
 

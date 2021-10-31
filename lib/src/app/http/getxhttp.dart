@@ -20,6 +20,12 @@ class GetxHttp {
     withCredentials: true,
   );
 
+  void Function(Response response)? _unauthorizedResponseHandler;
+
+  void addUnauthorizedResponseHandler(
+          void Function(Response response) handler) =>
+      _unauthorizedResponseHandler = handler;
+
   bool _disableLoadingIndicator = false;
   bool _disableLoadingIndicatorPermanent = false;
 
@@ -173,6 +179,11 @@ class GetxHttp {
             headers: headers,
             decoder: decoder)
         .whenComplete(() => _dismissProgressIndicator());
+
+    if (result.unauthorized && _unauthorizedResponseHandler != null) {
+      GetMicrotask().exec(() => _unauthorizedResponseHandler!.call(result));
+      //_unauthorizedResponseHandler!.call(result);
+    }
 
     return result;
   }
