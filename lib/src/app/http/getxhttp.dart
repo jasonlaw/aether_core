@@ -129,6 +129,7 @@ class GetxHttp {
     String api, {
     Map<String, dynamic>? query,
     Map<String, String>? headers,
+    String? contentType,
     T Function(dynamic)? decoder,
     Duration? timeout,
   }) async {
@@ -137,6 +138,7 @@ class GetxHttp {
       api,
       query: query,
       headers: headers,
+      contentType: contentType,
       decoder: decoder,
       timeout: timeout,
     );
@@ -147,6 +149,7 @@ class GetxHttp {
     dynamic body,
     Map<String, dynamic>? query,
     Map<String, String>? headers,
+    String? contentType,
     T Function(dynamic)? decoder,
     Duration? timeout,
   }) {
@@ -156,6 +159,7 @@ class GetxHttp {
       body: body,
       query: query,
       headers: headers,
+      contentType: contentType,
       decoder: decoder,
       timeout: timeout,
     );
@@ -165,6 +169,7 @@ class GetxHttp {
       {dynamic body,
       Map<String, dynamic>? query,
       Map<String, String>? headers,
+      String? contentType,
       T Function(dynamic)? decoder,
       Duration? timeout}) async {
     final encodedBody = _encodeBody(body);
@@ -177,6 +182,7 @@ class GetxHttp {
             body: encodedBody,
             query: encodedQuery,
             headers: headers,
+            contentType: contentType,
             decoder: decoder)
         .whenComplete(() => _dismissProgressIndicator());
 

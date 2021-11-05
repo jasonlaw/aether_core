@@ -73,17 +73,17 @@ class AppService extends GetxService {
     String? deviceName;
     bool isPhysicalDevice = true;
     final deviceInfo = DeviceInfoPlugin();
-    if (Platform.isAndroid) {
+    if (kIsWeb) {
+      final webBrowserInfo = await deviceInfo.webBrowserInfo;
+      deviceName = webBrowserInfo.userAgent;
+    } else if (GetPlatform.isAndroid) {
       final androidInfo = await deviceInfo.androidInfo;
       deviceName = androidInfo.model;
       isPhysicalDevice = androidInfo.isPhysicalDevice ?? !kDebugMode;
-    } else if (Platform.isIOS) {
+    } else if (GetPlatform.isIOS) {
       final iosInfo = await deviceInfo.iosInfo;
       deviceName = iosInfo.utsname.machine;
       isPhysicalDevice = iosInfo.isPhysicalDevice;
-    } else if (kIsWeb) {
-      final webBrowserInfo = await deviceInfo.webBrowserInfo;
-      deviceName = webBrowserInfo.userAgent;
     }
 
     final appService = AppService._(

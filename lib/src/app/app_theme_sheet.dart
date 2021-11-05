@@ -67,6 +67,7 @@ class AppThemeSheet extends StatelessWidget {
     App.theme.changeThemeMode(themeMode);
     if (systemEnabled.isTrue) {
       darkMode(Get.isPlatformDarkMode);
+      //WidgetsBinding.instance.window.platformBrightness
       systemEnabled.refresh();
     } else {
       darkMode(themeMode == ThemeMode.dark);

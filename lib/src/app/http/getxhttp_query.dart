@@ -30,6 +30,7 @@ class RestQuery {
 
   Future<Response<T>> post<T>({
     Map<String, String>? headers,
+    String? contentType,
     T Function(dynamic)? decoder,
     Duration? timeout,
     bool disableLoadingIndicator = false,
@@ -37,6 +38,7 @@ class RestQuery {
     return _request(
       'post',
       headers: headers,
+      contentType: contentType,
       decoder: decoder,
       timeout: timeout,
     );
@@ -45,6 +47,7 @@ class RestQuery {
   Future<Response<T>> _request<T>(
     String method, {
     Map<String, String>? headers,
+    String? contentType,
     T Function(dynamic)? decoder,
     Duration? timeout,
     bool disableLoadingIndicator = false,
@@ -57,7 +60,7 @@ class RestQuery {
       body: body is List<dynamic> ? RestBody.params(body) : body,
       query: query,
       headers: headers,
-      //decoder: decoder,
+      contentType: contentType,
       timeout: timeout,
     );
     if (result.isOk) {
