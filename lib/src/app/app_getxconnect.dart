@@ -3,7 +3,7 @@ part of 'app.dart';
 class GetxConnect extends GetxHttp {
   final CookieManager _cookie = CookieManager();
 
-  GetxConnect._() {
+  GetxConnect._() : super(allowAutoSignedCert: true, withCredentials: true) {
     client.timeout = Duration(seconds: App.settings.apiConnectTimeoutInSec());
 
     client.baseUrl = App.settings.apiBaseUrl();

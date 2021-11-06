@@ -15,10 +15,14 @@ part 'getxhttp_query.dart';
 part 'getxhttp_extensions.dart';
 
 class GetxHttp {
-  final GetConnect client = GetConnect(
-    allowAutoSignedCert: true,
-    withCredentials: true,
-  );
+  late final GetConnect client;
+
+  GetxHttp({bool allowAutoSignedCert = false, bool withCredentials = false}) {
+    client = GetConnect(
+      allowAutoSignedCert: allowAutoSignedCert,
+      withCredentials: withCredentials,
+    );
+  }
 
   void Function(Response response)? _unauthorizedResponseHandler;
 

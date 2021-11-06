@@ -14,6 +14,10 @@ class RestQuery {
     return this;
   }
 
+  RestQuery external() {
+    return use(App.http);
+  }
+
   Future<Response<T>> get<T>({
     Map<String, String>? headers,
     T Function(dynamic)? decoder,
@@ -93,6 +97,10 @@ class GraphQLQuery {
   GraphQLQuery use(GetxHttp http) {
     _http ??= http;
     return this;
+  }
+
+  GraphQLQuery external() {
+    return use(App.http);
   }
 
   Map<String, dynamic> buildQuery() {
