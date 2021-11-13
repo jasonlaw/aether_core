@@ -21,7 +21,7 @@ dependencies:
 
   # https://pub.dev/packages/get 
   get: ^4.3.8
-    #  git: https://github.com/jasonlaw/getx.git
+
   # https://pub.dev/packages/mime_type 
   mime_type: ^1.0.0
 
@@ -47,12 +47,6 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-# dependency_overrides:
-#   get: #^4.3.4
-#      git: https://github.com/jasonlaw/getx.git
-
-# For information on the generic Dart part of this file, see the
-# following page: https://dart.dev/tools/pub/pubspec
 
 # The following section is specific to Flutter.
 flutter:
