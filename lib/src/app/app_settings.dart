@@ -47,11 +47,13 @@ class AppSettings extends Entity {
         await loadFromPath(kSettingsFilePathStaging);
       } catch (_) {}
     }
+
     if (kDebugMode) {
       try {
         await loadFromPath(kSettingsFilePathDebug);
       } catch (_) {}
     }
+
     if (kDebugMode) print(settings.toMap());
 
     return settings;

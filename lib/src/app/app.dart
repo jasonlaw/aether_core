@@ -15,7 +15,6 @@ import 'package:get/get.dart';
 import 'package:get/get_connect/http/src/interceptors/get_modifiers.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:device_info_plus/device_info_plus.dart';
 
 import 'http/getxhttp.dart';
 import 'upgrader/upgrader.dart';
@@ -33,9 +32,11 @@ const String kSettingsFilePath = '$kSystemPath/settings.json';
 const String kSettingsFilePathDebug = '$kSystemPath/settings.debug.json';
 const String kSettingsFilePathStaging = '$kSystemPath/settings.staging.json';
 
-final kStagingMode = _envVIQCoreBuild.split(';').contains('staging');
-final kHuaweiAppGallery = _envVIQCoreBuild.split(';').contains('huawei');
-const _envVIQCoreBuild = String.fromEnvironment("VIQCORE_BUILD");
+final kStagingMode = kBuildArguments.contains('staging');
+final kHuaweiAppGallery = kBuildArguments.contains('huawei');
+const _viqcoreBuild = String.fromEnvironment("VIQCORE_BUILD");
+final kBuildArguments =
+    _viqcoreBuild.split(';').where((e) => e.isNotEmpty).toList();
 
 // ignore: non_constant_identifier_names
 AppService get App => Get.find();
@@ -46,8 +47,8 @@ class AppService extends GetxService {
   final String version;
   final String buildNumber;
   final String packageName;
-  final String platform;
-  final bool isPhysicalDevice;
+  //final String platform;
+  //final bool isPhysicalDevice;
   final bool useLocalTimezoneInHttp;
 
   final SnackbarService snackbar = SnackbarService();
@@ -70,29 +71,29 @@ class AppService extends GetxService {
 
     final packageInfo = await PackageInfo.fromPlatform();
 
-    String? deviceName;
-    bool isPhysicalDevice = true;
-    final deviceInfo = DeviceInfoPlugin();
-    if (kIsWeb) {
-      final webBrowserInfo = await deviceInfo.webBrowserInfo;
-      deviceName = webBrowserInfo.userAgent;
-    } else if (GetPlatform.isAndroid) {
-      final androidInfo = await deviceInfo.androidInfo;
-      deviceName = androidInfo.model;
-      isPhysicalDevice = androidInfo.isPhysicalDevice ?? !kDebugMode;
-    } else if (GetPlatform.isIOS) {
-      final iosInfo = await deviceInfo.iosInfo;
-      deviceName = iosInfo.utsname.machine;
-      isPhysicalDevice = iosInfo.isPhysicalDevice;
-    }
+    // String? deviceName;
+    // bool isPhysicalDevice = true;
+    // final deviceInfo = DeviceInfoPlugin();
+    // if (kIsWeb) {
+    //   final webBrowserInfo = await deviceInfo.webBrowserInfo;
+    //   deviceName = webBrowserInfo.userAgent;
+    // } else if (GetPlatform.isAndroid) {
+    //   final androidInfo = await deviceInfo.androidInfo;
+    //   deviceName = androidInfo.model;
+    //   isPhysicalDevice = androidInfo.isPhysicalDevice ?? !kDebugMode;
+    // } else if (GetPlatform.isIOS) {
+    //   final iosInfo = await deviceInfo.iosInfo;
+    //   deviceName = iosInfo.utsname.machine;
+    //   isPhysicalDevice = iosInfo.isPhysicalDevice;
+    // }
 
     final appService = AppService._(
       name: packageInfo.appName,
       version: packageInfo.version,
       buildNumber: packageInfo.buildNumber,
       packageName: packageInfo.packageName,
-      platform: deviceName ?? 'Unknown',
-      isPhysicalDevice: isPhysicalDevice,
+      //platform: deviceName ?? 'Unknown',
+      //isPhysicalDevice: isPhysicalDevice,
       useLocalTimezoneInHttp: useLocalTimezoneInHttp,
     );
 
@@ -110,16 +111,16 @@ class AppService extends GetxService {
     required this.version,
     required this.buildNumber,
     required this.packageName,
-    required this.platform,
-    required this.isPhysicalDevice,
+    //required this.platform,
+    //required this.isPhysicalDevice,
     required this.useLocalTimezoneInHttp,
   }) : this.name = name + (kDebugMode ? '*' : '') {
     Get.log('              App Name : ${this.name}');
     Get.log('           App Version : $version');
     Get.log('          Build Number : $buildNumber');
     Get.log('          Package Name : $packageName');
-    Get.log('              Platform : $platform');
-    Get.log('       Physical Device : $isPhysicalDevice');
+    //Get.log('              Platform : $platform');
+    //Get.log('       Physical Device : $isPhysicalDevice');
     Get.log('Local Timezone in Http : $useLocalTimezoneInHttp');
   }
 
@@ -136,16 +137,6 @@ class AppService extends GetxService {
     Upgrader().daysToAlertAgain = daysToAlertAgain;
     Upgrader().debugDisplayAlways = debugDisplayAlways;
   }
-
-  // void showProgressIndicator({String? status}) {
-  //   if (EasyLoading.instance.overlayEntry != null) {
-  //     EasyLoading.addStatusCallback((value) =>
-  //         isProgressIndicatorShowing(value == EasyLoadingStatus.show));
-  //     EasyLoading.show(status: status);
-  //   }
-  // }
-
-  // void dismissProgressIndicator() => EasyLoading.dismiss();
 
   Widget builder(BuildContext contxet, Widget? widget) => UpgradeAlert(
         child: FlutterEasyLoading(
