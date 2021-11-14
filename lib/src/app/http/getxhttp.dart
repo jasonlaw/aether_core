@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:aether_core/src/utils/utils.dart';
+import 'package:aether_core/src/utils.dart';
 import 'package:get/get_connect/http/src/exceptions/exceptions.dart';
 
 import '../../extensions.dart';
