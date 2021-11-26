@@ -98,3 +98,24 @@ class Settings extends Entity {
 
 class PlanQuality extends Entity {}
 ~~~
+
+## API Connect
+### Quick API Access
+~~~dart
+final result = await '/api/login'.api(body: request.data).post(
+        timeout: Duration(seconds: 5),
+        headers: {"AppToken": request["appToken"]});
+~~~
+By default it will connect via the **App.connect**. You may override it for external api.
+~~~dart
+final response = await 'https://oauth2.googleapis.com/token'
+          .api(body: {
+            'code': code,
+            'client_id': clientID,
+            'client_secret': clientSecret,
+            'redirect_uri': redirectUri,
+            'grant_type': 'authorization_code',
+          })
+          .external() // Indicate this is an external API
+          .post();
+~~~

@@ -32,3 +32,31 @@ extension GetxResponseExtensions on Response {
         .toList();
   }
 }
+
+extension QuickApiOnStringExtensions on String {
+  GraphQLQuery gql(
+    List<dynamic> fields, {
+    Map<String, dynamic>? params,
+    Map<String, String>? paramTypes,
+  }) {
+    return GraphQLQuery(this, fields, params: params, paramTypes: paramTypes);
+  }
+
+  RestQuery api({
+    dynamic body,
+    Map<String, dynamic>? query,
+  }) {
+    return RestQuery(this, body: body, query: query);
+  }
+}
+
+extension QuickApiOnFieldExtensions on FieldBase {
+  GraphQLQuery gql(
+    List<dynamic> fields, {
+    Map<String, dynamic>? params,
+    Map<String, String>? paramTypes,
+  }) {
+    return GraphQLQuery(this.name, fields,
+        params: params, paramTypes: paramTypes);
+  }
+}
