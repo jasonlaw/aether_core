@@ -120,13 +120,11 @@ class Upgrader {
   }
 
   bool shouldDisplayUpgrade() {
-    if (debugDisplayAlways || (debugDisplayOnce && !_hasAlerted)) {
-      return true;
-    }
+    if (debugDisplayAlways || (debugDisplayOnce && !_hasAlerted)) return true;
 
-    if (isTooSoon() || !isUpdateAvailable()) {
-      return false;
-    }
+    if (!isUpdateAvailable()) return false;
+    if (!forceUpdate && isTooSoon()) return false;
+
     return true;
   }
 

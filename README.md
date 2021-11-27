@@ -100,7 +100,7 @@ class PlanQuality extends Entity {}
 ~~~
 
 ## API Connect
-### Quick API Access
+### Quick REST PI Access
 ~~~dart
 final result = await '/api/login'.api(body: request.data).post(
         timeout: Duration(seconds: 5),
@@ -119,3 +119,4 @@ final response = await 'https://oauth2.googleapis.com/token'
           .external() // Indicate this is an external API
           .post();
 ~~~
+### Quick GraphQL API Access
