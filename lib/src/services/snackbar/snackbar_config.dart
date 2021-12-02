@@ -34,7 +34,7 @@ class SnackbarConfig {
   List<BoxShadow>? boxShadows;
   Gradient? backgroundGradient;
   bool isDismissible;
-  SnackDismissDirection dismissDirection;
+  DismissDirection dismissDirection;
   bool showProgressIndicator;
   AnimationController? progressIndicatorController;
   Color? progressIndicatorBackgroundColor;
@@ -72,7 +72,7 @@ class SnackbarConfig {
     this.boxShadows,
     this.backgroundGradient,
     this.isDismissible = true,
-    this.dismissDirection = SnackDismissDirection.VERTICAL,
+    this.dismissDirection = DismissDirection.vertical,
     this.showProgressIndicator = false,
     this.progressIndicatorController,
     this.progressIndicatorBackgroundColor,

@@ -10,7 +10,7 @@ class Custom {
     var errorText = error.toString();
     if (errorText.length > 1000)
       errorText = errorText.substring(0, 1000) + "...";
-    return Get.snackbar(
+    Get.snackbar(
       title ?? "Error".tr,
       errorText,
       icon: Icon(Icons.error, color: Colors.red),
@@ -19,7 +19,7 @@ class Custom {
 
   static Future<void> Function(String info, {String? title}) notifyInfo =
       (String info, {String? title}) async {
-    return Get.snackbar(
+    Get.snackbar(
       title ?? "Info".tr,
       info,
       icon: Icon(Icons.info, color: Colors.blue),

@@ -135,7 +135,7 @@ class SnackbarService {
     void Function()? onMainButtonTapped,
     Function? onTap,
     Duration duration = const Duration(seconds: 1),
-  }) {
+  }) async {
     final snackbarVariant = variant;
     assert(
       snackbarVariant != null,
@@ -167,7 +167,7 @@ class SnackbarService {
             config: snackbarConfig,
           );
 
-    final getBar = GetBar(
+    final getBar = GetSnackBar(
       key: Key('snackbar_view'),
       titleText: title != null
           ? Text(
@@ -229,7 +229,7 @@ class SnackbarService {
     } else {
       Completer completer = new Completer();
       WidgetsBinding.instance?.addPostFrameCallback((_) async {
-        final result = await getBar.show();
+        final result = getBar.show();
         completer.complete(result);
       });
       return completer.future;
