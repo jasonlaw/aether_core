@@ -1,5 +1,6 @@
 ## 0.2.4
 * Added ListField.rxEx, which will listening to list activity only. Changes from its children entity will be ignored.
+
 ## 0.2.3
 * Update getx version to 4.5.1
 
