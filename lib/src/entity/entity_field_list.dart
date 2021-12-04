@@ -14,8 +14,15 @@ class ListField<E extends Entity> extends FieldBase<List<E>> {
 
   //List<E> call() => this.value;
 
+  /// This will listen to any changes to the list, including its entity
+  /// children.
   Rx<ListField<E>> get rx => _rx ??= Rx<ListField<E>>(this);
   Rx<ListField<E>>? _rx;
+
+  /// This will listen to only changes to the list. Changes from its entity
+  /// children will be ignored.
+  Rx<ListField<E>> get rxEx => _rxEx ??= Rx<ListField<E>>(this);
+  Rx<ListField<E>>? _rxEx;
 
   @override
   List<E> get value {
@@ -36,9 +43,12 @@ class ListField<E extends Entity> extends FieldBase<List<E>> {
   }
 
   @override
-  void updateState() {
+  void updateState({bool exclusive = false}) {
     super.updateState();
-    _rx?.refresh();
+    if (exclusive)
+      _rxEx?.refresh();
+    else
+      _rx?.refresh();
   }
 
   // @override
@@ -73,7 +83,7 @@ class ListField<E extends Entity> extends FieldBase<List<E>> {
 
   void sort([int compare(E a, E b)?]) {
     this.value.sort(compare);
-    this.updateState();
+    this.updateState(exclusive: true);
   }
 
   bool get isEmpty => this.value.isEmpty;
@@ -81,19 +91,19 @@ class ListField<E extends Entity> extends FieldBase<List<E>> {
 
   void clear() {
     this.value.clear();
-    this.updateState();
+    this.updateState(exclusive: true);
   }
 
   void add(E entity) {
     this.value.add(entity);
     entity._parentRef = this;
-    this.updateState();
+    this.updateState(exclusive: true);
   }
 
   void addAll(Iterable<E> entities) {
     entities.forEach((entity) => entity._parentRef = this);
     this.value.addAll(entities);
-    this.updateState();
+    this.updateState(exclusive: true);
   }
 
   void assignAll(Iterable<E> entities) {
@@ -104,31 +114,31 @@ class ListField<E extends Entity> extends FieldBase<List<E>> {
   void insert(int index, E entity) {
     this.value.insert(index, entity);
     entity._parentRef = this;
-    this.updateState();
+    this.updateState(exclusive: true);
   }
 
   bool remove(E entity) {
     var foundAndRemoved = this.value.remove(entity);
     if (foundAndRemoved) {
       entity._parentRef = null;
-      this.updateState();
+      this.updateState(exclusive: true);
     }
     return foundAndRemoved;
   }
 
   void removeAt(int index) {
     this.value.removeAt(index);
-    this.updateState();
+    this.updateState(exclusive: true);
   }
 
   void removeLast() {
     this.value.removeLast();
-    this.updateState();
+    this.updateState(exclusive: true);
   }
 
   void removeWhere(bool test(E element)) {
     this.value.removeWhere(test);
-    this.updateState();
+    this.updateState(exclusive: true);
   }
 
   Iterator<E> get i => value.iterator;

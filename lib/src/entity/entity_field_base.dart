@@ -27,7 +27,7 @@ abstract class FieldBase<T> {
   Computed<T?>? _compute;
   Set<FieldBase>? _computeBindings;
   bool get isComputed => _compute != null;
-  bool get isLoaded => entity.hasDataField(name);
+  bool get isLoaded => entity.containsKey(name);
 
   T? get value;
 
@@ -82,7 +82,7 @@ abstract class FieldBase<T> {
   @mustCallSuper
   void reset() {
     if (isComputed) return;
-    if (entity.hasDataField(name)) {
+    if (entity.containsKey(name)) {
       entity.data.remove(name);
       updateState();
     }

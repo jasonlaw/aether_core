@@ -32,7 +32,7 @@ class Entity {
   /// Flag for non-empty content.
   bool get isNotEmpty => data.isNotEmpty;
 
-  bool hasDataField(String fieldName) => data.containsKey(fieldName);
+  bool containsKey(String fieldName) => data.containsKey(fieldName);
   //Iterable<String> get fieldNames => data.keys;
 
   dynamic operator [](String fieldName) => data[fieldName];
@@ -86,7 +86,10 @@ class Entity {
     //_isRaw = true;
     _isLoading = true;
     rawData.forEach((fieldName, value) {
-      if (!ignoreNullField || value != null) {
+      if (value == null &&
+          (ignoreNullField || !this.data.containsKey(fieldName))) {
+        // value is null, do nothing if empty field or specified to ignore
+      } else if (value != null) {
         // don't remove, to allow trigger field updateState
         this.data.remove(fieldName);
         var field = fields[fieldName];
