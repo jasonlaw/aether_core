@@ -45,10 +45,8 @@ class ListField<E extends Entity> extends FieldBase<List<E>> {
   @override
   void updateState({bool exclusive = false}) {
     super.updateState();
-    if (exclusive)
-      _rxEx?.refresh();
-    else
-      _rx?.refresh();
+    _rx?.refresh();
+    if (exclusive) _rxEx?.refresh();
   }
 
   // @override
