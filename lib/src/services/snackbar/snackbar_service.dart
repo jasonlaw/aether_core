@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:aether_core/src/services/exceptions/custom_snackbar_exception.dart';
 import 'package:aether_core/src/services/snackbar/snackbar_config.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
