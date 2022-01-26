@@ -84,9 +84,6 @@ class ListField<E extends Entity> extends FieldBase<List<E>> {
     this.updateState(exclusive: true);
   }
 
-  bool get isEmpty => this.value.isEmpty;
-  bool get isNotEmpty => this.value.isNotEmpty;
-
   void clear() {
     this.value.clear();
     this.updateState(exclusive: true);
@@ -139,18 +136,36 @@ class ListField<E extends Entity> extends FieldBase<List<E>> {
     this.updateState(exclusive: true);
   }
 
+  bool get isEmpty => value.isEmpty;
+  bool get isNotEmpty => value.isNotEmpty;
+
   Iterator<E> get i => value.iterator;
   int get length => value.length;
+
   E get first => value.first;
   E? get firstOrDefault => value.firstOrDefault;
+
   E get last => value.last;
+  E? get lastOrDefault => value.isEmpty ? null : value.last;
+
   Iterable<E> where(bool Function(E) test) => value.where(test);
   bool any(bool Function(E) test) => value.any(test);
+
   E firstWhere(bool test(E element), {E orElse()?}) =>
       value.firstWhere(test, orElse: orElse);
+  E? firstWhereOrDefault(bool test(E element)) {
+    try {
+      return value.firstWhere(test);
+    } catch (_) {
+      return null;
+    }
+  }
+
   bool every(bool test(E element)) => value.every(test);
+
   T fold<T>(T initialValue, T combine(T previousValue, E element)) =>
       value.fold<T>(initialValue, combine);
+
   void forEach(void f(E element)) => value.forEach(f);
 
   static ListField<E> create<E extends Entity>() {
