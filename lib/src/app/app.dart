@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:aether_core/src/app/app_theme.dart';
 import 'package:aether_core/src/utils/custom.dart';
+import 'package:aether_core/src/utils/uuid.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
@@ -103,6 +104,11 @@ class AppService extends GetxService {
 
     Get.log('Startup AppService Done.');
   }
+
+  String newUuid() => Uuid().v1();
+
+  String newDigits(int size, {int seed = -1}) =>
+      Uuid().digits(size, seed: seed);
 
   AppService._({
     required String name,
