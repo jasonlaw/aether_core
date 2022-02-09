@@ -11,12 +11,13 @@ class GetxConnect extends GetxHttp {
     client.httpClient.addRequestModifier<void>((request) async {
       request.headers.addAll({
         if (App.useLocalTimezoneInHttp)
-          "timezoneoffset": "${DateTime.now().timeZoneOffset.inHours}",
+          'timezoneoffset': '${DateTime.now().timeZoneOffset.inHours}',
         if (Get.locale != null)
-          "languagecode":
-              "${Get.locale!.languageCode}_${Get.locale!.countryCode}",
+          'languagecode':
+              '${Get.locale!.languageCode}_${Get.locale!.countryCode}',
         if (App.settings.apiKey().isNotNullOrEmpty)
-          "appkey": App.settings.apiKey(),
+          'appkey': App.settings.apiKey(),
+        if (request.method == 'post') 'post-token': App.newUuid()
       });
 
       await _cookie.loadForRequest(request);

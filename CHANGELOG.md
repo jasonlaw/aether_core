@@ -1,3 +1,6 @@
+## 0.2.6
+* Added post-token for post api request
+
 ## 0.2.5
 * Added methods to ListField: lastOrDefault, firstWhereOrDefault.
 
