@@ -1,3 +1,6 @@
+## 0.2.5
+* Added methods to ListField: lastOrDefault, firstWhereOrDefault.
+
 ## 0.2.4
 * Added ListField.rxEx, which will listening to list activity only. Changes from its children entity will be ignored.
 
