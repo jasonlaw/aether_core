@@ -140,6 +140,7 @@ class AppService extends GetxService {
     Upgrader().forceUpdate = forceUpdate;
     Upgrader().daysToAlertAgain = daysToAlertAgain;
     Upgrader().debugDisplayAlways = debugDisplayAlways;
+    Upgrader().debugLogging = kDebugMode;
   }
 
   Widget builder(BuildContext contxet, Widget? widget) => UpgradeAlert(
