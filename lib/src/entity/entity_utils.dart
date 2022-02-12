@@ -12,17 +12,15 @@ class ValueTransformers {
       if (dateTimeValue == null) return val;
       if (num.tryParse(val) != null) return val;
       if (dateTimeValue.year == 1) return null;
-      return App.useLocalTimezoneInHttp
-          ? DateTime(
-              dateTimeValue.year,
-              dateTimeValue.month,
-              dateTimeValue.day,
-              dateTimeValue.hour,
-              dateTimeValue.minute,
-              dateTimeValue.second,
-              dateTimeValue.millisecond,
-              dateTimeValue.microsecond)
-          : dateTimeValue.toLocal();
+      return DateTime(
+          dateTimeValue.year,
+          dateTimeValue.month,
+          dateTimeValue.day,
+          dateTimeValue.hour,
+          dateTimeValue.minute,
+          dateTimeValue.second,
+          dateTimeValue.millisecond,
+          dateTimeValue.microsecond);
     };
   }
 }
