@@ -10,8 +10,7 @@ class GetxConnect extends GetxHttp {
 
     client.httpClient.addRequestModifier<void>((request) async {
       request.headers.addAll({
-        if (App.useLocalTimezoneInHttp)
-          'timezoneoffset': '${DateTime.now().timeZoneOffset.inHours}',
+        'timezoneoffset': '${DateTime.now().timeZoneOffset.inHours}',
         if (Get.locale != null)
           'languagecode':
               '${Get.locale!.languageCode}_${Get.locale!.countryCode}',

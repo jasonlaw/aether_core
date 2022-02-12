@@ -41,14 +41,10 @@ final kBuildArguments =
 AppService get App => Get.find();
 
 class AppService extends GetxService {
-  // App information
   final String name;
   final String version;
   final String buildNumber;
   final String packageName;
-  //final String platform;
-  //final bool isPhysicalDevice;
-  final bool useLocalTimezoneInHttp;
 
   final SnackbarService snackbar = SnackbarService();
   final DialogService dialog = DialogService();
@@ -61,7 +57,7 @@ class AppService extends GetxService {
   late final AppTheme theme = AppTheme();
   final Custom custom = Custom();
 
-  static Future startup({bool useLocalTimezoneInHttp = true}) async {
+  static Future startup() async {
     Get.log('Startup AppService...');
 
     WidgetsFlutterBinding.ensureInitialized();
@@ -70,30 +66,11 @@ class AppService extends GetxService {
 
     final packageInfo = await PackageInfo.fromPlatform();
 
-    // String? deviceName;
-    // bool isPhysicalDevice = true;
-    // final deviceInfo = DeviceInfoPlugin();
-    // if (kIsWeb) {
-    //   final webBrowserInfo = await deviceInfo.webBrowserInfo;
-    //   deviceName = webBrowserInfo.userAgent;
-    // } else if (GetPlatform.isAndroid) {
-    //   final androidInfo = await deviceInfo.androidInfo;
-    //   deviceName = androidInfo.model;
-    //   isPhysicalDevice = androidInfo.isPhysicalDevice ?? !kDebugMode;
-    // } else if (GetPlatform.isIOS) {
-    //   final iosInfo = await deviceInfo.iosInfo;
-    //   deviceName = iosInfo.utsname.machine;
-    //   isPhysicalDevice = iosInfo.isPhysicalDevice;
-    // }
-
     final appService = AppService._(
       name: packageInfo.appName,
       version: packageInfo.version,
       buildNumber: packageInfo.buildNumber,
       packageName: packageInfo.packageName,
-      //platform: deviceName ?? 'Unknown',
-      //isPhysicalDevice: isPhysicalDevice,
-      useLocalTimezoneInHttp: useLocalTimezoneInHttp,
     );
 
     Get.put(appService);
@@ -115,17 +92,11 @@ class AppService extends GetxService {
     required this.version,
     required this.buildNumber,
     required this.packageName,
-    //required this.platform,
-    //required this.isPhysicalDevice,
-    required this.useLocalTimezoneInHttp,
   }) : this.name = name + (kDebugMode ? '*' : '') {
     Get.log('              App Name : ${this.name}');
     Get.log('           App Version : $version');
     Get.log('          Build Number : $buildNumber');
     Get.log('          Package Name : $packageName');
-    //Get.log('              Platform : $platform');
-    //Get.log('       Physical Device : $isPhysicalDevice');
-    Get.log('Local Timezone in Http : $useLocalTimezoneInHttp');
   }
 
   Future<void> initUpgrader({
