@@ -1,5 +1,3 @@
-## 0.2.8
-* Only remove refresh token if authenticated upon sign-out
 
 ## 0.2.7
 * Added x-refresh-token storage
