@@ -1,3 +1,6 @@
+## 0.2.7
+* Added x-refresh-token storage
+
 ## 0.2.6
 * Added post-token for post api request
 

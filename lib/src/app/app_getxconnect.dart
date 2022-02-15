@@ -25,6 +25,10 @@ class GetxConnect extends GetxHttp {
 
     client.httpClient.addResponseModifier<void>((request, response) async {
       await _cookie.saveFromResponse(response);
+      if (response.headers?.containsKey('x-refresh-token') ?? false) {
+        CredentialIdentity._writeRefreshToken(
+            response.headers!['x-refresh-token']);
+      }
       return response;
     });
   }
