@@ -60,7 +60,7 @@ class AppService extends GetxService {
   static Future startup() async {
     Get.log('Startup AppService...');
 
-    WidgetsFlutterBinding.ensureInitialized();
+    //WidgetsFlutterBinding.ensureInitialized();
 
     Get.isLogEnable = kDebugMode;
 
