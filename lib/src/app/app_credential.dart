@@ -31,9 +31,7 @@ class CredentialIdentity extends Entity {
 
   @mustCallSuper
   void signOut() {
-    if (isAuthenticated) {
-      GetStorage().remove('CredentialIdentity.RefreshToken');
-    }
+    GetStorage().remove('CredentialIdentity.RefreshToken');
     this.reset();
   }
 }

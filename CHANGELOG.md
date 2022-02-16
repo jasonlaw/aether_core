@@ -1,3 +1,5 @@
+## 0.2.8
+* Added entity onLoaded override method
 
 ## 0.2.7
 * Added x-refresh-token storage
