@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:aether_core/src/utils.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get_connect/http/src/exceptions/exceptions.dart';
 
 import '../../extensions.dart';
@@ -181,6 +182,9 @@ class GetxHttp {
 
     _showProgressIndicator();
     client.httpClient.timeout = timeout ?? client.timeout;
+
+    if (kDebugMode) print('${method.toUpperCase()} request: $api');
+
     var result = await client
         .request(api, method,
             body: encodedBody,
