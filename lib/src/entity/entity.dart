@@ -104,7 +104,11 @@ class Entity {
     _isLoading = false;
     this.commit();
     this.updateState();
+    this.onLoaded();
   }
+
+  @protected
+  void onLoaded() {}
 
   bool _isCopying = false;
   void copy(Entity source) {
