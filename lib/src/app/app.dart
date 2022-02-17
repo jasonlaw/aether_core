@@ -58,7 +58,7 @@ class AppService extends GetxService {
   late final AppTheme theme = AppTheme();
   final Custom custom = Custom();
 
-  static Future startup([String? appName]) async {
+  static Future startup() async {
     Get.log('Startup AppService...');
 
     //WidgetsFlutterBinding.ensureInitialized();
@@ -67,14 +67,9 @@ class AppService extends GetxService {
 
     final packageInfo = await PackageInfo.fromPlatform();
 
-    if (appName != null) {
-      if (kStagingMode) appName = appName + ' (Staging)';
-      if (kDebugMode) appName = appName + '*';
-    }
-
     final appService = AppService._(
-      id: packageInfo.appName,
-      name: appName ?? packageInfo.appName,
+      id: packageInfo.packageName,
+      name: packageInfo.appName,
       version: packageInfo.version,
       buildNumber: packageInfo.buildNumber,
       packageName: packageInfo.packageName,
