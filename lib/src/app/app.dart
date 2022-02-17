@@ -41,6 +41,7 @@ final kBuildArguments =
 AppService get App => Get.find();
 
 class AppService extends GetxService {
+  final String id;
   final String name;
   final String version;
   final String buildNumber;
@@ -57,7 +58,7 @@ class AppService extends GetxService {
   late final AppTheme theme = AppTheme();
   final Custom custom = Custom();
 
-  static Future startup() async {
+  static Future startup([String? appName]) async {
     Get.log('Startup AppService...');
 
     //WidgetsFlutterBinding.ensureInitialized();
@@ -66,8 +67,14 @@ class AppService extends GetxService {
 
     final packageInfo = await PackageInfo.fromPlatform();
 
+    if (appName != null) {
+      if (kStagingMode) appName = appName + ' (Staging)';
+      if (kDebugMode) appName = appName + '*';
+    }
+
     final appService = AppService._(
-      name: packageInfo.appName,
+      id: packageInfo.appName,
+      name: appName ?? packageInfo.appName,
       version: packageInfo.version,
       buildNumber: packageInfo.buildNumber,
       packageName: packageInfo.packageName,
@@ -88,11 +95,13 @@ class AppService extends GetxService {
       Uuid().digits(size, seed: seed);
 
   AppService._({
-    required String name,
+    required String id,
+    required this.name,
     required this.version,
     required this.buildNumber,
     required this.packageName,
-  }) : this.name = name + (kDebugMode ? '*' : '') {
+  }) : this.id = id + (kDebugMode ? '*' : '') {
+    Get.log('              App ID   : ${this.id}');
     Get.log('              App Name : ${this.name}');
     Get.log('           App Version : $version');
     Get.log('          Build Number : $buildNumber');
