@@ -20,13 +20,22 @@ class CredentialIdentity extends Entity {
   }
 
   static void _writeRefreshToken(String? token) {
+    if (token == null) {
+      GetStorage().remove('CredentialIdentity.RefreshToken');
+      return;
+    }
     GetStorage().write('CredentialIdentity.RefreshToken', token);
     //   print('Write token = $refreshToken');
   }
 
-  static String? get refreshToken {
+  static bool get hasRefreshToken =>
+      GetStorage().hasData('CredentialIdentity.RefreshToken');
+
+  static Map<String, String>? get refreshTokenHeader {
     final token = GetStorage().read<String>('CredentialIdentity.RefreshToken');
-    return token;
+    if (token == null) return null;
+    final tokenWithChecksum = '$token ${App.crypto.checkSum(token)}';
+    return {'x-refresh-token': tokenWithChecksum};
   }
 
   @mustCallSuper

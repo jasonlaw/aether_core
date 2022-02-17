@@ -3,14 +3,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import '../app.dart';
 import 'custom.dart';
 
-//final isProgressIndicatorShowing = false.obs;
-
 extension AppServiceUtils on AppService {
-  //String newUuid() => Uuid().v1();
-
-  // String newDigits(int size, {int seed = -1}) =>
-  //     Uuid().digits(size, seed: seed);
-
   Future<void> error(dynamic error, {String? title}) =>
       Custom.notifyError(error, title: title);
 
