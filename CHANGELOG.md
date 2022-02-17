@@ -1,3 +1,7 @@
+## 0.2.9
+* Added crypto (checkSum) support
+* Refresh token with checkSum
+
 ## 0.2.8
 * Added entity onLoaded override method
 

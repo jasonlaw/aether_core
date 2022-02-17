@@ -2,9 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:aether_core/src/app/app_theme.dart';
-import 'package:aether_core/src/utils/custom.dart';
-import 'package:aether_core/src/utils/uuid.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
@@ -17,7 +14,11 @@ import 'package:package_info_plus/package_info_plus.dart';
 
 import 'http/getxhttp.dart';
 import 'upgrader/upgrader.dart';
+import 'app_theme.dart';
 import '../services/services.dart';
+import '../utils/custom.dart';
+import '../utils/uuid.dart';
+import '../utils/crypto.dart';
 import '../entity.dart';
 import '../extensions.dart';
 
@@ -55,6 +56,7 @@ class AppService extends GetxService {
   late final GetxHttp http = GetxHttp();
   late final GetStorage storage = GetStorage();
   late final AppTheme theme = AppTheme();
+  late final Crypto crypto = Crypto();
   final Custom custom = Custom();
 
   static Future startup([String? appName]) async {
