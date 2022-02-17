@@ -28,14 +28,10 @@ class CredentialIdentity extends Entity {
     //   print('Write token = $refreshToken');
   }
 
-  static bool get hasRefreshToken =>
-      GetStorage().hasData('CredentialIdentity.RefreshToken');
-
-  static Map<String, String>? get refreshTokenHeader {
+  static String? get refreshToken {
     final token = GetStorage().read<String>('CredentialIdentity.RefreshToken');
-    if (token == null) return null;
-    final tokenWithChecksum = '$token ${App.crypto.checkSum(token)}';
-    return {'x-refresh-token': tokenWithChecksum};
+    if (token == null || token == '') return null;
+    return '$token ${App.crypto.checkSum(token)}';
   }
 
   @mustCallSuper
