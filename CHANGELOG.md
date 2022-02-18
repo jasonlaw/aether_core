@@ -1,3 +1,6 @@
+## 0.3.1
+* Added App credential callback actions
+
 ## 0.3.0
 * Use cross platform XFile in MediaFile
 
@@ -6,7 +9,7 @@
 * Refresh token with checkSum
 
 ## 0.2.8
-* Added entity onLoaded override method
+* Added entity onLoaded callback function
 
 ## 0.2.7
 * Added x-refresh-token storage
