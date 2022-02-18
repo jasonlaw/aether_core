@@ -125,4 +125,19 @@ class AppService extends GetxService {
           child: widget,
         ),
       );
+
+  Future Function()? _silentLoginAction;
+  void onSilentLoginRequest(Future Function() action) =>
+      _silentLoginAction = action;
+
+  Future Function(dynamic)? _loginAction;
+  void onLoginRequest(Future Function(dynamic request) action) =>
+      _loginAction = action;
+
+  Future Function()? _logoutAction;
+  void onLogoutRequest(Future Function() action) => _logoutAction = action;
+
+  Future silentLogin() async => _silentLoginAction?.call();
+  Future login(request) async => _loginAction?.call(request);
+  Future logout() async => _logoutAction?.call();
 }
