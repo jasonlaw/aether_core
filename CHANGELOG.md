@@ -1,3 +1,6 @@
+## 0.3.0
+* Use cross platform XFile in MediaFile
+
 ## 0.2.9
 * Added crypto (checkSum) support
 * Refresh token with checkSum
