@@ -41,6 +41,9 @@ class Entity {
   FieldBase? _parentRef;
   FieldBase? get parent => _parentRef;
 
+  void Function()? _onLoaded;
+  void onLoaded(void Function() action) => _onLoaded = action;
+
   static void removeFromParentList(Entity entity) {
     if (entity.parent == null) return;
     var list = entity.parent as ListField?;
@@ -104,11 +107,8 @@ class Entity {
     _isLoading = false;
     this.commit();
     this.updateState();
-    this.onLoaded();
+    _onLoaded?.call();
   }
-
-  @protected
-  void onLoaded() {}
 
   bool _isCopying = false;
   void copy(Entity source) {
