@@ -43,7 +43,7 @@ class RestBody {
 
   RestBody addParam(String name, dynamic value) {
     if (value != null) {
-      _formDataMode = _formDataMode || value is File || value is List<File>;
+      _formDataMode = _formDataMode || value is XFile || value is List<XFile>;
       data[name] = value;
     }
     return this;

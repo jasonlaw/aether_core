@@ -1,3 +1,4 @@
+export 'package:cross_file/cross_file.dart';
 export 'src/app.dart';
 export 'src/extensions.dart';
 export 'src/entity.dart';

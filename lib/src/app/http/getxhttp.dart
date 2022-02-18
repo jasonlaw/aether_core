@@ -1,10 +1,8 @@
-import 'dart:io';
-
 import 'package:aether_core/src/utils.dart';
+import 'package:cross_file/cross_file.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get_connect/http/src/exceptions/exceptions.dart';
 
-import '../../extensions.dart';
 import '../../entity.dart';
 import '../../models.dart';
 import '../../app.dart';
@@ -80,7 +78,7 @@ class GetxHttp {
     Map<String, dynamic>? variables,
     Map<String, String>? headers,
     Duration? timeout,
-  }) {
+  }) async {
     String _queryBody;
     Map<String, dynamic>? _variables = variables;
 
@@ -104,7 +102,7 @@ class GetxHttp {
     }
 
     _showProgressIndicator();
-    final encodedVariables = _encodeJson(_variables);
+    final encodedVariables = await _encodeJson(_variables);
     client.httpClient.timeout = timeout ?? client.timeout;
     return client
         .query<T>(_queryBody,
@@ -177,7 +175,7 @@ class GetxHttp {
       String? contentType,
       T Function(dynamic)? decoder,
       Duration? timeout}) async {
-    final encodedBody = _encodeBody(body);
+    final encodedBody = await _encodeBody(body);
     final encodedQuery = _encodeQuery(query);
 
     _showProgressIndicator();
@@ -202,15 +200,15 @@ class GetxHttp {
     return result;
   }
 
-  dynamic _encodeBody(dynamic body) {
+  Future<dynamic> _encodeBody(dynamic body) async {
     if (body is RestBody) {
-      final encoded = _encodeJson(body.data);
+      final encoded = await _encodeJson(body.data);
       if (body._formDataMode) {
         return FormData(encoded);
       }
       return encoded;
     }
-    return _encodeJson(body);
+    return await _encodeJson(body);
   }
 
   void _showProgressIndicator() {
@@ -226,7 +224,7 @@ class GetxHttp {
 
   Response ok({dynamic body}) {
     return Response(
-        statusCode: HttpStatus.ok, statusText: "ok", request: null, body: body);
+        statusCode: 200, statusText: "ok", request: null, body: body);
   }
 
   Response error([String errorText = '']) {
@@ -235,31 +233,38 @@ class GetxHttp {
   }
 }
 
-dynamic _encodeJson(dynamic payload) {
+Future<dynamic> _encodeJson(dynamic payload) async {
   if (payload == null) return null;
   if (payload is Parameter) {
-    return _encodeJson(payload.paramValue);
+    return await _encodeJson(payload.paramValue);
   }
   if (payload is! Map<String, dynamic>) return payload;
   final Map<String, dynamic> encoded = {};
-  payload.forEach((key, value) {
+
+  //payload.forEach((key, value) async {
+  for (final entry in payload.entries) {
+    final key = entry.key;
+    final value = entry.value;
     if (value is List<DateTime>)
       encoded[key] = value.map((e) => e.toIso8601String()).toList();
     else if (value is DateTime)
       encoded[key] = value.toIso8601String();
-    else if (value is File) {
-      encoded[key] = MultipartFile(value.readAsBytesSync(),
-          filename: value.name, contentType: value.mimeType);
-    } else if (value is List<File>) {
-      encoded[key] = value
-          .map((file) => MultipartFile(file.readAsBytesSync(),
-              filename: file.name, contentType: file.mimeType))
-          .toList();
+    else if (value is XFile) {
+      encoded[key] = MultipartFile(await value.readAsBytes(),
+          filename: value.name,
+          contentType: value.mimeType ?? 'application/octet-stream');
+    } else if (value is List<XFile>) {
+      encoded[key] = await Future.wait(value
+          .map((file) async => MultipartFile(await file.readAsBytes(),
+              filename: file.name,
+              contentType: file.mimeType ?? 'application/octet-stream'))
+          .toList());
+      print((encoded[key][0] as MultipartFile).length);
     } else if (value is Parameter) {
-      encoded[key] = _encodeJson(value.paramValue);
+      encoded[key] = await _encodeJson(value.paramValue);
     } else
       encoded[key] = value;
-  });
+  }
   return encoded;
 }
 
