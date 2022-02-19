@@ -6,7 +6,7 @@ class CredentialIdentity extends Entity {
   late final Field<String> name = this.field("name");
   late final Field<String> email = this.field("email");
   late final Field<String> roles = this.field("roles");
-  bool get isAuthenticated => id.value.isNotNullOrEmpty;
+  bool get isAuthenticated => id.valueIsNotNullOrEmpty;
 
   void signIn(String id, String username, String name, String email,
       {String? roles}) {

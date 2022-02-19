@@ -1,3 +1,6 @@
+## 0.3.2
+* Refactoring and rework the App init setup
+
 ## 0.3.1
 * Added App credential callback actions
 

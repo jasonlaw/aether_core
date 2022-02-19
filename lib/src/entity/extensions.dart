@@ -23,6 +23,11 @@ extension EntityExtensions<E extends Entity> on E {
   }
 }
 
+extension EntityFieldStringExtensions on Field<String> {
+  bool get valueIsNullOrEmpty => this.value.isNotNullOrEmpty;
+  bool get valueIsNotNullOrEmpty => this.value.isNotNullOrEmpty;
+}
+
 // extension ListOfEntityExtensions<E extends Entity> on List<E> {
 //   void load(EntityBuilder<E> createEntity, List<dynamic> rawData) {
 //     var list = rawData.map((data) => createEntity()..load(data));

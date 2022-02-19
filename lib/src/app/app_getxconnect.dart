@@ -14,7 +14,7 @@ class GetxConnect extends GetxHttp {
         if (Get.locale != null)
           'languagecode':
               '${Get.locale!.languageCode}_${Get.locale!.countryCode}',
-        if (App.settings.apiKey().isNotNullOrEmpty)
+        if (App.settings.apiKey.valueIsNotNullOrEmpty)
           'appkey': App.settings.apiKey(),
         if (request.method == 'post') 'post-token': App.newUuid()
       });

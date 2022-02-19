@@ -1,1 +1,0 @@
-export 'lang/lang.dart';
