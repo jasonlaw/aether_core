@@ -1,5 +1,6 @@
 ## 0.3.2
 * Refactoring and rework the App init setup
+* EntitySearch api call
 
 ## 0.3.1
 * Added App credential callback actions
