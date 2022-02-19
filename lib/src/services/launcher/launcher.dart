@@ -7,11 +7,11 @@ Future<void> launchUrl(String url,
     if (await canLaunch(url)) {
       await launch(url);
     } else if (showError && defaultErrorText != null) {
-      App.snackbar.showError(defaultErrorText);
+      App.error(defaultErrorText);
     }
   } catch (error) {
     if (showError) {
-      App.snackbar.showError(error);
+      App.error(error);
     }
   }
 }

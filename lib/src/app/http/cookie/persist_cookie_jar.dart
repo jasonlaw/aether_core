@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:aether_core/aether_core.dart';
 
+import 'package:aether_core/src/extensions/extensions.dart';
+
+import '../../app.dart';
 import 'default_cookie_jar.dart';
 import 'serializable_cookie.dart';
 

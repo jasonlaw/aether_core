@@ -1,12 +1,13 @@
-import 'package:aether_core/aether_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+
+import 'app.dart';
 
 class AppTheme {
   AppTheme() {
     var lastThemeMode = App.storage.read<String>('AppTheme.mode');
     try {
-      if (!lastThemeMode.isNullOrEmpty) {
+      if (lastThemeMode == null || lastThemeMode.isEmpty) {
         _themeMode = ThemeMode.values
             .firstWhere((e) => describeEnum(e) == lastThemeMode);
       }

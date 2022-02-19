@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:crypto/crypto.dart';
 
-import '../app/app.dart';
+import '../../app/app.dart';
 
 class Crypto {
   String checkSum(String data, {String? signingKey}) {

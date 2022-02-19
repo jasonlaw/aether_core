@@ -1,4 +1,4 @@
-import 'package:aether_core/src/lang/zh.dart';
+import 'src/zh.dart';
 
 final Map<String, Map<String, String>> _translations = {
   'zh': zh,

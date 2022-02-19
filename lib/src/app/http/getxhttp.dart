@@ -1,11 +1,10 @@
-import 'package:aether_core/src/utils.dart';
+import 'package:aether_core/src/entity/entity.dart';
+import 'package:aether_core/src/models/models.dart';
 import 'package:cross_file/cross_file.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get_connect/http/src/exceptions/exceptions.dart';
 
-import '../../entity.dart';
-import '../../models.dart';
-import '../../app.dart';
+import '../app.dart';
 
 export 'cookie/cookie_manager.dart';
 

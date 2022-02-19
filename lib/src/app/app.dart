@@ -12,15 +12,23 @@ import 'package:get/get_connect/http/src/interceptors/get_modifiers.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
+import 'package:aether_core/src/entity/entity.dart';
+import 'package:aether_core/src/services/services.dart';
+import 'package:aether_core/src/utils/utils.dart';
+
+import 'init.dart';
 import 'http/getxhttp.dart';
 import 'upgrader/upgrader.dart';
 import 'app_theme.dart';
-import '../services/services.dart';
-import '../utils/custom.dart';
-import '../utils/uuid.dart';
-import '../utils/crypto.dart';
-import '../entity.dart';
-import '../extensions.dart';
+
+///import '../entity.dart';
+//import '../extensions.dart';
+
+export 'http/getxhttp.dart';
+export 'package:get/get.dart';
+export 'package:flutter_easyloading/flutter_easyloading.dart'
+    show EasyLoadingIndicatorType;
+export 'app_theme_sheet.dart';
 
 part 'app_settings.dart';
 part 'app_getxconnect.dart';
@@ -57,7 +65,7 @@ class AppService extends GetxService {
   late final GetStorage storage = GetStorage();
   late final AppTheme theme = AppTheme();
   late final Crypto crypto = Crypto();
-  final Custom custom = Custom();
+  late final AppInit init = AppInit();
 
   static Future startup([String? appName]) async {
     Get.log('Startup AppService...');
@@ -74,7 +82,7 @@ class AppService extends GetxService {
       name: appName ?? packageInfo.appName,
       version: packageInfo.version,
       buildNumber: packageInfo.buildNumber,
-      packageName: packageInfo.packageName.isNullOrEmpty
+      packageName: packageInfo.packageName.isEmpty
           ? packageInfo.appName
           : packageInfo.packageName,
     );
@@ -87,11 +95,6 @@ class AppService extends GetxService {
 
     Get.log('Startup AppService Done.');
   }
-
-  String newUuid() => Uuid().v1();
-
-  String newDigits(int size, {int seed = -1}) =>
-      Uuid().digits(size, seed: seed);
 
   AppService._({
     required String name,
@@ -126,18 +129,43 @@ class AppService extends GetxService {
         ),
       );
 
-  Future Function()? _silentLoginAction;
-  void onSilentLoginRequest(Future Function() action) =>
-      _silentLoginAction = action;
+  // Unique ID generators
+  String newUuid() => Uuid().v1();
 
-  Future Function(dynamic)? _loginAction;
-  void onLoginRequest(Future Function(dynamic request) action) =>
-      _loginAction = action;
+  String newDigits(int size, {int seed = -1}) =>
+      Uuid().digits(size, seed: seed);
 
-  Future Function()? _logoutAction;
-  void onLogoutRequest(Future Function() action) => _logoutAction = action;
+  // Dialog actions
+  Future<void> error(dynamic error, {String? title}) =>
+      AppActions.notifyError(error, title: title);
 
-  Future silentLogin() async => _silentLoginAction?.call();
-  Future login(request) async => _loginAction?.call(request);
-  Future logout() async => _logoutAction?.call();
+  Future<void> info(String info, {String? title}) =>
+      AppActions.notifyInfo(info, title: title);
+
+  Future<bool> confirm(
+    String question, {
+    String? title,
+    String? okButtonTitle,
+    String? cancelButtonTitle,
+  }) =>
+      AppActions.askConfirm(question,
+          title: title,
+          okButtonTitle: okButtonTitle,
+          cancelButtonTitle: cancelButtonTitle);
+
+  // Progress indicator actions
+  void showProgressIndicator({String? status}) {
+    if (EasyLoading.instance.overlayEntry != null) {
+      EasyLoading.show(status: status);
+    }
+  }
+
+  void dismissProgressIndicator() => EasyLoading.dismiss();
+
+  // Credential actions
+  Future silentLogin() async => AppActions.silentLogin?.call();
+
+  Future login(request) async => AppActions.login?.call(request);
+
+  Future logout() async => AppActions.logout?.call();
 }

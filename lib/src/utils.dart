@@ -1,2 +1,1 @@
-export 'utils/appservice_extension.dart';
-export 'utils/conditional_switch.dart';
+export 'utils/src/conditional_switch.dart';

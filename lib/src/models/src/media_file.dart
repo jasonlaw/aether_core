@@ -1,4 +1,5 @@
-import 'package:aether_core/aether_core.dart';
+import 'package:aether_core/src/entity/entity.dart';
+import 'package:cross_file/cross_file.dart';
 
 class MediaFile extends Entity {
   late final Field<String> id = this.field("id");
@@ -7,6 +8,6 @@ class MediaFile extends Entity {
 
   MediaFile([this.file]);
 
-  bool get isNew => id.value.isNullOrEmpty;
+  bool get isNew => id.valueIsNullOrEmpty;
   bool get canUpload => isNew && file != null;
 }
