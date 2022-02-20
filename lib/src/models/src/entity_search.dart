@@ -30,11 +30,18 @@ class SearchResults<T extends Entity> extends Entity {
   ListField<T> get results => fieldList("results");
 }
 
-extension StringOnEntitySearchExtensions on String {
-  Future<SearchResults<T>> apiSearch<T extends Entity>(
-      {required SearchParams params,
-      required EntityBuilder<T> createEntity}) async {
-    final result = await this.api(query: params.queryData).get();
+extension AetherStringForEntitySearchExtensions on String {
+  Future<SearchResults<T>> apiSearch<T extends Entity>({
+    required SearchParams params,
+    required EntityBuilder<T> createEntity,
+    Map<String, String>? headers,
+    Duration? timeout,
+    bool disableLoadingIndicator = false,
+  }) async {
+    final result = await this.api(query: params.queryData).get(
+        headers: headers,
+        timeout: timeout,
+        disableLoadingIndicator: disableLoadingIndicator);
     if (result.hasError) return Future.error(result.errorText);
     return SearchResults<T>(createEntity, searchParams: params)
       ..load(result.body);
