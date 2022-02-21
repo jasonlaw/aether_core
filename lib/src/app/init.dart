@@ -1,4 +1,5 @@
 import 'package:aether_core/src/app/app.dart';
+import 'package:aether_core/src/extensions/extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 
@@ -48,12 +49,10 @@ class AppActions {
   static Future<void> Function(dynamic error, {String? title}) notifyError =
       (dynamic error, {String? title}) async {
     if (error == null) return;
-    var errorText = error.toString();
-    if (errorText.length > 1000)
-      errorText = errorText.substring(0, 1000) + "...";
     Get.snackbar(
       title ?? "Error".tr,
-      errorText,
+      error.toString().truncate(1000),
+      snackPosition: SnackPosition.BOTTOM,
       icon: Icon(Icons.error, color: Colors.red),
     );
   };
@@ -63,6 +62,7 @@ class AppActions {
     Get.snackbar(
       title ?? "Info".tr,
       info,
+      snackPosition: SnackPosition.BOTTOM,
       icon: Icon(Icons.info, color: Colors.blue),
     );
   };

@@ -4,6 +4,12 @@ extension AetherNullableStringExtensions on String? {
   bool get isNotNullOrEmpty => this != null && this!.isNotEmpty;
 }
 
+extension AetherStringExtensions on String {
+  String truncate(int maxLength, {String remaining = '...'}) {
+    if (this.length <= maxLength) return this;
+    return this.substring(0, maxLength) + '...';
+  }
+}
 // extension AetherStringExtensions on String {
 //   /// check if the string is a date
 //   bool get isDate {
@@ -14,19 +20,3 @@ extension AetherNullableStringExtensions on String? {
 //       return false;
 //     }
 //   }
-
-//   // GraphQLQuery gql(
-//   //   List<dynamic> fields, {
-//   //   Map<String, dynamic>? params,
-//   //   Map<String, String>? paramTypes,
-//   // }) {
-//   //   return GraphQLQuery(this, fields, params: params, paramTypes: paramTypes);
-//   // }
-
-//   // RestQuery api({
-//   //   dynamic body,
-//   //   Map<String, dynamic>? query,
-//   // }) {
-//   //   return RestQuery(this, body: body, query: query);
-//   // }
-// }
