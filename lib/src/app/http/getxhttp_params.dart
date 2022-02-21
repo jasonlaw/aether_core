@@ -28,14 +28,6 @@ class RestBody {
     return addParam(field.name, field.value);
   }
 
-  // RestBody addFormField(FormInputField field) {
-  //   return addParam(field.name, field.value);
-  // }
-
-  // RestBody addInputField(InputField field) {
-  //   return addParam(field.name, field.value);
-  // }
-
   RestBody addMap(Map<String, dynamic> map) {
     map.forEach((key, value) => addParam(key, value));
     return this;
