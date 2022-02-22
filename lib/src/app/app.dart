@@ -130,18 +130,22 @@ class AppService extends GetxService {
       );
 
   // Unique ID generators
+  /// Generate a v1 unique identifier
   String newUuid() => Uuid().v1();
 
   String newDigits(int size, {int seed = -1}) =>
       Uuid().digits(size, seed: seed);
 
   // Dialog actions
+  /// Error notification, default a snackbar
   Future<void> error(dynamic error, {String? title}) =>
       AppActions.notifyError(error, title: title);
 
+  /// Information notification, default a snackbar
   Future<void> info(String info, {String? title}) =>
       AppActions.notifyInfo(info, title: title);
 
+  /// Prompt confirmation dialog
   Future<bool> confirm(
     String question, {
     String? title,
@@ -163,9 +167,12 @@ class AppService extends GetxService {
   void dismissProgressIndicator() => EasyLoading.dismiss();
 
   // Credential actions
+  /// Silent login credential, implementation required in App.init.silentLogin
   Future silentLogin() async => AppActions.silentLogin?.call();
 
+  /// Login credential, implementation required in App.init.login
   Future login(request) async => AppActions.login?.call(request);
 
+  /// Logout credential, implementation required in App.init.logout
   Future logout() async => AppActions.logout?.call();
 }
