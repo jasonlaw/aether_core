@@ -18,11 +18,16 @@ class Field<T> extends FieldBase<T> {
   T Function()? _createDefault;
 
   @override
+  T? innerDefaultValue() =>
+      _compute == null ? _createDefault?.call() : _compute!.call();
+
+  @override
   T? get value {
     _getDefault() {
       if (this.isLoaded) return null;
-      return entity.data[name] =
-          _compute == null ? _createDefault?.call() : _compute!.call();
+      final _value = innerDefaultValue();
+      entity.data[name] = _value;
+      return _value;
     }
 
     return entity[name] ?? _getDefault();

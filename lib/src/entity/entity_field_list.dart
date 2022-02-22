@@ -25,9 +25,14 @@ class ListField<E extends Entity> extends FieldBase<List<E>> {
   Rx<ListField<E>>? _rxEx;
 
   @override
+  List<E> innerDefaultValue() => <E>[];
+
+  @override
   List<E> get value {
     _getDefault() {
-      return entity.data[name] = entity.data[name] = <E>[];
+      final _value = innerDefaultValue();
+      entity.data[name] = _value;
+      return _value;
     }
 
     return entity[name] ?? _getDefault();
