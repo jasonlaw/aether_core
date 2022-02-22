@@ -1,3 +1,6 @@
+## 0.3.3
+* Add url to MediaFile model
+
 ## 0.3.2
 * Refactoring and rework the App init setup
 * EntitySearch api call

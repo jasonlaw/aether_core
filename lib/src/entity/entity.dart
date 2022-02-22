@@ -85,16 +85,19 @@ class Entity {
   /// Normally this is called to set the data from repository.
   bool _isLoading = false;
   void load(Map<String, dynamic> rawData, {bool ignoreNullField = false}) {
-    //_isRaw = true;
     _isLoading = true;
     rawData.forEach((fieldName, value) {
       if (value == null &&
           (ignoreNullField || !this.data.containsKey(fieldName))) {
         // value is null, do nothing if empty field or specified to ignore
-      } else if (value != null) {
+      } else {
+        // if (value != null) {
         // don't remove, to allow trigger field updateState
         this.data.remove(fieldName);
         var field = fields[fieldName];
+        // NOTES: Be careful, sometime the late final Field has not been called, hence
+        // the Field is not instantiated, which could have missed the default value
+        // assignment.
         if (field != null) {
           field.innerLoad(value);
         } else {

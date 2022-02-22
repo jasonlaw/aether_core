@@ -48,15 +48,18 @@ abstract class FieldBase<T> {
   }
 
   @protected
+  T? innerDefaultValue() => null;
+
+  @protected
   void innerLoad(dynamic rawData, {bool copy = false}) {
     if (isComputed) return;
     if (rawData == null) {
       if (copy) {
         entity[name] = null;
       } else {
-        final defaultValue = this.value;
-        entity.data.remove(name);
-        entity[name] = defaultValue;
+        //final defaultValue = this.value;
+        //entity.data.remove(name);
+        entity[name] = innerDefaultValue();
       }
     } else {
       final transformer = _fieldOnLoading ?? ValueTransformers.system();
@@ -66,7 +69,7 @@ abstract class FieldBase<T> {
   }
 
   @override
-  String toString() => "$value";
+  String toString() => '$value';
 
   // /// This equality override works for EntityField instances and the internal values.
   // bool operator ==(o) {
@@ -91,7 +94,6 @@ abstract class FieldBase<T> {
   @mustCallSuper
   void updateState() {
     _fieldOnChanged?.call(value);
-    //_rx?.refresh();
     entity.updateState();
     _computeBindings?.forEach((computedField) {
       computedField.propagate();
