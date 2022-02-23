@@ -163,14 +163,14 @@ class AppService extends GetxService {
   Future<bool> confirm(
     String question, {
     String? title,
-    String? okButtonTitle,
+    String? buttonTitle,
     String? cancelButtonTitle,
   }) async {
     final response = await Get.find<DialogService>().showDialog(
       title: title,
       description: question,
       buttonTitle:
-          okButtonTitle ?? AppActions.dialogSettings.buttonTitle ?? 'OK'.tr,
+          buttonTitle ?? AppActions.dialogSettings.buttonTitle ?? 'OK'.tr,
       cancelTitle: cancelButtonTitle ??
           AppActions.dialogSettings.cancelTitle ??
           'CANCEL'.tr,
