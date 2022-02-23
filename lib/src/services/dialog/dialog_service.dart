@@ -1,10 +1,11 @@
 import 'dart:async';
 
-import 'package:aether_core/src/services/dialog/platform_dialog.dart';
-import 'package:aether_core/src/services/models/overlay_request.dart';
-import 'package:aether_core/src/services/models/overlay_response.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import '../models/overlay_request.dart';
+import '../models/overlay_response.dart';
+import 'platform_dialog.dart';
 
 typedef DialogBuilder = Widget Function(
     BuildContext, DialogRequest, void Function(DialogResponse));
@@ -218,31 +219,6 @@ class DialogService extends GetxService {
       // },
     );
   }
-
-  // /// Shows a confirmation dialog with title and description
-  // Future<bool> showConfirmationDialog({
-  //   String? title,
-  //   String? description,
-  //   String? cancelTitle,
-  //   String? confirmationTitle,
-  //   bool barrierDismissible = false,
-
-  //   /// Indicates which [DialogPlatform] to show.
-  //   ///
-  //   /// When not set a Platform specific dialog will be shown
-  //   DialogPlatform? dialogPlatform,
-  // }) async {
-  //   final response = await showDialog(
-  //     title: title,
-  //     description: description,
-  //     buttonTitle: confirmationTitle ?? 'OK'.tr,
-  //     cancelTitle: cancelTitle ?? 'CANCEL'.tr,
-  //     dialogPlatform: dialogPlatform,
-  //     barrierDismissible: barrierDismissible,
-  //   );
-
-  //   return response?.confirmed ?? false;
-  // }
 
   /// Completes the dialog and passes the [response] to the caller
   void completeDialog(DialogResponse response) {

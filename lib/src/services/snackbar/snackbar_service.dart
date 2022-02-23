@@ -1,9 +1,10 @@
 import 'dart:async';
 
-import 'package:aether_core/src/services/exceptions/custom_snackbar_exception.dart';
-import 'package:aether_core/src/services/snackbar/snackbar_config.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import '../exceptions/custom_snackbar_exception.dart';
+import 'snackbar_config.dart';
 
 /// A service that allows the user to show the snackbar from a ViewModel
 class SnackbarService extends GetxService {
@@ -13,14 +14,14 @@ class SnackbarService extends GetxService {
   //   return Get.key;
   // }
 
-  Map<dynamic, SnackbarConfig?> _customSnackbarConfigs =
-      Map<dynamic, SnackbarConfig?>();
+  final Map<dynamic, SnackbarConfig?> _customSnackbarConfigs =
+      <dynamic, SnackbarConfig?>{};
 
-  Map<dynamic, SnackbarConfig Function()?> _customSnackbarConfigBuilders =
-      Map<dynamic, SnackbarConfig Function()?>();
+  final Map<dynamic, SnackbarConfig Function()?> _customSnackbarConfigBuilders =
+      <dynamic, SnackbarConfig Function()?>{};
 
-  Map<dynamic, Widget Function(String?, Function?)?> _mainButtonBuilder =
-      Map<dynamic, Widget Function(String?, Function?)?>();
+  final Map<dynamic, Widget Function(String?, Function?)?> _mainButtonBuilder =
+      <dynamic, Widget Function(String?, Function?)?>{};
 
   SnackbarConfig? _snackbarConfig;
 
@@ -226,7 +227,7 @@ class SnackbarService extends GetxService {
     if (snackbarConfig.instantInit) {
       return getBar.show();
     } else {
-      Completer completer = new Completer();
+      final completer = Completer();
       WidgetsBinding.instance?.addPostFrameCallback((_) async {
         final result = getBar.show();
         completer.complete(result);
@@ -257,24 +258,4 @@ class SnackbarService extends GetxService {
       onPressed: onMainButtonTapped,
     );
   }
-
-  void showError(dynamic error, {String? title}) {
-    if (error == null) return;
-    var errorText = error.toString();
-    if (errorText.length > 500) errorText = errorText.substring(0, 500) + "...";
-    this.showSnackbar(
-        title: title ?? "Error".tr,
-        message: errorText,
-        icon: Icon(Icons.report_problem_outlined, color: Colors.red));
-  }
-
-  void showInfo(String message, {String? title}) => this.showSnackbar(
-      title: title ?? "Info".tr,
-      message: message,
-      icon: Icon(Icons.info_outline, color: Colors.blue));
-
-  void showWarning(String message, {String? title}) => this.showSnackbar(
-      title: title ?? "Warning".tr,
-      message: message,
-      icon: Icon(Icons.report_outlined, color: Colors.amber));
 }

@@ -1,5 +1,5 @@
-import 'package:aether_core/src/app/app.dart';
-import 'package:aether_core/src/entity/entity.dart';
+import '../../app/app.dart';
+import '../../entity/entity.dart';
 
 class SearchParams extends Entity {
   SearchParams() {
@@ -38,7 +38,7 @@ extension AetherStringForEntitySearchExtensions on String {
     Duration? timeout,
     bool disableLoadingIndicator = false,
   }) async {
-    final result = await this.api(query: params.queryData).get(
+    final result = await api(query: params.queryData).get(
         headers: headers,
         timeout: timeout,
         disableLoadingIndicator: disableLoadingIndicator);

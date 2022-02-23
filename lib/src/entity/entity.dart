@@ -1,12 +1,13 @@
-import 'package:aether_core/src/app/app.dart';
-import 'package:aether_core/src/extensions/extensions.dart';
 import 'package:flutter/material.dart';
 
-part 'entity_field_base.dart';
+import '../app/app.dart';
+import '../extensions/extensions.dart';
+
 part 'entity_field.dart';
+part 'entity_field_base.dart';
 part 'entity_field_list.dart';
-part 'entity_utils.dart';
 part 'entity_graphql.dart';
+part 'entity_utils.dart';
 part 'extensions.dart';
 
 typedef EntityBuilder<E extends Entity> = E Function();
@@ -56,10 +57,11 @@ class Entity {
     final valueChanged = oldValue != value;
     final firstAssignment = !data.containsKey(fieldName);
     if (valueChanged || (firstAssignment && value != null)) {
-      if (value == null)
+      if (value == null) {
         data.remove(fieldName);
-      else
+      } else {
         data[fieldName] = value;
+      }
       fields[fieldName]?.updateState();
     }
   }
@@ -87,13 +89,12 @@ class Entity {
   void load(Map<String, dynamic> rawData, {bool ignoreNullField = false}) {
     _isLoading = true;
     rawData.forEach((fieldName, value) {
-      if (value == null &&
-          (ignoreNullField || !this.data.containsKey(fieldName))) {
+      if (value == null && (ignoreNullField || !data.containsKey(fieldName))) {
         // value is null, do nothing if empty field or specified to ignore
       } else {
         // if (value != null) {
         // don't remove, to allow trigger field updateState
-        this.data.remove(fieldName);
+        data.remove(fieldName);
         var field = fields[fieldName];
         // NOTES: Be careful, sometime the late final Field has not been called, hence
         // the Field is not instantiated, which could have missed the default value
@@ -107,18 +108,18 @@ class Entity {
       }
     });
     _isLoading = false;
-    this.commit();
-    this.updateState();
+    commit();
+    updateState();
     _onLoaded?.call();
   }
 
   bool _isCopying = false;
   void copy(Entity source) {
-    assert(this.runtimeType == source.runtimeType, "Type mismatched");
-    this.commit();
+    assert(runtimeType == source.runtimeType, "Type mismatched");
+    commit();
     _isCopying = true;
     try {
-      this.data.clear();
+      data.clear();
       source.toMap().forEach((key, value) {
         final field = fields[key];
         if (field != null) {
@@ -127,14 +128,14 @@ class Entity {
           this[key] = value;
         }
       });
-    } catch (_) {
-      this.rollback();
+    } on Exception catch (_) {
+      rollback();
       rethrow;
     } finally {
       _isCopying = false;
     }
-    this.commit();
-    this.updateState();
+    commit();
+    updateState();
   }
 
   void updateState() {
@@ -155,7 +156,7 @@ class Entity {
           this[fieldName] = value;
         }
       });
-    } catch (_) {
+    } on Exception catch (_) {
       return;
     } finally {
       _isUpdatingValues = false;
@@ -164,14 +165,14 @@ class Entity {
   }
 
   void commit() {
-    _committedData = Map.unmodifiable(this.data);
+    _committedData = Map.unmodifiable(data);
   }
 
   /// Rollback to the last commit
   void rollback() {
     if (_committedData == null) return;
-    this.data.clear();
-    this.data.addAll(_committedData!);
+    data.clear();
+    data.addAll(_committedData!);
     _committedData = null;
   }
 
@@ -179,9 +180,9 @@ class Entity {
   @mustCallSuper
   void reset() {
     _isReseting = true;
-    fields.values.forEach((field) {
+    for (final field in fields.values) {
       field.reset();
-    });
+    }
     data.clear();
     _committedData = null;
     //_updated.clear();
@@ -190,13 +191,13 @@ class Entity {
   }
 
   Map<String, dynamic> toMap() {
-    return this.data.map<String, dynamic>((key, value) {
+    return data.map<String, dynamic>((key, value) {
       if (value is Entity) return MapEntry(key, value.toMap());
       if (value is List<Entity>) {
-        List<Map<String, dynamic>> list = [];
-        value.forEach((entity) {
+        final list = <Map<String, dynamic>>[];
+        for (final entity in value) {
           list.add(entity.toMap());
-        });
+        }
         return MapEntry(key, list);
       }
       return MapEntry(key, value);

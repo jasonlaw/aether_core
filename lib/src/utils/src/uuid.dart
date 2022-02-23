@@ -1,8 +1,8 @@
 /// Generates UUID v1
 library uuid;
 
-import 'dart:typed_data';
 import 'dart:math';
+import 'dart:typed_data';
 
 /// uuid for Dart
 /// Author: Yulian Kuncheff

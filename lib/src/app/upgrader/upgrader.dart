@@ -1,9 +1,10 @@
 import 'dart:async';
-import 'package:aether_core/src/services/launcher/launcher.dart';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:version/version.dart';
 
+import '../../services/launcher/launcher.dart';
 import '../app.dart';
 
 /// Signature of callbacks that have no arguments and return bool.
@@ -11,7 +12,7 @@ typedef BoolCallback = bool Function();
 
 /// A singleton class to configure the upgrade dialog.
 class Upgrader {
-  static final Upgrader _singleton = new Upgrader._internal();
+  static final Upgrader _singleton = Upgrader._internal();
 
   /// The later button title, which defaults to ```Later```
   String? buttonTitleLater; // = 'Later'.toUpperCase();
@@ -89,24 +90,24 @@ class Upgrader {
 
   String getMessage() {
     return '%s %s - A new version is available now! Please update to enjoy the latest features.'
-        .trArgs([App.name, this.updateVersion!]);
+        .trArgs([App.name, updateVersion!]);
     //return 'A new version of ${App.name} is available! Version ${this.updateVersion} is now available-you have ${App.version}.';
   }
 
   String getTitle() {
-    return this.title ?? 'Update App?'.tr;
+    return title ?? 'Update App?'.tr;
   }
 
   String getPrompt() {
-    return this.prompt ?? 'Would you like to update it now?'.tr;
+    return prompt ?? 'Would you like to update it now?'.tr;
   }
 
   String getButtonTitleLater() {
-    return this.buttonTitleLater ?? "LATER".tr;
+    return buttonTitleLater ?? "LATER".tr;
   }
 
   String getButtonTitleUpdate() {
-    return this.buttonTitleUpdate ?? "UPDATE NOW".tr;
+    return buttonTitleUpdate ?? "UPDATE NOW".tr;
   }
 
   void checkVersion() {
@@ -139,14 +140,14 @@ class Upgrader {
 
   bool isUpdateAvailable() {
     if (_updateAvailable == null) {
-      final appStoreVersion = Version.parse(this.updateVersion);
+      final appStoreVersion = Version.parse(updateVersion);
       final installedVersion = Version.parse(App.version);
 
       final available = appStoreVersion > installedVersion;
-      _updateAvailable = available ? this.updateVersion : null;
+      _updateAvailable = available ? updateVersion : null;
 
       if (debugLogging) {
-        print('upgrader: appStoreVersion: ${this.updateVersion}');
+        print('upgrader: appStoreVersion: $updateVersion');
         print('upgrader: installedVersion: ${App.version.toString()}');
         print('upgrader: isUpdateAvailable: $available');
       }
@@ -168,7 +169,7 @@ class Upgrader {
       context: Get.context!,
       builder: (BuildContext context) {
         return WillPopScope(
-            onWillPop: () => Future.value(!this.forceUpdate),
+            onWillPop: () => Future.value(!forceUpdate),
             child: AlertDialog(
               title: Text(getTitle()),
               content: Column(
@@ -182,7 +183,7 @@ class Upgrader {
               ),
               actions: <Widget>[
                 Visibility(
-                    visible: kDebugMode || !this.forceUpdate,
+                    visible: kDebugMode || !forceUpdate,
                     child: TextButton(
                         child: Text(getButtonTitleLater()),
                         onPressed: () => onUserLater(true))),
@@ -202,7 +203,7 @@ class Upgrader {
 
     // If this callback has been provided, call it.
     var doProcess = true;
-    if (this.onLater != null) {
+    if (onLater != null) {
       doProcess = onLater!();
     }
 
@@ -220,7 +221,7 @@ class Upgrader {
 
     // If this callback has been provided, call it.
     var doProcess = true;
-    if (this.onUpdate != null) {
+    if (onUpdate != null) {
       doProcess = onUpdate!();
     }
 
@@ -247,7 +248,7 @@ class Upgrader {
     _lastTimeAlerted = DateTime.now();
     App.storage.write('lastTimeAlerted', _lastTimeAlerted.toString());
 
-    _lastVersionAlerted = this.updateVersion;
+    _lastVersionAlerted = updateVersion;
     App.storage.write('lastVersionAlerted', _lastVersionAlerted);
 
     _hasAlerted = true;
@@ -339,11 +340,11 @@ class UpgradeAlert extends StatelessWidget {
     // if (this.updateVersionInfo != null) {
     //   ViqUpgrader()._updateVersionInfo = this.updateVersionInfo;
     // }
-    if (this.buttonTitleLater != null) {
-      Upgrader().buttonTitleLater = this.buttonTitleLater;
+    if (buttonTitleLater != null) {
+      Upgrader().buttonTitleLater = buttonTitleLater;
     }
-    if (this.buttonTitleUpdate != null) {
-      Upgrader().buttonTitleUpdate = this.buttonTitleUpdate;
+    if (buttonTitleUpdate != null) {
+      Upgrader().buttonTitleUpdate = buttonTitleUpdate;
     }
     //if (this.daysToAlertAgain != null) {
     //  VIQCoreUpgrader().daysUntilAlertAgain = this.daysToAlertAgain;
@@ -351,26 +352,26 @@ class UpgradeAlert extends StatelessWidget {
     // if (this.debugDisplayAlways != null) {
     //   VIQCoreUpgrader().debugDisplayAlways = this.debugDisplayAlways;
     // }
-    if (this.debugDisplayOnce) {
-      Upgrader().debugDisplayOnce = this.debugDisplayOnce;
+    if (debugDisplayOnce) {
+      Upgrader().debugDisplayOnce = debugDisplayOnce;
     }
-    if (this.debugLogging) {
-      Upgrader().debugLogging = this.debugLogging;
+    if (debugLogging) {
+      Upgrader().debugLogging = debugLogging;
     }
-    if (this.onIgnore != null) {
-      Upgrader().onIgnore = this.onIgnore;
+    if (onIgnore != null) {
+      Upgrader().onIgnore = onIgnore;
     }
-    if (this.onLater != null) {
-      Upgrader().onLater = this.onLater;
+    if (onLater != null) {
+      Upgrader().onLater = onLater;
     }
-    if (this.onUpdate != null) {
-      Upgrader().onUpdate = this.onUpdate;
+    if (onUpdate != null) {
+      Upgrader().onUpdate = onUpdate;
     }
-    if (this.prompt != null) {
-      Upgrader().prompt = this.prompt;
+    if (prompt != null) {
+      Upgrader().prompt = prompt;
     }
-    if (this.title != null) {
-      Upgrader().title = this.title;
+    if (title != null) {
+      Upgrader().title = title;
     }
   }
 

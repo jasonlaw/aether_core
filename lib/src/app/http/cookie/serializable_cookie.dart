@@ -35,6 +35,6 @@ class SerializableCookie {
 
   @override
   String toString() {
-    return cookie.toString() + ';_crt=$createTimeStamp';
+    return '$cookie;_crt=$createTimeStamp';
   }
 }

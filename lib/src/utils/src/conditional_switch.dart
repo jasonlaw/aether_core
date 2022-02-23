@@ -19,7 +19,7 @@ class ConditionalSwitch {
     required Map<T, Widget Function()> caseBuilders,
     required Widget Function() fallbackBuilder,
   }) {
-    final T value = valueBuilder();
+    final value = valueBuilder();
     if (caseBuilders[value] != null) {
       return caseBuilders[value]!();
     } else {
@@ -41,7 +41,7 @@ class ConditionalSwitch {
     required Map<T, List<Widget> Function()> caseBuilders,
     required List<Widget> Function() fallbackBuilder,
   }) {
-    final T value = valueBuilder();
+    final value = valueBuilder();
     if (caseBuilders[value] != null) {
       return caseBuilders[value]!();
     } else {

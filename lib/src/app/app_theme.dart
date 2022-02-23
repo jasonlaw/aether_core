@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 import 'app.dart';
 
@@ -11,7 +11,7 @@ class AppTheme {
         _themeMode = ThemeMode.values
             .firstWhere((e) => describeEnum(e) == lastThemeMode);
       }
-    } catch (e) {}
+    } on Exception catch (_) {}
   }
 
   ThemeMode defaultMode = ThemeMode.system;

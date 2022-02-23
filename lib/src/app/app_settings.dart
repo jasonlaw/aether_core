@@ -1,20 +1,20 @@
 part of 'app.dart';
 
 class AppSettings extends Entity {
-  late final Field<String> apiBaseUrl = this.field("ApiBaseUrl");
-  late final Field<String> apiKey = this.field("ApiKey");
+  late final Field<String> apiBaseUrl = field("ApiBaseUrl");
+  late final Field<String> apiKey = field("ApiKey");
   late final Field<int> apiConnectTimeoutInSec =
-      this.field("ApiConnectTimeoutInSec", defaultValue: 5);
-  late final Field<String?> appStoreURL = this.field("AppStoreURL");
+      field("ApiConnectTimeoutInSec", defaultValue: 5);
+  late final Field<String?> appStoreURL = field("AppStoreURL");
 
   // EasyLoading get easyLoading => EasyLoading.instance;
 
   AppSettings._() {
-    final _google = this.field<String>("GooglePlayURL");
-    final _apple = this.field<String>("AppleAppStoreURL");
-    final _huawei = this.field<String>("HuaweiAppGalleryURL");
+    final _google = field<String>("GooglePlayURL");
+    final _apple = field<String>("AppleAppStoreURL");
+    final _huawei = field<String>("HuaweiAppGalleryURL");
 
-    this.appStoreURL.computed(
+    appStoreURL.computed(
         bindings: [_google, _apple, _huawei],
         compute: () {
           if (kIsWeb) return null;
@@ -31,27 +31,27 @@ class AppSettings extends Entity {
 
     /// Loading a json configuration file from a custom [path] into the current app config./
     Future loadFromPath(String path) async {
-      String content = await rootBundle.loadString(path);
-      Map<String, dynamic> configAsMap = json.decode(content);
+      final content = await rootBundle.loadString(path);
+      final configAsMap = json.decode(content) as Map<String, dynamic>;
       settings.load(configAsMap);
     }
 
     try {
       await loadFromPath(kSettingsFilePath);
-    } catch (_) {
+    } on Exception catch (_) {
       return settings;
     }
 
     if (kStagingMode) {
       try {
         await loadFromPath(kSettingsFilePathStaging);
-      } catch (_) {}
+      } on Exception catch (_) {}
     }
 
     if (kDebugMode) {
       try {
         await loadFromPath(kSettingsFilePathDebug);
-      } catch (_) {}
+      } on Exception catch (_) {}
     }
 
     if (kDebugMode) print(settings.toMap());

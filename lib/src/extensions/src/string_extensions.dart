@@ -6,8 +6,8 @@ extension AetherNullableStringExtensions on String? {
 
 extension AetherStringExtensions on String {
   String truncate(int maxLength, {String remaining = '...'}) {
-    if (this.length <= maxLength) return this;
-    return this.substring(0, maxLength) + '...';
+    if (length <= maxLength) return this;
+    return '${substring(0, maxLength)}...';
   }
 }
 // extension AetherStringExtensions on String {

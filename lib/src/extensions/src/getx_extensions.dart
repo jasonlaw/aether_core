@@ -3,12 +3,12 @@ import 'package:get_storage/get_storage.dart';
 
 extension GetxGetStorageExtensions on GetStorage {
   Future removeAll(List<String> keys) async {
-    await Future.forEach(keys, (String key) async => await this.remove(key));
+    await Future.forEach(keys, (String key) async => await remove(key));
   }
 }
 
 extension GetxRxnExtensions on Rxn {
-  void nil() => this.value = null;
-  bool get isValueNull => this.value == null;
-  bool get isValueNotNull => this.value != null;
+  void nil() => value = null;
+  bool get isValueNull => value == null;
+  bool get isValueNotNull => value != null;
 }
