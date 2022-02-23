@@ -54,7 +54,7 @@ App.dialog({String? title,
             
 App.confirm(String question, 
             {String? title, 
-             String? okButtonTitle, 
+             String? buttonTitle, 
              String? cancelButtonTitle})
 
 // Notification
