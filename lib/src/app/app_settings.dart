@@ -18,7 +18,7 @@ class AppSettings extends Entity {
         bindings: [_google, _apple, _huawei],
         compute: () {
           if (kIsWeb) return null;
-          if (Platform.isIOS) return _apple();
+          if (GetPlatform.isIOS) return _apple();
           if (kHuaweiAppGallery) return _huawei();
           return _google();
         });

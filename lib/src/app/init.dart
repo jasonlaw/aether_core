@@ -1,5 +1,4 @@
 import 'package:aether_core/src/app/app.dart';
-import 'package:aether_core/src/extensions/extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 
@@ -7,30 +6,20 @@ import '../services/dialog/dialog_service.dart';
 
 class AppInit {
   // Progress indicator config
-  void progressIndicator(void Function(EasyLoading easyLoading) configure) {
-    configure(EasyLoading.instance);
-  }
+  void progressIndicator(
+    void Function(EasyLoading easyLoading) configure,
+  ) =>
+      configure(EasyLoading.instance);
 
-  // Dialog notification customization
-  void error(
-      Future<void> Function(dynamic error, {String? title}) notifyError) {
-    AppActions.notifyError = notifyError;
-  }
+  void dialog(
+    void Function(DialogDefaultSettings settings) configure,
+  ) =>
+      configure(AppActions.dialogSettings);
 
-  void info(Future<void> Function(String info, {String? title}) notifyInfo) {
-    AppActions.notifyInfo = notifyInfo;
-  }
-
-  void confirm(
-      Future<bool> Function(
-    String question, {
-    String? title,
-    String? okButtonTitle,
-    String? cancelButtonTitle,
-  })
-          confirm) {
-    AppActions.askConfirm = confirm;
-  }
+  void notification(
+    void Function(NotificationDefaultSettings settings) configure,
+  ) =>
+      configure(AppActions.notifySettings);
 
   // Credential setup
   void silentLogin(Future Function() action) => AppActions.silentLogin = action;
@@ -45,48 +34,23 @@ class AppActions {
   static Future Function()? silentLogin;
   static Future Function(dynamic)? login;
   static Future Function()? logout;
+  static DialogDefaultSettings dialogSettings = DialogDefaultSettings();
+  static NotificationDefaultSettings notifySettings =
+      NotificationDefaultSettings();
+}
 
-  static Future<void> Function(dynamic error, {String? title}) notifyError =
-      (dynamic error, {String? title}) async {
-    if (error == null) return;
-    Get.snackbar(
-      title ?? "Error".tr,
-      error.toString().truncate(1000),
-      snackPosition: SnackPosition.BOTTOM,
-      icon: Icon(Icons.error, color: Colors.red),
-    );
-  };
+class DialogDefaultSettings {
+  String? buttonTitle;
+  String? cancelTitle;
+  Color? buttonTitleColor;
+  Color? cancelTitleColor;
+  DialogPlatform? dialogPlatform;
+}
 
-  static Future<void> Function(String info, {String? title}) notifyInfo =
-      (String info, {String? title}) async {
-    Get.snackbar(
-      title ?? "Info".tr,
-      info,
-      snackPosition: SnackPosition.BOTTOM,
-      icon: Icon(Icons.info, color: Colors.blue),
-    );
-  };
-
-  static Future<bool> Function(
-    String question, {
-    String? title,
-    String? okButtonTitle,
-    String? cancelButtonTitle,
-  }) askConfirm = (
-    String question, {
-    String? title,
-    String? okButtonTitle,
-    String? cancelButtonTitle,
-  }) async {
-    var response = await App.dialog.showDialog(
-      title: title,
-      description: question,
-      buttonTitle: okButtonTitle ?? 'Ok'.tr,
-      cancelTitle: cancelButtonTitle ?? 'Cancel'.tr,
-      cancelTitleColor: Colors.red,
-      dialogPlatform: DialogPlatform.Cupertino,
-      barrierDismissible: true,
-    );
-    return response?.confirmed ?? false;
-  };
+class NotificationDefaultSettings {
+  String? errorTitle;
+  String? infoTitle;
+  Icon errorIcon = const Icon(Icons.error, color: Colors.red);
+  Icon infoIcon = const Icon(Icons.info, color: Colors.blue);
+  SnackPosition snackPosition = SnackPosition.BOTTOM;
 }

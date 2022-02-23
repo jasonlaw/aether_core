@@ -4,6 +4,6 @@ export 'src/app/app.dart';
 export 'src/entity/entity.dart';
 export 'src/models/models.dart';
 export 'src/extensions/extensions.dart';
+export 'src/services/services.dart';
 
-export 'src/services.dart';
 export 'src/utils.dart';

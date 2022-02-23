@@ -17,7 +17,7 @@ enum DialogPlatform {
 
 // https://github.com/FilledStacks/stacked/tree/master/packages/stacked_services
 /// A DialogService that uses the Get package to show dialogs from the business logic
-class DialogService {
+class DialogService extends GetxService {
   Map<dynamic, DialogBuilder>? _dialogBuilders;
 
   void registerCustomDialogBuilders(Map<dynamic, DialogBuilder> builders) {
@@ -63,9 +63,9 @@ class DialogService {
         barrierDismissible: barrierDismissible,
       );
     } else {
-      var _dialogType = GetPlatform.isAndroid
-          ? DialogPlatform.Material
-          : DialogPlatform.Cupertino;
+      var _dialogType = GetPlatform.isIOS
+          ? DialogPlatform.Cupertino
+          : DialogPlatform.Material;
       return _showDialog(
         title: title,
         description: description,

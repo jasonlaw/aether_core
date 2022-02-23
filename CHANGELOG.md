@@ -1,3 +1,6 @@
+## 0.3.4
+* Rework on App.dialog and notification
+
 ## 0.3.3
 * Add url to MediaFile model
 
