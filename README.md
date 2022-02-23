@@ -116,7 +116,7 @@ class PlanQuality extends Entity {}
   });
 ~~~
 
-### Quick REST PI Access
+### Quick REST API Access
 ~~~dart
 final result = await '/api/login'.api(body: request.data).post(
         timeout: Duration(seconds: 5),
