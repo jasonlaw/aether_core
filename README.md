@@ -69,9 +69,10 @@ App.dismissProgressIndicator()
 ### Unauthorized handler (401 error)
 ~~~dart
  App.connect.addUnauthorizedResponseHandler((response) async {
-    await App.error(
-      'Your login session may have expired. Please re-login again.',
+    await App.dialog(
+      description: 'Your login session may have expired. Please re-login again.',
       title: 'Unauthorized',
+      barrierDismissible: true,
     );
     App.identity.signOut();
   });
