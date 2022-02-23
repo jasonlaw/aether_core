@@ -35,19 +35,33 @@ Before runApp, initialize AppService. After that, you may access the service via
 await AppService.startup(); 
 ~~~
 
-### Notification services
+### Dialog, Notification and Progress indicator
 ~~~dart
 // Customization
-App.custom.info(Future<void> Function(String info, {String? title}) notifyInfo)
-App.custom.confirm(Future<bool> Function(String question, {String? title, String? okButtonTitle, String? cancelButtonTitle})
-App.custom.error(Future<void> Function(dynamic error, {String? title}) notifyError)
-App.custom.progressIndicator(void Function(EasyLoading easyLoading) configure)
+App.init.dialog(void Function(DialogDefaultSettings settings) configure)
+App.init.notification(void Function(NotificationDefaultSettings settings) configure)
+App.init.progressIndicator(void Function(EasyLoading easyLoading) configure)
 
-// Call the service
+// Dialog
+App.dialog({String? title, 
+            String? description, 
+            String? cancelTitle, 
+            Color? cancelTitleColor, 
+            String? buttonTitle, 
+            Color? buttonTitleColor,  
+            bool barrierDismissible = false, 
+            DialogPlatform? dialogPlatform})
+            
+App.confirm(String question, 
+            {String? title, 
+             String? okButtonTitle, 
+             String? cancelButtonTitle})
+
+// Notification
 App.info(String info, {String? title})
-App.confirm(String question, {String? title, String? okButtonTitle, String? cancelButtonTitle})
 App.error(dynamic error, {String? title})
 
+// Progress indicator
 App.showProgressIndicator({String? status})
 App.dismissProgressIndicator()
 ~~~
