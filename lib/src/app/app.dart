@@ -1,7 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 
+import 'package:aether_core/src/extensions/extensions.dart';
+import 'package:aether_core/src/services/models/overlay_response.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
@@ -55,8 +56,8 @@ class AppService extends GetxService {
   final String buildNumber;
   final String packageName;
 
-  final SnackbarService snackbar = SnackbarService();
-  final DialogService dialog = DialogService();
+  //final SnackbarService snackbar = SnackbarService();
+  //final DialogService dialog = DialogService();
   late final CredentialIdentity identity =
       Get.isRegistered() ? Get.find() : CredentialIdentity();
   late final AppSettings settings;
@@ -92,6 +93,9 @@ class AppService extends GetxService {
     await GetStorage.init();
 
     appService.settings = await AppSettings._init();
+
+    Get.lazyPut(() => DialogService());
+    Get.lazyPut(() => SnackbarService());
 
     Get.log('Startup AppService Done.');
   }
@@ -136,26 +140,72 @@ class AppService extends GetxService {
   String newDigits(int size, {int seed = -1}) =>
       Uuid().digits(size, seed: seed);
 
-  // Dialog actions
-  /// Error notification, default a snackbar
-  Future<void> error(dynamic error, {String? title}) =>
-      AppActions.notifyError(error, title: title);
+  /// Error snackbar notification
+  Future<void> error(dynamic error, {String? title}) async {
+    if (error == null) return;
+    Get.snackbar(
+      title ?? AppActions.notifySettings.infoTitle ?? 'Error'.tr,
+      error.toString().truncate(1000),
+      snackPosition: AppActions.notifySettings.snackPosition,
+      icon: AppActions.notifySettings.errorIcon,
+    );
+  }
 
-  /// Information notification, default a snackbar
-  Future<void> info(String info, {String? title}) =>
-      AppActions.notifyInfo(info, title: title);
+  /// Information snackbar notification
+  Future<void> info(String info, {String? title}) async => Get.snackbar(
+        title ?? AppActions.notifySettings.infoTitle ?? 'Info'.tr,
+        info,
+        snackPosition: AppActions.notifySettings.snackPosition,
+        icon: AppActions.notifySettings.infoIcon,
+      );
 
-  /// Prompt confirmation dialog
+  /// Confirmation dialog
   Future<bool> confirm(
     String question, {
     String? title,
     String? okButtonTitle,
     String? cancelButtonTitle,
+  }) async {
+    final response = await Get.find<DialogService>().showDialog(
+      title: title,
+      description: question,
+      buttonTitle:
+          okButtonTitle ?? AppActions.dialogSettings.buttonTitle ?? 'OK'.tr,
+      cancelTitle: cancelButtonTitle ??
+          AppActions.dialogSettings.cancelTitle ??
+          'CANCEL'.tr,
+      buttonTitleColor: AppActions.dialogSettings.buttonTitleColor,
+      cancelTitleColor: AppActions.dialogSettings.cancelTitleColor,
+      dialogPlatform: AppActions.dialogSettings.dialogPlatform,
+      barrierDismissible: true,
+    );
+    return response?.confirmed ?? false;
+  }
+
+  /// General dialog
+  Future<DialogResponse?> dialog({
+    String? title,
+    String? description,
+    String? cancelTitle,
+    Color? cancelTitleColor,
+    String? buttonTitle,
+    Color? buttonTitleColor,
+    bool barrierDismissible = false,
+    DialogPlatform? dialogPlatform,
   }) =>
-      AppActions.askConfirm(question,
+      Get.find<DialogService>().showDialog(
           title: title,
-          okButtonTitle: okButtonTitle,
-          cancelButtonTitle: cancelButtonTitle);
+          description: description,
+          buttonTitle:
+              buttonTitle ?? AppActions.dialogSettings.buttonTitle ?? 'OK'.tr,
+          cancelTitle: cancelTitle ?? AppActions.dialogSettings.cancelTitle,
+          buttonTitleColor:
+              buttonTitleColor ?? AppActions.dialogSettings.buttonTitleColor,
+          cancelTitleColor:
+              cancelTitleColor ?? AppActions.dialogSettings.cancelTitleColor,
+          barrierDismissible: barrierDismissible,
+          dialogPlatform:
+              dialogPlatform ?? AppActions.dialogSettings.dialogPlatform);
 
   // Progress indicator actions
   void showProgressIndicator({String? status}) {

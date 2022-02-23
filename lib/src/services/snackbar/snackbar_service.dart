@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 /// A service that allows the user to show the snackbar from a ViewModel
-class SnackbarService {
+class SnackbarService extends GetxService {
   // @Deprecated(
   //     'Prefer to use the StackedServices.navigatorKey instead of using this key. This will be removed in the next major version update for stacked.')
   // get navigatorKey {
