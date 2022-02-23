@@ -66,18 +66,6 @@ App.showProgressIndicator({String? status})
 App.dismissProgressIndicator()
 ~~~
 
-### Unauthorized handler (401 error)
-~~~dart
- App.connect.addUnauthorizedResponseHandler((response) async {
-    await App.dialog(
-      description: 'Your login session may have expired. Please re-login again.',
-      title: 'Unauthorized',
-      barrierDismissible: true,
-    );
-    App.identity.signOut();
-  });
-~~~
-
 ## Entity
 ~~~dart
 class Company extends Entity {
@@ -115,6 +103,19 @@ class PlanQuality extends Entity {}
 ~~~
 
 ## API Connect
+
+### Unauthorized handler (401 error)
+~~~dart
+ App.connect.addUnauthorizedResponseHandler((response) async {
+    await App.dialog(
+      description: 'Your login session may have expired. Please re-login again.',
+      title: 'Unauthorized',
+      barrierDismissible: true,
+    );
+    App.identity.signOut();
+  });
+~~~
+
 ### Quick REST PI Access
 ~~~dart
 final result = await '/api/login'.api(body: request.data).post(
