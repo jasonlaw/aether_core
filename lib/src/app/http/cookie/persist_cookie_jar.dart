@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:aether_core/src/extensions/extensions.dart';
+import '../../../extensions/extensions.dart';
 
 import '../../app.dart';
 import 'default_cookie_jar.dart';
@@ -73,7 +73,7 @@ class PersistCookieJar extends DefaultCookieJar {
           domainCookies
             ..clear()
             ..addAll(cookies);
-        } catch (e) {
+        } on Exception catch (_) {
           await App.storage.remove(_domainsKey);
         }
       }
@@ -83,7 +83,7 @@ class PersistCookieJar extends DefaultCookieJar {
         try {
           final list = json.decode(str);
           _hostSet = Set<String>.from(list);
-        } catch (e) {
+        } on Exception catch (_) {
           await App.storage.remove(_indexKey);
         }
       } else {

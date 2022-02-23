@@ -1,39 +1,37 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:aether_core/src/extensions/extensions.dart';
-import 'package:aether_core/src/services/models/overlay_response.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/foundation.dart';
-
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:get/get_connect/http/src/interceptors/get_modifiers.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
-import 'package:aether_core/src/entity/entity.dart';
-import 'package:aether_core/src/services/services.dart';
-import 'package:aether_core/src/utils/utils.dart';
-
-import 'init.dart';
-import 'http/getxhttp.dart';
-import 'upgrader/upgrader.dart';
+import '../entity/entity.dart';
+import '../extensions/extensions.dart';
+import '../services/models/overlay_response.dart';
+import '../services/services.dart';
+import '../utils/utils.dart';
 import 'app_theme.dart';
+import 'http/getxhttp.dart';
+import 'init.dart';
+import 'upgrader/upgrader.dart';
 
-///import '../entity.dart';
-//import '../extensions.dart';
-
-export 'http/getxhttp.dart';
-export 'package:get/get.dart';
 export 'package:flutter_easyloading/flutter_easyloading.dart'
     show EasyLoadingIndicatorType;
+export 'package:get/get.dart';
+
 export 'app_theme_sheet.dart';
 
-part 'app_settings.dart';
-part 'app_getxconnect.dart';
+///import '../entity.dart';
+export 'http/getxhttp.dart';
+
 part 'app_credential.dart';
+part 'app_getxconnect.dart';
+part 'app_settings.dart';
 
 const String kSystemPath = 'assets/system';
 const String kImagesPath = 'assets/images';
@@ -77,7 +75,7 @@ class AppService extends GetxService {
 
     final packageInfo = await PackageInfo.fromPlatform();
 
-    if (kStagingMode && appName != null) appName = appName + ' (Staging)';
+    if (kStagingMode && appName != null) appName = '$appName (Staging)';
 
     final appService = AppService._(
       name: appName ?? packageInfo.appName,
@@ -105,7 +103,7 @@ class AppService extends GetxService {
     required this.version,
     required this.buildNumber,
     required this.packageName,
-  }) : this.name = name + (kDebugMode ? '*' : '') {
+  }) : name = name + (kDebugMode ? '*' : '') {
     Get.log('              App Name : ${this.name}');
     Get.log('           App Version : $version');
     Get.log('          Build Number : $buildNumber');
@@ -221,7 +219,7 @@ class AppService extends GetxService {
   Future silentLogin() async => AppActions.silentLogin?.call();
 
   /// Login credential, implementation required in App.init.login
-  Future login(request) async => AppActions.login?.call(request);
+  Future login(dynamic request) async => AppActions.login?.call(request);
 
   /// Logout credential, implementation required in App.init.logout
   Future logout() async => AppActions.logout?.call();

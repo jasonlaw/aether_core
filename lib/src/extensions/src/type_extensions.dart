@@ -1,11 +1,11 @@
 extension AetherTypeExtensions on Type {
   bool isTypeOf<T>() => this == T;
 
-  getDefault() {
-    if (this.isTypeOf<String>()) return '';
-    if (this.isTypeOf<bool>()) return false;
-    if (this.isTypeOf<int>() || this.isTypeOf<num>()) return 0;
-    if (this.isTypeOf<double>()) return 0.0;
+  dynamic getDefault() {
+    if (isTypeOf<String>()) return '';
+    if (isTypeOf<bool>()) return false;
+    if (isTypeOf<int>() || isTypeOf<num>()) return 0;
+    if (isTypeOf<double>()) return 0.0;
     return null;
   }
 }

@@ -37,11 +37,11 @@ abstract class FieldBase<T> {
       _fieldOnChanged = action;
 
   void propagate() {
-    if (this.isComputed) {
+    if (isComputed) {
       try {
         entity[name] = _compute!();
       } on Exception catch (_) {
-        printError(info: 'ComputedError on ${this.runtimeType}.$name');
+        printError(info: 'ComputedError on ${runtimeType}.$name');
         rethrow;
       }
     }

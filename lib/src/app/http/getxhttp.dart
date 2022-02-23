@@ -1,16 +1,16 @@
-import 'package:aether_core/src/entity/entity.dart';
-import 'package:aether_core/src/models/models.dart';
 import 'package:cross_file/cross_file.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get_connect/http/src/exceptions/exceptions.dart';
 
+import '../../entity/entity.dart';
+import '../../models/models.dart';
 import '../app.dart';
 
 export 'cookie/cookie_manager.dart';
 
+part 'getxhttp_extensions.dart';
 part 'getxhttp_params.dart';
 part 'getxhttp_query.dart';
-part 'getxhttp_extensions.dart';
 
 class GetxHttp {
   late final GetConnect client;
@@ -79,7 +79,7 @@ class GetxHttp {
     Duration? timeout,
   }) async {
     String _queryBody;
-    Map<String, dynamic>? _variables = variables;
+    var _variables = variables;
 
     if (query is GraphQLQuery) {
       final _gql = query.buildQuery();
@@ -113,7 +113,7 @@ class GetxHttp {
           message: error?.toString(),
         )
       ]);
-    }).whenComplete(() => _dismissProgressIndicator());
+    }).whenComplete(_dismissProgressIndicator);
   }
 
   String _gqlDataType(dynamic value) {
@@ -121,8 +121,9 @@ class GetxHttp {
     if (value is bool || value is bool?) return GraphQLDataType.boolean;
     if (value is int || value is int?) return GraphQLDataType.integer;
     if (value is double || value is double?) return GraphQLDataType.double;
-    if (value is DateTime || value is DateTime?)
+    if (value is DateTime || value is DateTime?) {
       return GraphQLDataType.dateTime;
+    }
     if (value is Parameter) return value.paramType;
     return value.runtimeType.toString();
   }
@@ -189,7 +190,7 @@ class GetxHttp {
             headers: headers,
             contentType: contentType,
             decoder: decoder)
-        .whenComplete(() => _dismissProgressIndicator());
+        .whenComplete(_dismissProgressIndicator);
 
     if (result.unauthorized && _unauthorizedResponseHandler != null) {
       GetMicrotask().exec(() => _unauthorizedResponseHandler!.call(result));
@@ -238,17 +239,17 @@ Future<dynamic> _encodeJson(dynamic payload) async {
     return await _encodeJson(payload.paramValue);
   }
   if (payload is! Map<String, dynamic>) return payload;
-  final Map<String, dynamic> encoded = {};
+  final encoded = <String, dynamic>{};
 
   //payload.forEach((key, value) async {
   for (final entry in payload.entries) {
     final key = entry.key;
     final value = entry.value;
-    if (value is List<DateTime>)
+    if (value is List<DateTime>) {
       encoded[key] = value.map((e) => e.toIso8601String()).toList();
-    else if (value is DateTime)
+    } else if (value is DateTime) {
       encoded[key] = value.toIso8601String();
-    else if (value is XFile) {
+    } else if (value is XFile) {
       encoded[key] = MultipartFile(await value.readAsBytes(),
           filename: value.name,
           contentType: value.mimeType ?? 'application/octet-stream');
@@ -261,8 +262,9 @@ Future<dynamic> _encodeJson(dynamic payload) async {
       print((encoded[key][0] as MultipartFile).length);
     } else if (value is Parameter) {
       encoded[key] = await _encodeJson(value.paramValue);
-    } else
+    } else {
       encoded[key] = value;
+    }
   }
   return encoded;
 }
@@ -271,10 +273,12 @@ Map<String, dynamic>? _encodeQuery(Map<String, dynamic>? query) {
   if (query == null) return null;
   query.removeWhere((key, value) => value == null);
   return query.map((key, value) {
-    if (value is String || value is List<String>)
+    if (value is String || value is List<String>) {
       return MapEntry(key, value.toString());
-    if (value is List)
+    }
+    if (value is List) {
       return MapEntry(key, value.map((e) => e.toString()).toList());
+    }
     return MapEntry(key, value.toString());
   });
 }

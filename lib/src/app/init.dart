@@ -1,8 +1,8 @@
-import 'package:aether_core/src/app/app.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 import '../services/dialog/dialog_service.dart';
+import 'app.dart';
 
 class AppInit {
   // Progress indicator config

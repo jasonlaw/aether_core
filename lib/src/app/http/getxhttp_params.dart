@@ -2,7 +2,7 @@ part of 'getxhttp.dart';
 
 class Parameter {
   dynamic get paramValue => throw UnimplementedError();
-  String get paramType => this.runtimeType.toString();
+  String get paramType => runtimeType.toString();
 }
 
 class RestBody {
@@ -10,7 +10,7 @@ class RestBody {
   bool _formDataMode;
   bool get formDataMode => _formDataMode;
 
-  RestBody({bool formData: false}) : _formDataMode = formData;
+  RestBody({bool formData = false}) : _formDataMode = formData;
 
   RestBody addField(FieldBase field) {
     if (field is ListField<MediaFile>) {
@@ -29,7 +29,7 @@ class RestBody {
   }
 
   RestBody addMap(Map<String, dynamic> map) {
-    map.forEach((key, value) => addParam(key, value));
+    map.forEach(addParam);
     return this;
   }
 
@@ -43,15 +43,15 @@ class RestBody {
 
   /// param can be [FieldBase], [Map<String, dynamic>] or [MapEntry<String, dynamic>]
   RestBody addParams(List params) {
-    params.forEach((item) {
+    for (final item in params) {
       if (item is FieldBase) {
-        this.addField(item);
+        addField(item);
       } else if (item is Map<String, dynamic>) {
-        this.addMap(item);
+        addMap(item);
       } else if (item is MapEntry<String, dynamic>) {
-        this.addParam(item.key, item.value);
+        addParam(item.key, item.value);
       }
-    });
+    }
     return this;
   }
 

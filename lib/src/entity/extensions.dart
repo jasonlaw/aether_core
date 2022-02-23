@@ -1,15 +1,15 @@
 part of 'entity.dart';
 
 extension RxEntityExtensions on Rx<Entity> {
-  T of<T extends Entity>() => this.value as T;
+  T of<T extends Entity>() => value as T;
 }
 
 extension RxEntityFieldExtensions<E> on Rx<Field<E>> {
-  E? get field => this.value.value;
+  E? get field => value.value;
 }
 
 extension RxEntityListFieldExtensions<E extends Entity> on Rx<ListField<E>> {
-  List<E> get list => this.value.value;
+  List<E> get list => value.value;
 }
 
 extension EntityExtensions<E extends Entity> on E {
@@ -24,8 +24,8 @@ extension EntityExtensions<E extends Entity> on E {
 }
 
 extension EntityFieldStringExtensions on Field<String> {
-  bool get valueIsNullOrEmpty => this.value.isNotNullOrEmpty;
-  bool get valueIsNotNullOrEmpty => this.value.isNotNullOrEmpty;
+  bool get valueIsNullOrEmpty => value.isNotNullOrEmpty;
+  bool get valueIsNotNullOrEmpty => value.isNotNullOrEmpty;
 }
 
 // extension ListOfEntityExtensions<E extends Entity> on List<E> {

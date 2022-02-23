@@ -104,9 +104,9 @@ class GraphQLQuery {
   }
 
   Map<String, dynamic> buildQuery() {
-    final Map<String, dynamic> result = {};
-    final Map<String, dynamic> vars = {};
-    final Map<String, String> varTypes = {};
+    final result = <String, dynamic>{};
+    final vars = <String, dynamic>{};
+    final varTypes = <String, String>{};
 
     if (params != null && params!.isNotEmpty) {
       vars.addAll(params!);
@@ -191,7 +191,7 @@ class GraphQLQuery {
   }) async {
     _http ??= App.connect;
     if (disableLoadingIndicator) _http!.disableLoadingIndicator();
-    var result = await _http!.gql(
+    final result = await _http!.gql(
       method,
       this,
       headers: headers,

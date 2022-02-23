@@ -24,7 +24,7 @@ class Field<T> extends FieldBase<T> {
   @override
   T? get value {
     _getDefault() {
-      if (this.isLoaded) return null;
+      if (isLoaded) return null;
       final _value = innerDefaultValue();
       entity.data[name] = _value;
       return _value;
@@ -46,8 +46,7 @@ class Field<T> extends FieldBase<T> {
   T call([T? value]) {
     if (value != null) this.value = value;
     final _value = this.value;
-    assert(
-        _value != null, '${this.entity.runtimeType}.$name() has a null value!');
+    assert(_value != null, '${entity.runtimeType}.$name() has a null value!');
     return this.value!;
   }
 
@@ -64,21 +63,21 @@ class Field<T> extends FieldBase<T> {
     required List<FieldBase> bindings,
     required Computed<T?> compute,
   }) {
-    bindings.forEach((bindingField) {
-      var list = bindingField._computeBindings ??= Set();
+    for (final bindingField in bindings) {
+      var list = bindingField._computeBindings ??= <FieldBase>{};
       list.add(this);
-    });
+    }
     _compute = compute;
   }
 
-  bool get valueIsNull => this.value == null;
-  bool get valueIsNotNull => this.value != null;
+  bool get valueIsNull => value == null;
+  bool get valueIsNotNull => value != null;
 }
 
 // Specific for standard EntityField
 extension FieldExtensions<T> on Field<T> {
   void onLoading({required ValueTransform<T> transform}) =>
-      this._fieldOnLoading = (value) => transform(value);
+      _fieldOnLoading = (value) => transform(value);
 }
 
 // Specific for EntityField of Entity
@@ -88,8 +87,8 @@ extension FieldOfEntityExtensions<E extends Entity> on Field<E> {
     bool auto = false,
   }) {
     if (auto) _createDefault = () => createEntity().._parentRef = this;
-    this._fieldOnLoading = (rawData) {
-      final instance = this.value ?? createEntity()
+    _fieldOnLoading = (rawData) {
+      final instance = value ?? createEntity()
         .._parentRef = this;
       return instance..load(rawData);
     };
@@ -98,10 +97,10 @@ extension FieldOfEntityExtensions<E extends Entity> on Field<E> {
 
   void load(Map<String, dynamic> rawData) {
     assert(!isComputed, "Not allowed to load data into a computed field $name");
-    this.innerLoad(rawData);
+    innerLoad(rawData);
   }
 
   void nil() {
-    this.entity[name] = null;
+    entity[name] = null;
   }
 }

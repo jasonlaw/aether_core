@@ -1,4 +1,3 @@
-import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:cross_file/cross_file.dart';
@@ -41,7 +40,7 @@ class XFileImage extends ImageProvider<XFileImage> {
   }
 
   Future<ui.Codec> _loadAsync(XFileImage key, DecoderCallback decode) async {
-    final Uint8List bytes = await file.readAsBytes();
+    final bytes = await file.readAsBytes();
 
     if (bytes.lengthInBytes == 0) {
       // The file may become available later.

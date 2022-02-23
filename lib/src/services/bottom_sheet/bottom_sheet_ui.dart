@@ -74,7 +74,7 @@ class FullScreenButton extends StatelessWidget {
   /// Height of the button. Default value is [screenHeightFraction(context, dividedBy: 18)]
   final double? height;
 
-  static BorderRadius _borderRadius = BorderRadius.circular(8);
+  static final BorderRadius _borderRadius = BorderRadius.circular(8);
 
   FullScreenButton({
     Key? key,

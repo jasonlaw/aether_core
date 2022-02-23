@@ -1,16 +1,16 @@
 part of 'app.dart';
 
 class CredentialIdentity extends Entity {
-  late final Field<String> id = this.field("id");
-  late final Field<String> username = this.field("username");
-  late final Field<String> name = this.field("name");
-  late final Field<String> email = this.field("email");
-  late final Field<String> roles = this.field("roles");
+  late final Field<String> id = field("id");
+  late final Field<String> username = field("username");
+  late final Field<String> name = field("name");
+  late final Field<String> email = field("email");
+  late final Field<String> roles = field("roles");
   bool get isAuthenticated => id.valueIsNotNullOrEmpty;
 
   void signIn(String id, String username, String name, String email,
       {String? roles}) {
-    this.load({
+    load({
       'id': id,
       'username': username,
       'name': name,
@@ -37,6 +37,6 @@ class CredentialIdentity extends Entity {
   @mustCallSuper
   void signOut() {
     GetStorage().remove('CredentialIdentity.RefreshToken');
-    this.reset();
+    reset();
   }
 }

@@ -64,10 +64,10 @@ class ListField<E extends Entity> extends FieldBase<List<E>> {
     EntityBuilder<E> createEntity,
   ) {
     _createEntity = createEntity;
-    this._fieldOnLoading = (rawData) {
+    _fieldOnLoading = (rawData) {
       final list = <E>[];
       rawData.forEach((data) {
-        final E entity = _createEntity();
+        final entity = _createEntity();
         entity.load(data);
         entity._parentRef = this;
         list.add(entity);
@@ -79,66 +79,68 @@ class ListField<E extends Entity> extends FieldBase<List<E>> {
 
   void load(List rawData) {
     assert(!isComputed, "Not allowed to load data into a computed field $name");
-    this.innerLoad(rawData);
+    innerLoad(rawData);
   }
 
-  E operator [](int index) => this.value[index];
+  E operator [](int index) => value[index];
 
   void sort([int compare(E a, E b)?]) {
-    this.value.sort(compare);
-    this.updateState(exclusive: true);
+    value.sort(compare);
+    updateState(exclusive: true);
   }
 
   void clear() {
-    this.value.clear();
-    this.updateState(exclusive: true);
+    value.clear();
+    updateState(exclusive: true);
   }
 
   void add(E entity) {
-    this.value.add(entity);
+    value.add(entity);
     entity._parentRef = this;
-    this.updateState(exclusive: true);
+    updateState(exclusive: true);
   }
 
   void addAll(Iterable<E> entities) {
-    entities.forEach((entity) => entity._parentRef = this);
-    this.value.addAll(entities);
-    this.updateState(exclusive: true);
+    for (var entity in entities) {
+      entity._parentRef = this;
+    }
+    value.addAll(entities);
+    updateState(exclusive: true);
   }
 
   void assignAll(Iterable<E> entities) {
-    this.value.clear();
-    this.addAll(entities);
+    value.clear();
+    addAll(entities);
   }
 
   void insert(int index, E entity) {
-    this.value.insert(index, entity);
+    value.insert(index, entity);
     entity._parentRef = this;
-    this.updateState(exclusive: true);
+    updateState(exclusive: true);
   }
 
   bool remove(E entity) {
-    var foundAndRemoved = this.value.remove(entity);
+    var foundAndRemoved = value.remove(entity);
     if (foundAndRemoved) {
       entity._parentRef = null;
-      this.updateState(exclusive: true);
+      updateState(exclusive: true);
     }
     return foundAndRemoved;
   }
 
   void removeAt(int index) {
-    this.value.removeAt(index);
-    this.updateState(exclusive: true);
+    value.removeAt(index);
+    updateState(exclusive: true);
   }
 
   void removeLast() {
-    this.value.removeLast();
-    this.updateState(exclusive: true);
+    value.removeLast();
+    updateState(exclusive: true);
   }
 
   void removeWhere(bool test(E element)) {
-    this.value.removeWhere(test);
-    this.updateState(exclusive: true);
+    value.removeWhere(test);
+    updateState(exclusive: true);
   }
 
   bool get isEmpty => value.isEmpty;
@@ -161,7 +163,7 @@ class ListField<E extends Entity> extends FieldBase<List<E>> {
   E? firstWhereOrDefault(bool test(E element)) {
     try {
       return value.firstWhere(test);
-    } catch (_) {
+    } on Exception catch (_) {
       return null;
     }
   }

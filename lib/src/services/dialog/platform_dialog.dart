@@ -1,6 +1,7 @@
-import 'package:aether_core/src/services/dialog/dialog_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
+import 'dialog_service.dart';
 
 const TextStyle _defaultTextStyle = TextStyle(color: Colors.black);
 const TextStyle _cancelTextStyle = TextStyle(color: Colors.red);

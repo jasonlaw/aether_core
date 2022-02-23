@@ -1,10 +1,11 @@
 import 'dart:async';
 
-import 'package:aether_core/src/services/dialog/platform_dialog.dart';
-import 'package:aether_core/src/services/models/overlay_request.dart';
-import 'package:aether_core/src/services/models/overlay_response.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import '../models/overlay_request.dart';
+import '../models/overlay_response.dart';
+import 'platform_dialog.dart';
 
 typedef DialogBuilder = Widget Function(
     BuildContext, DialogRequest, void Function(DialogResponse));
