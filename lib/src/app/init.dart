@@ -30,15 +30,6 @@ class AppInit {
   void logout(Future Function() action) => AppActions.logout = action;
 }
 
-class AppActions {
-  static Future Function()? silentLogin;
-  static Future Function(dynamic)? login;
-  static Future Function()? logout;
-  static DialogDefaultSettings dialogSettings = DialogDefaultSettings();
-  static NotificationDefaultSettings notifySettings =
-      NotificationDefaultSettings();
-}
-
 class DialogDefaultSettings {
   String? buttonTitle;
   String? cancelTitle;
@@ -53,4 +44,13 @@ class NotificationDefaultSettings {
   Icon errorIcon = const Icon(Icons.error, color: Colors.red);
   Icon infoIcon = const Icon(Icons.info, color: Colors.blue);
   SnackPosition snackPosition = SnackPosition.BOTTOM;
+}
+
+class AppActions {
+  static Future Function()? silentLogin;
+  static Future Function(dynamic)? login;
+  static Future Function()? logout;
+  static DialogDefaultSettings dialogSettings = DialogDefaultSettings();
+  static NotificationDefaultSettings notifySettings =
+      NotificationDefaultSettings();
 }

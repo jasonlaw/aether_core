@@ -41,7 +41,7 @@ abstract class FieldBase<T> {
       try {
         entity[name] = _compute!();
       } on Exception catch (_) {
-        printError(info: 'ComputedError on ${runtimeType}.$name');
+        printError(info: 'ComputedError on $runtimeType.$name');
         rethrow;
       }
     }

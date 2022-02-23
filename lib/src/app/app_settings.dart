@@ -32,7 +32,7 @@ class AppSettings extends Entity {
     /// Loading a json configuration file from a custom [path] into the current app config./
     Future loadFromPath(String path) async {
       final content = await rootBundle.loadString(path);
-      Map<String, dynamic> configAsMap = json.decode(content);
+      final configAsMap = json.decode(content) as Map<String, dynamic>;
       settings.load(configAsMap);
     }
 

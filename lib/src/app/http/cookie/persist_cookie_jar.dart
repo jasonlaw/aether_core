@@ -215,7 +215,7 @@ class PersistCookieJar extends DefaultCookieJar {
 
           hostCookies[host] =
               cookies.cast<String, Map<String, SerializableCookie>>();
-        } catch (e) {
+        } on Exception catch (_) {
           await App.storage.remove(host);
         }
       }
