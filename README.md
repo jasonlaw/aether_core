@@ -32,15 +32,15 @@ Example
 ## AppService
 Before runApp, initialize AppService. After that, you may access the service via App instance.
 ~~~dart
-await AppService.startup(); 
+await AppService.init(); 
 ~~~
 
 ### Dialog, Notification and Progress indicator
 ~~~dart
-// Customization
-App.init.dialog(void Function(DialogDefaultSettings settings) configure)
-App.init.notification(void Function(NotificationDefaultSettings settings) configure)
-App.init.progressIndicator(void Function(EasyLoading easyLoading) configure)
+// Configurations
+App.config.dialog(void Function(DialogDefaultSettings settings) configure)
+App.config.notification(void Function(NotificationDefaultSettings settings) configure)
+App.config.progressIndicator(void Function(EasyLoading easyLoading) configure)
 
 // Dialog
 App.dialog({String? title, 
