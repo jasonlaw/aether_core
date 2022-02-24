@@ -4,7 +4,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import '../services/dialog/dialog_service.dart';
 import 'app.dart';
 
-class AppInit {
+class AppConfig {
   // Progress indicator config
   void progressIndicator(
     void Function(EasyLoading easyLoading) configure,

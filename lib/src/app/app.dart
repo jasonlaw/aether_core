@@ -17,7 +17,7 @@ import '../services/services.dart';
 import '../utils/utils.dart';
 import 'app_theme.dart';
 import 'http/getxhttp.dart';
-import 'init.dart';
+import 'config.dart';
 import 'upgrader/upgrader.dart';
 
 export 'package:flutter_easyloading/flutter_easyloading.dart'
@@ -64,9 +64,9 @@ class AppService extends GetxService {
   late final GetStorage storage = GetStorage();
   late final AppTheme theme = AppTheme();
   late final Crypto crypto = Crypto();
-  late final AppInit init = AppInit();
+  late final AppConfig config = AppConfig();
 
-  static Future startup([String? appName]) async {
+  static Future init([String? appName]) async {
     Get.log('Startup AppService...');
 
     //WidgetsFlutterBinding.ensureInitialized();
