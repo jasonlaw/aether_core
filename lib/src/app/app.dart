@@ -16,8 +16,8 @@ import '../services/models/overlay_response.dart';
 import '../services/services.dart';
 import '../utils/utils.dart';
 import 'app_theme.dart';
-import 'http/getxhttp.dart';
 import 'config.dart';
+import 'http/getxhttp.dart';
 import 'upgrader/upgrader.dart';
 
 export 'package:flutter_easyloading/flutter_easyloading.dart'
