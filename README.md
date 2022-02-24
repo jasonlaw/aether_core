@@ -66,6 +66,66 @@ App.showProgressIndicator({String? status})
 App.dismissProgressIndicator()
 ~~~
 
+## Credential Management
+Example:
+~~~dart
+class CredentialManager {
+  static void init() {
+    App.config.silentLogin(() => CredentialManager.silentLogin());
+    App.config.login((request) => CredentialManager.login(request));
+    App.config.logout(() => CredentialManager.logout());
+
+    App.connect.addAuthenticator<void>((request) async {
+      final token = CredentialIdentity.refreshToken;
+      if (token != null) {
+        final result = await '/api/login/refresh'
+            .api()
+            .post(headers: {'x-refresh-token': token});
+        if (result.hasError) {
+          //AppAuth.reset();
+          App.identity.signOut();
+        }
+      }
+      return request;
+    });
+  }
+
+  static Future<void> login(LoginRequest request) async {
+    if (!request.validated()) return LoginStatus.failed;
+
+    final result = await '/api/login/admin'
+        .api(body: request.toMap())
+        .post(timeout: const Duration(seconds: 5));
+
+    if (result.hasError) return Future.error(result.errorText);
+    
+    App.identity.load(result.body);    
+  }
+
+  static Future<void> silentLogin() async {
+    final result = await '/api/mylogin/silentlogin'
+        .api()
+        .post(timeout: const Duration(seconds: 10));
+
+    if (result.isOk) {
+      App.identity.load(result.body);
+    }
+  }
+
+  static Future<void> logout() async {
+    final result =
+        await '/api/logout'.api().post(timeout: const Duration(seconds: 5));
+    if (result.hasError) {
+      // if failed to logout, we manually clear the cookies.
+      App.connect.clearCookies();
+    }
+    //AppAuth.reset();
+    App.identity.signOut();
+    return await Get.toNamed('/');
+  }
+}
+~~~
+
 ## Entity
 ~~~dart
 class Company extends Entity {
