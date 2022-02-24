@@ -1,3 +1,6 @@
+## 0.35
+* Renamed: AppService.init and App.config
+
 ## 0.3.4
 * Rework on App.dialog and notification
 
