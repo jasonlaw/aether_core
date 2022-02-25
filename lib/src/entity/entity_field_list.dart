@@ -60,7 +60,7 @@ class ListField<E extends Entity> extends FieldBase<List<E>> {
   //   super.reset();
   // }
 
-  ListField<E> register(
+  void register(
     EntityBuilder<E> createEntity,
   ) {
     _createEntity = createEntity;
@@ -74,7 +74,7 @@ class ListField<E extends Entity> extends FieldBase<List<E>> {
       });
       return list;
     };
-    return this;
+    //return this;
   }
 
   void load(List rawData) {

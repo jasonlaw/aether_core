@@ -9,13 +9,12 @@ class RestQuery {
 
   RestQuery(this.url, {this.body, this.query});
 
-  RestQuery use(GetxHttp http) {
+  void use(GetxHttp http) {
     _http ??= http;
-    return this;
   }
 
-  RestQuery external() {
-    return use(App.http);
+  void external() {
+    use(App.http);
   }
 
   Future<Response<T>> get<T>({
@@ -94,13 +93,12 @@ class GraphQLQuery {
 
   GraphQLQuery(this.name, this.fields, {this.params, this.paramTypes});
 
-  GraphQLQuery use(GetxHttp http) {
+  void use(GetxHttp http) {
     _http ??= http;
-    return this;
   }
 
-  GraphQLQuery external() {
-    return use(App.http);
+  void external() {
+    use(App.http);
   }
 
   Map<String, dynamic> buildQuery() {
@@ -136,7 +134,7 @@ class GraphQLQuery {
 
     final _variables = params?.entries.map((x) {
       if (x.value is Parameter) {
-        varTypes[x.key] ??= x.value.paramType;
+        varTypes[x.key] ??= x.value.type;
       }
       return '${x.key}: \$${x.key}';
     }).join(', ');

@@ -2,9 +2,8 @@ part of 'getxhttp.dart';
 
 class Parameter {
   final String type;
-  final dynamic Function() valueBuilder;
-  const Parameter({required this.type, required this.valueBuilder});
-  dynamic get value => valueBuilder.call();
+  final dynamic value;
+  const Parameter({required this.type, required this.value});
 }
 
 class RestBody {
