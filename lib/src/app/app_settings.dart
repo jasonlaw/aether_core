@@ -27,8 +27,6 @@ class AppSettings extends Entity {
   static Future<AppSettings> _init() async {
     var settings = AppSettings._();
 
-    AppActions.resetDefaultLoading();
-
     /// Loading a json configuration file from a custom [path] into the current app config./
     Future loadFromPath(String path) async {
       final content = await rootBundle.loadString(path);
