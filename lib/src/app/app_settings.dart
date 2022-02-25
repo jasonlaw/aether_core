@@ -27,7 +27,7 @@ class AppSettings extends Entity {
   static Future<AppSettings> _init() async {
     var settings = AppSettings._();
 
-    _configLoading();
+    AppActions.resetDefaultLoading();
 
     /// Loading a json configuration file from a custom [path] into the current app config./
     Future loadFromPath(String path) async {
@@ -58,37 +58,4 @@ class AppSettings extends Entity {
 
     return settings;
   }
-
-  static void _configLoading() {
-    EasyLoading.instance
-      ..displayDuration = const Duration(milliseconds: 2000)
-      ..indicatorType = EasyLoadingIndicatorType.fadingCircle
-      ..loadingStyle = EasyLoadingStyle.dark
-      ..indicatorSize = 50.0
-      ..radius = 10.0
-      ..progressColor = Colors.green
-      ..backgroundColor = Colors.transparent
-      ..indicatorColor = Colors.green
-      ..textColor = Colors.transparent
-      ..maskColor = Colors.blue.withOpacity(0.5)
-      ..userInteractions = false;
-    // ..customAnimation = CustomAnimation();
-  }
-
-//   void customLoadingIndicator(
-//       {EasyLoadingIndicatorType type = EasyLoadingIndicatorType.fadingCircle,
-//       double size = 50.0,
-//       Color color = Colors.green,
-//       Color backgroundColor = Colors.transparent,
-//       Color textColor = Colors.transparent,
-//       Color maskColor = Colors.transparent}) {
-//     EasyLoading.instance
-//       ..indicatorType = type
-//       ..indicatorSize = size
-//       ..indicatorColor = color
-//       ..backgroundColor = backgroundColor
-//       ..textColor = textColor
-//       ..maskColor = maskColor
-//       ..loadingStyle = EasyLoadingStyle.custom;
-//   }
 }
