@@ -6,4 +6,4 @@ export 'src/entity/entity.dart';
 export 'src/extensions/extensions.dart';
 export 'src/models/models.dart';
 export 'src/services/services.dart';
-export 'src/utils.dart';
+export 'src/utils/utils.dart';

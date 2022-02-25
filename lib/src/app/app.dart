@@ -133,13 +133,6 @@ class AppService extends GetxService {
         ),
       );
 
-  // Unique ID generators
-  /// Generate a v1 unique identifier
-  String newUuid() => Uuid().v1();
-
-  String newDigits(int size, {int seed = -1}) =>
-      Uuid().digits(size, seed: seed);
-
   /// Error snackbar notification
   Future<void> error(dynamic error, {String? title}) async {
     if (error == null) return;
