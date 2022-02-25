@@ -32,75 +32,151 @@ Example
 ## AppService
 Before runApp, initialize AppService. After that, you may access the service via App instance.
 ~~~dart
-await AppService.startup(); 
+await AppService.init(); 
 ~~~
 
-### Notification services
+### Dialog, Notification and Progress indicator
 ~~~dart
-// Customization
-App.custom.info(Future<void> Function(String info, {String? title}) notifyInfo)
-App.custom.confirm(Future<bool> Function(String question, {String? title, String? okButtonTitle, String? cancelButtonTitle})
-App.custom.error(Future<void> Function(dynamic error, {String? title}) notifyError)
-App.custom.progressIndicator(void Function(EasyLoading easyLoading) configure)
+// Configurations
+App.config.dialog(void Function(DialogDefaultSettings settings) configure)
+App.config.notification(void Function(NotificationDefaultSettings settings) configure)
+App.config.progressIndicator(void Function(EasyLoading easyLoading) configure)
 
-// Call the service
+// Dialog
+App.dialog({String? title, 
+            String? description, 
+            String? cancelTitle, 
+            Color? cancelTitleColor, 
+            String? buttonTitle, 
+            Color? buttonTitleColor,  
+            bool barrierDismissible = false, 
+            DialogPlatform? dialogPlatform})
+            
+App.confirm(String question, 
+            {String? title, 
+             String? buttonTitle, 
+             String? cancelButtonTitle})
+
+// Notification
 App.info(String info, {String? title})
-App.confirm(String question, {String? title, String? okButtonTitle, String? cancelButtonTitle})
 App.error(dynamic error, {String? title})
 
+// Progress indicator
 App.showProgressIndicator({String? status})
 App.dismissProgressIndicator()
 ~~~
 
-### Unauthorized handler (401 error)
+## Credential Management
+Example:
 ~~~dart
- App.connect.addUnauthorizedResponseHandler((response) async {
-    await App.error(
-      'Your login session may have expired. Please re-login again.',
-      title: 'Unauthorized',
-    );
+class CredentialManager {
+  static void init() {
+    App.config.silentLogin(() => CredentialManager.silentLogin());
+    App.config.login((request) => CredentialManager.login(request));
+    App.config.logout(() => CredentialManager.logout());
+
+    App.connect.addAuthenticator<void>((request) async {
+      final token = CredentialIdentity.refreshToken;
+      if (token != null) {
+        final result = await '/api/login/refresh'
+            .api()
+            .post(headers: {'x-refresh-token': token});
+        if (result.hasError) {
+          //AppAuth.reset();
+          App.identity.signOut();
+        }
+      }
+      return request;
+    });
+  }
+
+  static Future<void> login(LoginRequest request) async {
+    if (!request.validated()) return LoginStatus.failed;
+
+    final result = await '/api/login/admin'
+        .api(body: request.toMap())
+        .post(timeout: const Duration(seconds: 5));
+
+    if (result.hasError) return Future.error(result.errorText);
+    
+    App.identity.load(result.body);    
+  }
+
+  static Future<void> silentLogin() async {
+    final result = await '/api/mylogin/silentlogin'
+        .api()
+        .post(timeout: const Duration(seconds: 10));
+
+    if (result.isOk) {
+      App.identity.load(result.body);
+    }
+  }
+
+  static Future<void> logout() async {
+    final result =
+        await '/api/logout'.api().post(timeout: const Duration(seconds: 5));
+    if (result.hasError) {
+      // if failed to logout, we manually clear the cookies.
+      App.connect.clearCookies();
+    }
+    //AppAuth.reset();
     App.identity.signOut();
-  });
+    return await Get.toNamed('/');
+  }
+}
 ~~~
 
 ## Entity
 ~~~dart
 class Company extends Entity {
-  late final Field<DateTime> name = this.field('name');
-  late final Field<DateTime> time = this.field('time');
-  late final Field<int> capacity = this.field('capacity');
-  late final Field<double> kpi = this.field('kpi');
-  late final ListField<Machine> machines = this.fieldList('machines');
-  late final Field<Settings> settings = this.field('settings');
-  late final Field<PlanQuality> planQuality = this.field('planQuality');
+  late final Field<DateTime> name = field('name');
+  late final Field<DateTime> time = field('time');
+  late final Field<int> capacity = field('capacity');
+  late final Field<double> kpi = field('kpi');
+  late final ListField<Machine> machines = fieldList('machines');
+  late final Field<Settings> settings = field('settings');
+  late final Field<PlanQuality> planQuality = field('planQuality');
 
   Company() {
     print('Company constructor');
-    this.capacity.computed(
+    capacity.computed(
       bindings: [machines],
       compute: () => machines.fold(0, (p, e) => p! + e.capacity()),
     );
-    this.machines.register(() => Machine());
-    this.settings.register(() => Settings(), auto: true);
+    machines.register(() => Machine());
+    settings.register(() => Settings(), auto: true);
     print('End of Company constructor');
   }
 }
 
 class Machine extends Entity {
-  late final Field<String> name = this.field('name');
-  late final Field<int> capacity = this.field('capacity');
+  late final Field<String> name = field('name');
+  late final Field<int> capacity = field('capacity');
 }
 
 class Settings extends Entity {
   late final Field<int> minCapacity =
-      this.field('minCapacity', defaultValue: 10);
+      field('minCapacity', defaultValue: 10);
 }
 
 class PlanQuality extends Entity {}
 ~~~
 
 ## API Connect
-### Quick REST PI Access
+
+### Unauthorized handler (401 error)
+~~~dart
+ App.connect.addUnauthorizedResponseHandler((response) async {
+    await App.dialog(
+      description: 'Your login session may have expired. Please re-login again.',
+      title: 'Unauthorized',
+      barrierDismissible: true,
+    );
+    App.identity.signOut();
+  });
+~~~
+
+### Quick REST API Access
 ~~~dart
 final result = await '/api/login'.api(body: request.data).post(
         timeout: Duration(seconds: 5),
