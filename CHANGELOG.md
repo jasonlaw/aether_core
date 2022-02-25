@@ -1,4 +1,7 @@
 ## 0.35
+* Fixed upload media file bug
+
+## 0.35
 * Renamed: AppService.init and App.config
 
 ## 0.3.4

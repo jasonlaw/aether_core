@@ -24,7 +24,7 @@ extension EntityExtensions<E extends Entity> on E {
 }
 
 extension EntityFieldStringExtensions on Field<String> {
-  bool get valueIsNullOrEmpty => value.isNotNullOrEmpty;
+  bool get valueIsNullOrEmpty => value.isNullOrEmpty;
   bool get valueIsNotNullOrEmpty => value.isNotNullOrEmpty;
 }
 

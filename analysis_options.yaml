@@ -74,7 +74,7 @@ linter:
     # use_setters_to_change_properties: true #JL
     avoid_setters_without_getters: true
     avoid_returning_null: true # avoid
-    # avoid_returning_this: true # avoid #JL
+    avoid_returning_this: true # avoid #JL
     type_annotate_public_apis: true # prefer
     #- prefer_typing_uninitialized_variables # consider
     omit_local_variable_types: true # avoid    
