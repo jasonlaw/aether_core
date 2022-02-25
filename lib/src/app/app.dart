@@ -92,6 +92,8 @@ class AppService extends GetxService {
 
     appService.settings = await AppSettings._init();
 
+    AppActions.resetDefaultLoading();
+
     Get.lazyPut(() => DialogService());
     Get.lazyPut(() => SnackbarService());
 

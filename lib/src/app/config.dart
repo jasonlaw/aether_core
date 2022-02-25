@@ -53,4 +53,20 @@ class AppActions {
   static DialogDefaultSettings dialogSettings = DialogDefaultSettings();
   static NotificationDefaultSettings notifySettings =
       NotificationDefaultSettings();
+
+  static void resetDefaultLoading() {
+    EasyLoading.instance
+      ..displayDuration = const Duration(milliseconds: 2000)
+      ..indicatorType = EasyLoadingIndicatorType.fadingCircle
+      ..loadingStyle = EasyLoadingStyle.dark
+      ..indicatorSize = 50.0
+      ..radius = 10.0
+      ..progressColor = Colors.green
+      ..backgroundColor = Colors.transparent
+      ..indicatorColor = Colors.green
+      ..textColor = Colors.transparent
+      ..maskColor = Colors.blue.withOpacity(0.5)
+      ..userInteractions = false;
+    // ..customAnimation = CustomAnimation();
+  }
 }
