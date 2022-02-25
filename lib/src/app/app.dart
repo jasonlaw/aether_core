@@ -63,7 +63,6 @@ class AppService extends GetxService {
   late final GetxHttp http = GetxHttp();
   late final GetStorage storage = GetStorage();
   late final AppTheme theme = AppTheme();
-  late final Crypto crypto = Crypto();
   late final AppConfig config = AppConfig();
 
   static Future init([String? appName]) async {
