@@ -124,7 +124,7 @@ class GetxHttp {
     if (value is DateTime || value is DateTime?) {
       return GraphQLDataType.dateTime;
     }
-    if (value is Parameter) return value.paramType;
+    if (value is Parameter) return value.type;
     return value.runtimeType.toString();
   }
 
@@ -236,12 +236,11 @@ class GetxHttp {
 Future<dynamic> _encodeJson(dynamic payload) async {
   if (payload == null) return null;
   if (payload is Parameter) {
-    return await _encodeJson(payload.paramValue);
+    return await _encodeJson(payload.value);
   }
   if (payload is! Map<String, dynamic>) return payload;
   final encoded = <String, dynamic>{};
 
-  //payload.forEach((key, value) async {
   for (final entry in payload.entries) {
     final key = entry.key;
     final value = entry.value;
@@ -249,6 +248,18 @@ Future<dynamic> _encodeJson(dynamic payload) async {
       encoded[key] = value.map((e) => e.toIso8601String()).toList();
     } else if (value is DateTime) {
       encoded[key] = value.toIso8601String();
+    } else if (value is MediaFile) {
+      encoded[key] = MultipartFile(await value.file!.readAsBytes(),
+          filename: value.file!.name,
+          contentType: value.file!.mimeType ?? 'application/octet-stream');
+    } else if (value is List<MediaFile>) {
+      encoded[key] = await Future.wait(value
+          .map((mediaFile) async => MultipartFile(
+              await mediaFile.file!.readAsBytes(),
+              filename: mediaFile.file!.name,
+              contentType:
+                  mediaFile.file!.mimeType ?? 'application/octet-stream'))
+          .toList());
     } else if (value is XFile) {
       encoded[key] = MultipartFile(await value.readAsBytes(),
           filename: value.name,
@@ -259,9 +270,8 @@ Future<dynamic> _encodeJson(dynamic payload) async {
               filename: file.name,
               contentType: file.mimeType ?? 'application/octet-stream'))
           .toList());
-      print((encoded[key][0] as MultipartFile).length);
     } else if (value is Parameter) {
-      encoded[key] = await _encodeJson(value.paramValue);
+      encoded[key] = await _encodeJson(value.value);
     } else {
       encoded[key] = value;
     }

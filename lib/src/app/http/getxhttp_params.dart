@@ -1,8 +1,10 @@
 part of 'getxhttp.dart';
 
 class Parameter {
-  dynamic get paramValue => throw UnimplementedError();
-  String get paramType => runtimeType.toString();
+  final String type;
+  final dynamic Function() valueBuilder;
+  const Parameter({required this.type, required this.valueBuilder});
+  dynamic get value => valueBuilder.call();
 }
 
 class RestBody {
@@ -12,50 +14,52 @@ class RestBody {
 
   RestBody({bool formData = false}) : _formDataMode = formData;
 
-  RestBody addField(FieldBase field) {
+  void _addParam(String name, dynamic value) {
+    if (value != null) {
+      _formDataMode = _formDataMode ||
+          value is MediaFile ||
+          value is List<MediaFile> ||
+          value is XFile ||
+          value is List<XFile>;
+
+      data[name] = value;
+    }
+  }
+
+  void addField(FieldBase field) {
     if (field is ListField<MediaFile>) {
       _formDataMode = true;
-      final _uploads =
-          field.where((e) => e.canUpload).map((e) => e.file!).toList();
-      if (_uploads.isEmpty) return this;
-      return addParam(field.name, _uploads);
+      final _uploads = field.where((e) => e.canUpload).toList();
+      if (_uploads.isNotEmpty) _addParam(field.name, _uploads);
+      return;
     }
     if (field is Field<MediaFile>) {
       _formDataMode = true;
-      if (field.valueIsNull || !field().canUpload) return this;
-      return addParam(field.name, field().file!);
+      if (field.valueIsNull || !field().canUpload) return;
+      _addParam(field.name, field());
+      return;
     }
-    return addParam(field.name, field.value);
+    return _addParam(field.name, field.value);
   }
 
-  RestBody addMap(Map<String, dynamic> map) {
-    map.forEach(addParam);
-    return this;
-  }
-
-  RestBody addParam(String name, dynamic value) {
-    if (value != null) {
-      _formDataMode = _formDataMode || value is XFile || value is List<XFile>;
-      data[name] = value;
-    }
-    return this;
+  void addMap(Map<String, dynamic> map) {
+    map.forEach(_addParam);
   }
 
   /// param can be [FieldBase], [Map<String, dynamic>] or [MapEntry<String, dynamic>]
-  RestBody addParams(List params) {
+  void add(List params) {
     for (final item in params) {
       if (item is FieldBase) {
         addField(item);
       } else if (item is Map<String, dynamic>) {
         addMap(item);
       } else if (item is MapEntry<String, dynamic>) {
-        addParam(item.key, item.value);
+        _addParam(item.key, item.value);
       }
     }
-    return this;
   }
 
   static RestBody params(List<dynamic> params) {
-    return RestBody().addParams(params);
+    return RestBody()..add(params);
   }
 }
