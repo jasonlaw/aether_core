@@ -9,12 +9,14 @@ class RestQuery {
 
   RestQuery(this.url, {this.body, this.query});
 
-  void use(GetxHttp http) {
+  // ignore: avoid_returning_this
+  RestQuery use(GetxHttp http) {
     _http ??= http;
+    return this;
   }
 
-  void external() {
-    use(App.http);
+  RestQuery external() {
+    return use(App.http);
   }
 
   Future<Response<T>> get<T>({
@@ -93,12 +95,14 @@ class GraphQLQuery {
 
   GraphQLQuery(this.name, this.fields, {this.params, this.paramTypes});
 
-  void use(GetxHttp http) {
+  // ignore: avoid_returning_this
+  GraphQLQuery use(GetxHttp http) {
     _http ??= http;
+    return this;
   }
 
-  void external() {
-    use(App.http);
+  GraphQLQuery external() {
+    return use(App.http);
   }
 
   Map<String, dynamic> buildQuery() {
