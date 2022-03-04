@@ -68,19 +68,14 @@ class Entity {
 
   Field<T> field<T>(String name, {String? label, T? defaultValue}) {
     var instance = fields[name] as Field<T>?;
-    if (instance == null) {
-      instance = Field<T>._(this,
-          name: name, label: label, defaultValue: defaultValue);
-    }
-    return instance;
+    return instance ??
+        Field<T>._(this, name: name, label: label, defaultValue: defaultValue);
   }
 
   ListField<E> fieldList<E extends Entity>(String name, {String? label}) {
     var instance = fields[name] as ListField<E>?;
-    if (instance == null) {
-      instance = ListField<E>._(this, name: name, label: label);
-    }
-    return instance;
+
+    return instance ?? ListField<E>._(this, name: name, label: label);
   }
 
   /// Load entity data.

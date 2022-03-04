@@ -84,7 +84,7 @@ class ListField<E extends Entity> extends FieldBase<List<E>> {
 
   E operator [](int index) => value[index];
 
-  void sort([int compare(E a, E b)?]) {
+  void sort([int Function(E a, E b)? compare]) {
     value.sort(compare);
     updateState(exclusive: true);
   }
@@ -138,7 +138,7 @@ class ListField<E extends Entity> extends FieldBase<List<E>> {
     updateState(exclusive: true);
   }
 
-  void removeWhere(bool test(E element)) {
+  void removeWhere(bool Function(E element) test) {
     value.removeWhere(test);
     updateState(exclusive: true);
   }
@@ -158,9 +158,9 @@ class ListField<E extends Entity> extends FieldBase<List<E>> {
   Iterable<E> where(bool Function(E) test) => value.where(test);
   bool any(bool Function(E) test) => value.any(test);
 
-  E firstWhere(bool test(E element), {E orElse()?}) =>
+  E firstWhere(bool Function(E element) test, {E Function()? orElse}) =>
       value.firstWhere(test, orElse: orElse);
-  E? firstWhereOrDefault(bool test(E element)) {
+  E? firstWhereOrDefault(bool Function(E element) test) {
     try {
       return value.firstWhere(test);
     } on Exception catch (_) {
@@ -168,12 +168,12 @@ class ListField<E extends Entity> extends FieldBase<List<E>> {
     }
   }
 
-  bool every(bool test(E element)) => value.every(test);
+  bool every(bool Function(E element) test) => value.every(test);
 
-  T fold<T>(T initialValue, T combine(T previousValue, E element)) =>
+  T fold<T>(T initialValue, T Function(T previousValue, E element) combine) =>
       value.fold<T>(initialValue, combine);
 
-  void forEach(void f(E element)) => value.forEach(f);
+  void forEach(void Function(E element) f) => value.forEach(f);
 
   static ListField<E> create<E extends Entity>() {
     return Entity().fieldList(E.runtimeType.toString());

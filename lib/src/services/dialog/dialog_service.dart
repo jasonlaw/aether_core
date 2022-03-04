@@ -11,8 +11,11 @@ typedef DialogBuilder = Widget Function(
     BuildContext, DialogRequest, void Function(DialogResponse));
 
 enum DialogPlatform {
+  // ignore: constant_identifier_names
   Cupertino,
+  // ignore: constant_identifier_names
   Material,
+  // ignore: constant_identifier_names
   Custom,
 }
 

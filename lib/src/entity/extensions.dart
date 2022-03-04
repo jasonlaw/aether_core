@@ -15,7 +15,7 @@ extension RxEntityListFieldExtensions<E extends Entity> on Rx<ListField<E>> {
 extension EntityExtensions<E extends Entity> on E {
   GraphQLEntity<E> gql(
     String name,
-    List<dynamic> query(E entity), {
+    List<dynamic> Function(E entity) query, {
     Map<String, dynamic>? params,
     Map<String, String>? paramTypes,
   }) {

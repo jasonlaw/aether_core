@@ -5,6 +5,8 @@ import '../services/dialog/dialog_service.dart';
 import 'app.dart';
 
 class AppConfig {
+  const AppConfig();
+
   // Progress indicator config
   void progressIndicator(
     void Function(EasyLoading easyLoading) configure,

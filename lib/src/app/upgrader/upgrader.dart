@@ -267,7 +267,7 @@ class Upgrader {
   }
 
   void _sendUserToAppStore() async {
-    if (_appStoreListingURL == null || _appStoreListingURL!.length == 0) {
+    if (_appStoreListingURL == null || _appStoreListingURL!.isEmpty) {
       if (debugLogging) {
         print('upgrader: empty _appStoreListingURL');
       }
