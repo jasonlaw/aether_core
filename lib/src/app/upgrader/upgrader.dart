@@ -114,7 +114,7 @@ class Upgrader {
     if (!_initCalled || _displayed) return;
     if (shouldDisplayUpgrade()) {
       _displayed = true;
-      Future.delayed(Duration(milliseconds: 0), () {
+      Future.delayed(const Duration(milliseconds: 0), () {
         _showDialog(title: getTitle(), message: getMessage());
       });
     }
@@ -177,7 +177,7 @@ class Upgrader {
                 children: <Widget>[
                   Text(message),
                   Padding(
-                      padding: EdgeInsets.only(top: 15.0),
+                      padding: const EdgeInsets.only(top: 15.0),
                       child: Text(getPrompt())),
                 ],
               ),

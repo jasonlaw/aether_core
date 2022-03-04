@@ -97,15 +97,15 @@ class DialogService extends GetxService {
     buttonTitle ??= 'OK'.tr;
     return Get.dialog<DialogResponse>(
       PlatformDialog(
-        key: Key('dialog_view'),
+        key: const Key('dialog_view'),
         dialogPlatform: dialogPlatform,
         title: title,
         content: description,
         actions: <Widget>[
           if (isConfirmationDialog)
             PlatformButton(
-              key: Key('dialog_touchable_cancel'),
-              textChildKey: Key('dialog_text_cancelButtonText'),
+              key: const Key('dialog_touchable_cancel'),
+              textChildKey: const Key('dialog_text_cancelButtonText'),
               dialogPlatform: dialogPlatform,
               text: cancelTitle!,
               cancelBtnColor: cancelTitleColor,
@@ -119,8 +119,8 @@ class DialogService extends GetxService {
               },
             ),
           PlatformButton(
-            key: Key('dialog_touchable_confirm'),
-            textChildKey: Key('dialog_text_confirmButtonText'),
+            key: const Key('dialog_touchable_confirm'),
+            textChildKey: const Key('dialog_text_confirmButtonText'),
             dialogPlatform: dialogPlatform,
             text: buttonTitle,
             confirmationBtnColor: buttonTitleColor,
@@ -187,7 +187,7 @@ class DialogService extends GetxService {
       barrierDismissible: barrierDismissible,
       barrierLabel: barrierLabel,
       pageBuilder: (BuildContext buildContext, _, __) => SafeArea(
-        key: Key('dialog_view'),
+        key: const Key('dialog_view'),
         child: Builder(
           builder: (BuildContext context) => customDialogUI!(
             context,

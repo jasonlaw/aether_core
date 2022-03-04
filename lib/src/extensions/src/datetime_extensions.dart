@@ -12,8 +12,9 @@ extension AetherDateTimeExtensions on DateTime {
   }
 
   DateTime get startOfDay => DateTime(year, month, day);
-  DateTime get startOfNextDay => startOfDay.add(Duration(days: 1));
-  DateTime get startOfPreviousDay => startOfDay.subtract(Duration(days: 1));
+  DateTime get startOfNextDay => startOfDay.add(const Duration(days: 1));
+  DateTime get startOfPreviousDay =>
+      startOfDay.subtract(const Duration(days: 1));
 
   DateTime withTime(DateTime time) => DateTime(
         year,

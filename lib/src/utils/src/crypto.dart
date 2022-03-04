@@ -5,8 +5,7 @@ import 'package:crypto/crypto.dart';
 import '../../app/app.dart';
 
 class Crypto {
-  const Crypto();
-  String checkSum(String data, {String? signingKey}) {
+  static String checkSum(String data, {String? signingKey}) {
     final key = utf8.encode(signingKey ?? App.settings.apiKey());
     final bytes = utf8.encode(data);
 

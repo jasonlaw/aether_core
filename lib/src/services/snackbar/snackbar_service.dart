@@ -89,7 +89,7 @@ class SnackbarService extends GetxService {
       titleText: _snackbarConfig?.titleColor != null || title.isNotEmpty
           ? Text(
               title,
-              key: Key('snackbar_text_title'),
+              key: const Key('snackbar_text_title'),
               style: TextStyle(
                 color:
                     _snackbarConfig?.titleColor ?? _snackbarConfig?.textColor,
@@ -98,11 +98,11 @@ class SnackbarService extends GetxService {
               ),
               textAlign: _snackbarConfig?.titleTextAlign ?? TextAlign.left,
             )
-          : SizedBox.shrink(),
+          : const SizedBox.shrink(),
       messageText: _snackbarConfig?.messageColor != null || message.isNotEmpty
           ? Text(
               message,
-              key: Key('snackbar_text_message'),
+              key: const Key('snackbar_text_message'),
               style: TextStyle(
                 color:
                     _snackbarConfig?.messageColor ?? _snackbarConfig?.textColor,
@@ -111,7 +111,7 @@ class SnackbarService extends GetxService {
               ),
               textAlign: _snackbarConfig?.messageTextAlign ?? TextAlign.left,
             )
-          : SizedBox.shrink(),
+          : const SizedBox.shrink(),
       colorText: _snackbarConfig?.textColor ?? Colors.white,
       shouldIconPulse: _snackbarConfig?.shouldIconPulse,
       onTap: onTap,
@@ -168,11 +168,11 @@ class SnackbarService extends GetxService {
           );
 
     final getBar = GetSnackBar(
-      key: Key('snackbar_view'),
+      key: const Key('snackbar_view'),
       titleText: title != null
           ? Text(
               title,
-              key: Key('snackbar_text_title'),
+              key: const Key('snackbar_text_title'),
               style: TextStyle(
                 color: snackbarConfig.titleColor ?? snackbarConfig.textColor,
                 fontWeight: FontWeight.w800,
@@ -183,7 +183,7 @@ class SnackbarService extends GetxService {
           : null,
       messageText: Text(
         message,
-        key: Key('snackbar_text_message'),
+        key: const Key('snackbar_text_message'),
         style: TextStyle(
           color: snackbarConfig.messageColor ?? snackbarConfig.textColor,
           fontWeight: FontWeight.w300,
@@ -246,10 +246,10 @@ class SnackbarService extends GetxService {
     }
 
     return TextButton(
-      key: Key('snackbar_touchable_mainButton'),
+      key: const Key('snackbar_touchable_mainButton'),
       child: Text(
         mainButtonTitle,
-        key: Key('snackbar_text_mainButtonTitle'),
+        key: const Key('snackbar_text_mainButtonTitle'),
         style: TextStyle(
           color:
               config?.mainButtonTextColor ?? config?.textColor ?? Colors.white,

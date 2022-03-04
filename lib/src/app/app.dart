@@ -63,7 +63,7 @@ class AppService extends GetxService {
   late final GetxHttp http = GetxHttp();
   late final GetStorage storage = GetStorage();
   late final AppTheme theme = AppTheme();
-  late final AppConfig config = AppConfig();
+  late final AppConfig config = const AppConfig();
 
   static Future init([String? appName]) async {
     Get.log('Startup AppService...');

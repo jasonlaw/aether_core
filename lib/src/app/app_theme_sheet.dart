@@ -5,6 +5,8 @@ import 'app.dart';
 class AppThemeSheet extends StatelessWidget {
   final darkMode = Get.isDarkMode.obs;
   final systemEnabled = (App.theme.defaultMode == ThemeMode.system).obs;
+
+  AppThemeSheet({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Obx(
@@ -17,19 +19,19 @@ class AppThemeSheet extends StatelessWidget {
               if (systemEnabled.isTrue)
                 ListTile(
                   title: Text('System'.tr),
-                  leading: Icon(Icons.settings_brightness),
+                  leading: const Icon(Icons.settings_brightness),
                   trailing: getThemeIcon(ThemeMode.system),
                   onTap: () => changeThemeMode(ThemeMode.system),
                 ),
               ListTile(
                 title: Text('Light'.tr),
-                leading: Icon(Icons.light_mode),
+                leading: const Icon(Icons.light_mode),
                 trailing: getThemeIcon(ThemeMode.light),
                 onTap: () => changeThemeMode(ThemeMode.light),
               ),
               ListTile(
                 title: Text('Dark'.tr),
-                leading: Icon(Icons.dark_mode),
+                leading: const Icon(Icons.dark_mode),
                 trailing: getThemeIcon(ThemeMode.dark),
                 onTap: () => changeThemeMode(ThemeMode.dark),
               ),
@@ -58,8 +60,8 @@ class AppThemeSheet extends StatelessWidget {
       }
     }
     return checked
-        ? Icon(Icons.check_circle_outline)
-        : Icon(Icons.circle_outlined);
+        ? const Icon(Icons.check_circle_outline)
+        : const Icon(Icons.circle_outlined);
   }
 
   void changeThemeMode(ThemeMode themeMode) {

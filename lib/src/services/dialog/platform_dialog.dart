@@ -121,13 +121,13 @@ class PlatformDialog extends StatelessWidget {
           title: title != null
               ? Text(
                   title!,
-                  key: Key('dialog_text_title'),
+                  key: const Key('dialog_text_title'),
                 )
               : null,
           content: content != null
               ? Text(
                   content!,
-                  key: Key('dialog_text_content'),
+                  key: const Key('dialog_text_content'),
                 )
               : null,
           actions: actions ?? [],
@@ -140,13 +140,13 @@ class PlatformDialog extends StatelessWidget {
           title: title != null
               ? Text(
                   title!,
-                  key: Key('dialog_text_title'),
+                  key: const Key('dialog_text_title'),
                 )
               : null,
           content: content != null
               ? Text(
                   content!,
-                  key: Key('dialog_text_content'),
+                  key: const Key('dialog_text_content'),
                 )
               : null,
           actions: actions,

@@ -31,7 +31,7 @@ class CredentialIdentity extends Entity {
   static String? get refreshToken {
     final token = GetStorage().read<String>('CredentialIdentity.RefreshToken');
     if (token == null || token == '') return null;
-    return '$token ${Crypto().checkSum(token)}';
+    return '$token ${Crypto.checkSum(token)}';
   }
 
   @mustCallSuper

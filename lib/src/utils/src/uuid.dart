@@ -27,7 +27,7 @@ class Uuid {
         'hasInitV1': false
       };
 
-  const Uuid();
+  const Uuid._();
 
   /// Unparses a [buffer] of bytes and outputs a proper UUID string.
   /// An optional [offset] is allowed if you want to start at a different point
@@ -173,4 +173,8 @@ class Uuid {
 
     return b;
   }
+
+  static String newUuid() => const Uuid._().v1();
+  static String newDigits(int size, {int seed = -1}) =>
+      const Uuid._().digits(size, seed: seed);
 }

@@ -45,7 +45,7 @@ class BottomSheetService {
       backgroundColor: Theme.of(Get.context!).brightness == Brightness.light
           ? Colors.white
           : Colors.grey[800],
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(15),
           topRight: Radius.circular(15),

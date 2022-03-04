@@ -33,13 +33,13 @@ class GeneralBottomSheet extends StatelessWidget {
         children: [
           Text(
             title,
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           if (description != null) verticalSpaceSmall,
           if (description != null)
             Text(
               description!,
-              style: TextStyle(fontSize: 15, color: Colors.grey),
+              style: const TextStyle(fontSize: 15, color: Colors.grey),
             ),
           verticalSpaceMedium,
           FullScreenButton(
@@ -76,7 +76,7 @@ class FullScreenButton extends StatelessWidget {
 
   static final BorderRadius _borderRadius = BorderRadius.circular(8);
 
-  FullScreenButton({
+  const FullScreenButton({
     Key? key,
     required this.title,
     required this.onPressed,
@@ -116,7 +116,7 @@ class FullScreenButton extends StatelessWidget {
                 borderRadius: _borderRadius,
                 boxShadow: [
                     if (hasDropShadow)
-                      BoxShadow(
+                      const BoxShadow(
                         color: Colors.black12,
                         blurRadius: 3,
                       )
