@@ -147,9 +147,11 @@ class Upgrader {
       _updateAvailable = available ? updateVersion : null;
 
       if (debugLogging) {
-        print('upgrader: appStoreVersion: $updateVersion');
-        print('upgrader: installedVersion: ${App.version.toString()}');
-        print('upgrader: isUpdateAvailable: $available');
+        if (kDebugMode) {
+          print('upgrader: appStoreVersion: $updateVersion');
+          print('upgrader: installedVersion: ${App.version.toString()}');
+          print('upgrader: isUpdateAvailable: $available');
+        }
       }
     }
     return _updateAvailable != null;
@@ -157,8 +159,10 @@ class Upgrader {
 
   void _showDialog({required String title, required String message}) {
     if (debugLogging) {
-      print('upgrader: showDialog title: $title');
-      print('upgrader: showDialog message: $message');
+      if (kDebugMode) {
+        print('upgrader: showDialog title: $title');
+        print('upgrader: showDialog message: $message');
+      }
     }
 
     // Save the date/time as the last time alerted.
@@ -198,7 +202,9 @@ class Upgrader {
 
   void onUserLater(bool shouldPop) {
     if (debugLogging) {
-      print('upgrader: button tapped: $buttonTitleLater');
+      if (kDebugMode) {
+        print('upgrader: button tapped: $buttonTitleLater');
+      }
     }
 
     // If this callback has been provided, call it.
@@ -216,7 +222,9 @@ class Upgrader {
 
   void onUserUpdated(bool shouldPop) {
     if (debugLogging) {
-      print('upgrader: button tapped: $buttonTitleUpdate');
+      if (kDebugMode) {
+        print('upgrader: button tapped: $buttonTitleUpdate');
+      }
     }
 
     // If this callback has been provided, call it.
@@ -269,13 +277,17 @@ class Upgrader {
   void _sendUserToAppStore() async {
     if (_appStoreListingURL == null || _appStoreListingURL!.isEmpty) {
       if (debugLogging) {
-        print('upgrader: empty _appStoreListingURL');
+        if (kDebugMode) {
+          print('upgrader: empty _appStoreListingURL');
+        }
       }
       return;
     }
 
     if (debugLogging) {
-      print('upgrader: launching: $_appStoreListingURL');
+      if (kDebugMode) {
+        print('upgrader: launching: $_appStoreListingURL');
+      }
     }
 
     launchUrl(_appStoreListingURL!);

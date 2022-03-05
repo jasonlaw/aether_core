@@ -1,4 +1,5 @@
 import 'package:aether_core/aether_core.dart';
+import 'package:flutter/foundation.dart';
 
 class Company extends Entity {
   late final Field<DateTime> name = field('name');
@@ -10,14 +11,18 @@ class Company extends Entity {
   late final Field<PlanQuality> planQuality = field('planQuality');
 
   Company() {
-    print('Company constructor');
+    if (kDebugMode) {
+      print('Company constructor');
+    }
     capacity.computed(
       bindings: [machines],
       compute: () => machines.fold(0, (p, e) => p! + e.capacity()),
     );
     machines.register(() => Machine());
     settings.register(() => Settings(), auto: true);
-    print('End of Company constructor');
+    if (kDebugMode) {
+      print('End of Company constructor');
+    }
   }
 }
 
