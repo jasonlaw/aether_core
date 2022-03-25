@@ -5,7 +5,7 @@ homepage: https://github.com/jasonlaw/aether_core.git
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `pub publish`. This is preferred for private packages.
-# publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
@@ -20,13 +20,17 @@ dependencies:
   #cupertino_icons: ^0.1.3
 
   # https://pub.dev/packages/get 
-  get: ^4.6.1
+  get: ^5.0.0-beta.50
 
   # https://pub.dev/packages/mime_type 
   # mime_type: ^1.0.0
 
   # https://pub.dev/packages/get_storage 
-  get_storage: ^2.0.3
+  # get_storage: ^2.0.3
+  get_storage:
+    git:
+      url: https://github.com/yutae/get_storage
+      ref: master
 
   # https://pub.dev/packages/package_info_plus 
   package_info_plus: ^1.4.0

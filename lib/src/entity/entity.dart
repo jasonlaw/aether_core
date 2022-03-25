@@ -137,7 +137,7 @@ class Entity {
     if (_isUpdatingValues || _isCopying || _isLoading || _isReseting) {
       return;
     }
-    _rx?.update((_) {}); //refresh has been removed
+    _rx?.trigger(this); //refresh has been removed
     _parentRef?.updateState();
   }
 
