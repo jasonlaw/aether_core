@@ -137,9 +137,8 @@ class Entity {
     if (_isUpdatingValues || _isCopying || _isLoading || _isReseting) {
       return;
     }
-    _rx?.refresh();
+    _rx?.update((_) {}); //refresh has been removed
     _parentRef?.updateState();
-    //_rxRefresh();
   }
 
   bool _isUpdatingValues = false;
