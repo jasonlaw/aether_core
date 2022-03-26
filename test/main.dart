@@ -1,3 +1,4 @@
+import 'package:aether_core/aether_core.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'model.dart';
@@ -80,6 +81,49 @@ void main() {
     });
     test('PlanQuality is cleared', () {
       expect(company.planQuality.valueIsNull, true);
+    });
+    test('Company is reloaded again', () {
+      company.load(companyData);
+      expect(company.isNotEmpty, true);
+    });
+    test('Field Rx', () async {
+      //final count = 0.obs;
+      company.count(0);
+      var result = -1;
+      ever<Field<int>>(company.count.rx, (value) {
+        result = value();
+      });
+      company.count(company.count() + 1);
+      await Future.delayed(Duration.zero);
+      expect(result, 1);
+      company.count(company.count() + 1);
+      await Future.delayed(Duration.zero);
+      expect(result, 2);
+      company.count(company.count() + 1);
+      await Future.delayed(Duration.zero);
+      expect(result, 3);
+    });
+
+    test('Entity Rx', () async {
+      final firstMachine = company.machines.first;
+
+      var capacity = firstMachine.capacity();
+      expect(capacity, 2, reason: 'Machine capacity not matched.');
+      var totalCapacity = company.capacity();
+      expect(totalCapacity, 10);
+
+      ever<Field<int>>(firstMachine.capacity.rx, (value) {
+        capacity = value();
+      });
+
+      ever<Entity>(company.rx, (value) {
+        totalCapacity = (value as Company).capacity();
+      });
+
+      firstMachine.capacity(11);
+      await Future.delayed(Duration.zero);
+      expect(capacity, 11);
+      expect(totalCapacity, 19);
     });
   });
 }

@@ -6,6 +6,7 @@ class Company extends Entity {
   late final Field<DateTime> time = field('time');
   late final Field<int> capacity = field('capacity');
   late final Field<double> kpi = field('kpi');
+  late final Field<int> count = field('count');
   late final ListField<Machine> machines = fieldList('machines');
   late final Field<Settings> settings = field('settings');
   late final Field<PlanQuality> planQuality = field('planQuality');
