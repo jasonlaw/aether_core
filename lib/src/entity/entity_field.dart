@@ -56,7 +56,7 @@ class Field<T> extends FieldBase<T> {
   @override
   void updateState() {
     super.updateState();
-    _rx?.trigger(this); //refresh has been removed
+    _rx?.forceRefresh();
   }
 
   void computed({

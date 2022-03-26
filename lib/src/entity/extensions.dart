@@ -1,5 +1,13 @@
 part of 'entity.dart';
 
+extension RxGenericExtensions on Rx {
+  void forceRefresh() {
+    // replace the obsoleted refresh method.
+    firstRebuild = false;
+    trigger(value);
+  }
+}
+
 extension RxEntityExtensions on Rx<Entity> {
   T of<T extends Entity>() => value as T;
 }

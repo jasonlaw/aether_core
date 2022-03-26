@@ -20,17 +20,17 @@ dependencies:
   #cupertino_icons: ^0.1.3
 
   # https://pub.dev/packages/get 
-  get: ^5.0.0-beta.50
+  get: ^4.6.1
 
   # https://pub.dev/packages/mime_type 
   # mime_type: ^1.0.0
 
   # https://pub.dev/packages/get_storage 
-  # get_storage: ^2.0.3
-  get_storage:
-    git:
-      url: https://github.com/yutae/get_storage
-      ref: master
+  get_storage: ^2.0.3
+  # get_storage:
+  #   git:
+  #     url: https://github.com/yutae/get_storage
+  #     ref: master
 
   # https://pub.dev/packages/package_info_plus 
   package_info_plus: ^1.4.0
