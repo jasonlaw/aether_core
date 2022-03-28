@@ -1,10 +1,10 @@
-## 0.37
+## 0.3.7
 * Fixed app_theme bug
 
-## 0.36
+## 0.3.6
 * Fixed upload media file bug
 
-## 0.35
+## 0.3.5
 * Renamed: AppService.init and App.config
 
 ## 0.3.4
