@@ -1,4 +1,7 @@
-## 0.35
+## 0.37
+* Fixed app_theme bug
+
+## 0.36
 * Fixed upload media file bug
 
 ## 0.35

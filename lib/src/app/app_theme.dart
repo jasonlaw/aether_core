@@ -5,13 +5,16 @@ import 'app.dart';
 
 class AppTheme {
   AppTheme() {
-    var lastThemeMode = App.storage.read<String>('AppTheme.mode');
+    final _lastThemeMode = App.storage.read<String>('AppTheme.mode');
     try {
-      if (lastThemeMode == null || lastThemeMode.isEmpty) {
+      _themeMode = null;
+      if (_lastThemeMode != null && _lastThemeMode.isNotEmpty) {
         _themeMode = ThemeMode.values
-            .firstWhere((e) => describeEnum(e) == lastThemeMode);
+            .firstWhere((e) => describeEnum(e) == _lastThemeMode);
       }
-    } on Exception catch (_) {}
+    } on Exception catch (_) {
+      App.storage.remove('AppTheme.mode');
+    }
   }
 
   ThemeMode defaultMode = ThemeMode.system;
