@@ -196,3 +196,16 @@ final response = await 'https://oauth2.googleapis.com/token'
           .post();
 ~~~
 ### Quick GraphQL API Access
+~~~dart
+final result = await 'register'
+        .gql([
+          'customerId'
+        ], params: {
+          'input:RegisterCustomerInput': {
+            'name': name.value,
+            'email': email.value,
+            'password': password.value
+          }
+        })
+        .mutation();
+~~~

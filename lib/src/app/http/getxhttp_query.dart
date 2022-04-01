@@ -89,11 +89,34 @@ class RestQuery {
 class GraphQLQuery {
   final String name;
   final List<dynamic> fields;
-  final Map<String, dynamic>? params;
-  final Map<String, String>? paramTypes;
+  late final Map<String, dynamic>? params;
+  late final Map<String, String>? paramTypes;
   GetxHttp? _http;
 
-  GraphQLQuery(this.name, this.fields, {this.params, this.paramTypes});
+  GraphQLQuery(this.name, this.fields,
+      {Map<String, dynamic>? params, Map<String, String>? paramTypes}) {
+    _initParams(params, paramTypes);
+  }
+
+  void _initParams(
+      Map<String, dynamic>? inputParams, Map<String, String>? inputParamTypes) {
+    Map<String, dynamic>? _params;
+    if (inputParams != null) {
+      _params = <String, dynamic>{};
+      for (var item in inputParams.entries) {
+        var key = item.key;
+        if (key.contains(':')) {
+          final keys = key.split(':');
+          key = keys[0];
+          inputParamTypes ??= <String, String>{};
+          inputParamTypes[key] = keys[1];
+        }
+        _params[key] = item.value;
+      }
+    }
+    paramTypes = inputParamTypes;
+    params = _params;
+  }
 
   // ignore: avoid_returning_this
   GraphQLQuery use(GetxHttp http) {

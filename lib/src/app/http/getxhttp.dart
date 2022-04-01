@@ -124,6 +124,7 @@ class GetxHttp {
     if (value is DateTime || value is DateTime?) {
       return GraphQLDataType.dateTime;
     }
+
     if (value is Parameter) return value.type;
     return value.runtimeType.toString();
   }
