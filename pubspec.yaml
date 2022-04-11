@@ -8,7 +8,7 @@ homepage: https://github.com/jasonlaw/aether_core.git
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
 environment:
-  sdk: ">=2.12.0 <3.0.0"
+  sdk: ">=2.16.0 <3.0.0"
   flutter: ">=2.10.0"
 
 dependencies:
@@ -33,7 +33,7 @@ dependencies:
   #     ref: master
 
   # https://pub.dev/packages/package_info_plus 
-  package_info_plus: ^1.4.0
+  package_info_plus: ^1.4.2
   
   # https://pub.dev/packages/url_launcher 
   url_launcher: ^6.0.20

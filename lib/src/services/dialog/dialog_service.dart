@@ -107,7 +107,7 @@ class DialogService extends GetxService {
               key: const Key('dialog_touchable_cancel'),
               textChildKey: const Key('dialog_text_cancelButtonText'),
               dialogPlatform: dialogPlatform,
-              text: cancelTitle!,
+              text: cancelTitle,
               cancelBtnColor: cancelTitleColor,
               isCancelButton: true,
               onPressed: () {
@@ -210,16 +210,6 @@ class DialogService extends GetxService {
           ),
         ),
       ),
-      // TODO: Add configurable transition builders to set  from the outside as well
-      // transitionBuilder: (context, animation, _, child) {
-      //   return ScaleTransition(
-      //     scale: CurvedAnimation(
-      //       parent: animation,
-      //       curve: Curves.decelerate,
-      //     ),
-      //     child: child,
-      //   );
-      // },
     );
   }
 
