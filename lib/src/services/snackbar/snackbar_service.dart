@@ -160,7 +160,7 @@ class SnackbarService extends GetxService {
     final hasMainButtonBuilder = mainButtonBuilder != null;
 
     final mainButtonWidget = hasMainButtonBuilder
-        ? mainButtonBuilder(mainButtonTitle, onMainButtonTapped)
+        ? mainButtonBuilder!(mainButtonTitle, onMainButtonTapped)
         : _getMainButtonWidget(
             mainButtonTitle: mainButtonTitle,
             onMainButtonTapped: onMainButtonTapped,

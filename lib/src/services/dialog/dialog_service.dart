@@ -107,7 +107,7 @@ class DialogService extends GetxService {
               key: const Key('dialog_touchable_cancel'),
               textChildKey: const Key('dialog_text_cancelButtonText'),
               dialogPlatform: dialogPlatform,
-              text: cancelTitle,
+              text: cancelTitle!,
               cancelBtnColor: cancelTitleColor,
               isCancelButton: true,
               onPressed: () {
