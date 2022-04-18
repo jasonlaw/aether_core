@@ -1,17 +1,21 @@
 import 'dart:convert';
-
 import 'package:csv/csv.dart';
 
 import '../../aether_core.dart';
 
 class AppTranslations extends Translations {
   final _keys = <String, Map<String, String>>{};
+  final languages = <String, String>{};
 
   @override
   Map<String, Map<String, String>> get keys => _keys;
 
   void import(Map<String, Map<String, String>> keys) {
-    _keys.addAll(keys);
+    keys.forEach((key, value) {
+      final kv = key.split(':');
+      languages[kv.first] = kv.last;
+      _keys[kv.first] = value;
+    });
   }
 
   /// Download translations which maintained in google sheets.
@@ -40,15 +44,20 @@ class AppTranslations extends Translations {
 
     final index = fields[0]
         .cast<String>()
-        .map((key) => key.trim().replaceAll('\n', '').toLowerCase())
+        .map((key) => key.trim().replaceAll('\n', ''))
         .takeWhile((x) => x.isNotEmpty)
-        .toList();
+        .map((key) {
+      final kv = key.split(':');
+      return {kv.first: kv.last};
+    }).toList();
 
     for (var r = 1; r < fields.length; r++) {
       final rowValues = fields[r];
       final translationKey = rowValues[0];
       for (var c = 1; c < index.length; c++) {
-        final lang = _keys[index[c]] ??= {};
+        final langcode = index[c].keys.first;
+        languages[langcode] ??= index[c].values.first;
+        final lang = _keys[langcode] ??= {};
         lang[translationKey] = rowValues[c];
       }
     }
