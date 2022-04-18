@@ -157,7 +157,7 @@ class GraphQLQuery {
           return null;
         })
         .where((x) => x != null)
-        .join(", ");
+        .join(', ');
 
     final _variables = params?.entries.map((x) {
       if (x.value is Parameter) {
@@ -238,10 +238,10 @@ class GraphQLQuery {
 }
 
 class GraphQLDataType {
-  static const boolean = "Boolean";
-  static const string = "String";
-  static const dateTime = "DateTime";
-  static const guid = "Uuid";
-  static const double = "Double";
-  static const integer = "Int";
+  static const boolean = 'Boolean';
+  static const string = 'String';
+  static const dateTime = 'DateTime';
+  static const guid = 'Uuid';
+  static const double = 'Double';
+  static const integer = 'Int';
 }

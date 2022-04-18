@@ -45,7 +45,8 @@ class RestBody {
     map.forEach(_addParam);
   }
 
-  /// param can be [FieldBase], [Map<String, dynamic>] or [MapEntry<String, dynamic>]
+  /// param can be [FieldBase], [Map<String, dynamic>] or
+  /// [MapEntry<String, dynamic>]
   void add(List params) {
     for (final item in params) {
       if (item is FieldBase) {

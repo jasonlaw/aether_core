@@ -3,8 +3,8 @@ import 'cookie_jar.dart';
 import 'serializable_cookie.dart';
 
 /// [DefaultCookieJar] is a default cookie manager which implements the standard
-/// cookie policy declared in RFC. [DefaultCookieJar] saves the cookies in RAM, so if the application
-/// exit, all cookies will be cleared.
+/// cookie policy declared in RFC. [DefaultCookieJar] saves the cookies in RAM,
+/// so if the application exit, all cookies will be cleared.
 class DefaultCookieJar implements CookieJar {
   /// [ignoreExpires]: save/load even cookies that have expired.
   DefaultCookieJar({this.ignoreExpires = false});
@@ -116,7 +116,8 @@ class DefaultCookieJar implements CookieJar {
   }
 
   /// Delete cookies for specified [uri].
-  /// This API will delete all cookies for the `uri.host`, it will ignored the `uri.path`.
+  /// This API will delete all cookies for the `uri.host`, it will ignored the
+  /// `uri.path`.
   ///
   /// [withDomainSharedCookie] `true` will delete the domain-shared cookies.
   @override

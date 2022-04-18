@@ -1,3 +1,6 @@
+## 0.3.8
+* Added AppTranslations
+
 ## 0.3.7
 * Fixed app_theme bug
 

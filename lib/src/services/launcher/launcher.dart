@@ -23,12 +23,12 @@ Future<void> launchPhoneCall(String phoneNumber,
 }
 
 Future<void> launchEmail(String recipients,
-    {String bcc = "",
-    String subject = "",
-    String body = "",
+    {String bcc = '',
+    String subject = '',
+    String body = '',
     bool showError = false}) async {
   return launchUrl(
       'mailto:$recipients?bcc=$bcc&body=${Uri.encodeComponent(body)}&subject=${Uri.encodeComponent(subject)}',
       showError: showError,
-      defaultErrorText: "No email client found");
+      defaultErrorText: 'No email client found');
 }

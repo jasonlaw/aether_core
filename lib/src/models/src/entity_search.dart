@@ -9,10 +9,10 @@ class SearchParams extends Entity {
     );
   }
 
-  Field<int> get page => field("page");
-  Field<int> get skip => field("skip");
-  Field<int> get take => field("take", defaultValue: 99999);
-  Field<String> get orderBy => field("orderBy");
+  Field<int> get page => field('page');
+  Field<int> get skip => field('skip');
+  Field<int> get take => field('take', defaultValue: 99999);
+  Field<String> get orderBy => field('orderBy');
 
   Map<String, dynamic> get queryData {
     data.removeWhere((key, value) => value == null);
@@ -26,8 +26,8 @@ class SearchResults<T extends Entity> extends Entity {
   }
 
   final SearchParams searchParams;
-  Field<int> get totalCount => field("totalCount");
-  ListField<T> get results => fieldList("results");
+  Field<int> get totalCount => field('totalCount');
+  ListField<T> get results => fieldList('results');
 }
 
 extension AetherStringForEntitySearchExtensions on String {

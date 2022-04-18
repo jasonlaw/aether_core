@@ -225,7 +225,7 @@ class GetxHttp {
 
   Response ok({dynamic body}) {
     return Response(
-        statusCode: 200, statusText: "ok", request: null, body: body);
+        statusCode: 200, statusText: 'ok', request: null, body: body);
   }
 
   Response error([String errorText = '']) {

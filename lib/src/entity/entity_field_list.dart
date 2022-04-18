@@ -72,7 +72,7 @@ class ListField<E extends Entity> extends FieldBase<List<E>> {
   }
 
   void load(List rawData) {
-    assert(!isComputed, "Not allowed to load data into a computed field $name");
+    assert(!isComputed, 'Not allowed to load data into a computed field $name');
     innerLoad(rawData);
   }
 
@@ -173,6 +173,7 @@ class ListField<E extends Entity> extends FieldBase<List<E>> {
     return Entity().fieldList(E.runtimeType.toString());
   }
 
+  /// Get the ListField (parent) of the entity
   static ListField<E>? of<E extends Entity>(E child) {
     final lf = child._parentRef;
     if (lf is ListField<E>) return lf;

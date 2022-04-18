@@ -91,7 +91,6 @@ class Upgrader {
   String getMessage() {
     return '%s %s - A new version is available now! Please update to enjoy the latest features.'
         .trArgs([App.name, updateVersion!]);
-    //return 'A new version of ${App.name} is available! Version ${this.updateVersion} is now available-you have ${App.version}.';
   }
 
   String getTitle() {
@@ -103,11 +102,11 @@ class Upgrader {
   }
 
   String getButtonTitleLater() {
-    return buttonTitleLater ?? "LATER".tr;
+    return buttonTitleLater ?? 'LATER'.tr;
   }
 
   String getButtonTitleUpdate() {
-    return buttonTitleUpdate ?? "UPDATE NOW".tr;
+    return buttonTitleUpdate ?? 'UPDATE NOW'.tr;
   }
 
   void checkVersion() {

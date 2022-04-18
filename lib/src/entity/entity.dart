@@ -110,7 +110,7 @@ class Entity {
 
   bool _isCopying = false;
   void copy(Entity source) {
-    assert(runtimeType == source.runtimeType, "Type mismatched");
+    assert(runtimeType == source.runtimeType, 'Type mismatched');
     commit();
     _isCopying = true;
     try {

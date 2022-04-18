@@ -16,6 +16,7 @@ import '../services/models/overlay_response.dart';
 import '../services/services.dart';
 import '../utils/utils.dart';
 import 'app_theme.dart';
+import 'app_translations.dart';
 import 'config.dart';
 import 'http/getxhttp.dart';
 import 'upgrader/upgrader.dart';
@@ -41,7 +42,7 @@ const String kSettingsFilePathStaging = '$kSystemPath/settings.staging.json';
 
 final kStagingMode = kBuildArguments.contains('staging');
 final kHuaweiAppGallery = kBuildArguments.contains('huawei');
-const _viqcoreBuild = String.fromEnvironment("VIQCORE_BUILD");
+const _viqcoreBuild = String.fromEnvironment('VIQCORE_BUILD');
 final kBuildArguments =
     _viqcoreBuild.split(';').where((e) => e.isNotEmpty).toList();
 
@@ -64,6 +65,7 @@ class AppService extends GetxService {
   late final GetStorage storage = GetStorage();
   late final AppTheme theme = AppTheme();
   late final AppConfig config = const AppConfig();
+  late final AppTranslations tr = AppTranslations();
 
   static Future init([String? appName]) async {
     Get.log('Startup AppService...');

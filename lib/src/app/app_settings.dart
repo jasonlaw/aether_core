@@ -1,18 +1,18 @@
 part of 'app.dart';
 
 class AppSettings extends Entity {
-  late final Field<String> apiBaseUrl = field("ApiBaseUrl");
-  late final Field<String> apiKey = field("ApiKey");
+  late final Field<String> apiBaseUrl = field('ApiBaseUrl');
+  late final Field<String> apiKey = field('ApiKey');
   late final Field<int> apiConnectTimeoutInSec =
-      field("ApiConnectTimeoutInSec", defaultValue: 5);
-  late final Field<String?> appStoreURL = field("AppStoreURL");
+      field('ApiConnectTimeoutInSec', defaultValue: 5);
+  late final Field<String?> appStoreURL = field('AppStoreURL');
 
   // EasyLoading get easyLoading => EasyLoading.instance;
 
   AppSettings._() {
-    final _google = field<String>("GooglePlayURL");
-    final _apple = field<String>("AppleAppStoreURL");
-    final _huawei = field<String>("HuaweiAppGalleryURL");
+    final _google = field<String>('GooglePlayURL');
+    final _apple = field<String>('AppleAppStoreURL');
+    final _huawei = field<String>('HuaweiAppGalleryURL');
 
     appStoreURL.computed(
         bindings: [_google, _apple, _huawei],

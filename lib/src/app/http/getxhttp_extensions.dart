@@ -12,12 +12,12 @@ extension GetxResponseExtensions on Response {
   String get errorText {
     if (isOk) return '';
     var body = this.body;
-    if (body == null || body.toString() == "") {
+    if (body == null || body.toString() == '') {
       return statusText ?? 'Unknown error'.tr;
     }
     if (body is List) body = body.first;
-    if (body is! Map) return "$body";
-    return body["message"] ?? "Unknown error".tr;
+    if (body is! Map) return '$body';
+    return body['message'] ?? 'Unknown error'.tr;
   }
 
   E toEntity<E extends Entity>(EntityBuilder<E> createEntity) {

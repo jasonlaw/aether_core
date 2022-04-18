@@ -34,7 +34,7 @@ class Field<T> extends FieldBase<T> {
   }
 
   set value(T? value) {
-    assert(!isComputed, "Not allowed to set value into a computed field $name");
+    assert(!isComputed, 'Not allowed to set value into a computed field $name');
     if (value is Entity?) {
       value?._parentRef = this;
     }
@@ -96,7 +96,7 @@ extension FieldOfEntityExtensions<E extends Entity> on Field<E> {
   }
 
   void load(Map<String, dynamic> rawData) {
-    assert(!isComputed, "Not allowed to load data into a computed field $name");
+    assert(!isComputed, 'Not allowed to load data into a computed field $name');
     innerLoad(rawData);
   }
 

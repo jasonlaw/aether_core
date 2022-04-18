@@ -1,6 +1,6 @@
 name: aether_core
 description: Aether Core
-version: 0.3.7
+version: 0.3.8
 homepage: https://github.com/jasonlaw/aether_core.git
 
 # The following line prevents the package from being accidentally published to
@@ -49,6 +49,11 @@ dependencies:
 
   # https://pub.dev/packages/cross_file
   cross_file: ^0.3.2
+
+  # https://pub.dev/packages/csv
+  csv: ^5.0.1
+  # https://pub.dev/packages/http
+  http: ^0.13.4
 
 dev_dependencies:
   flutter_test:

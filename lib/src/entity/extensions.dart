@@ -36,10 +36,6 @@ extension EntityFieldStringExtensions on Field<String> {
   bool get valueIsNotNullOrEmpty => value.isNotNullOrEmpty;
 }
 
-// extension ListOfEntityExtensions<E extends Entity> on List<E> {
-//   void load(EntityBuilder<E> createEntity, List<dynamic> rawData) {
-//     var list = rawData.map((data) => createEntity()..load(data));
-//     this.clear();
-//     this.addAll(list);
-//   }
-// }
+extension ListOfEntityExtensions<E extends Entity> on List<E> {
+  ListField<E> get obsx => ListField.create<E>();
+}

@@ -8,8 +8,9 @@ import 'default_cookie_jar.dart';
 import 'serializable_cookie.dart';
 
 /// [PersistCookieJar] is a cookie manager which implements the standard
-/// cookie policy declared in RFC. [PersistCookieJar]  persists the cookies in files,
-/// so if the application exit, the cookies always exist unless call [delete] explicitly.
+/// cookie policy declared in RFC. [PersistCookieJar]  persists the cookies
+/// in files, so if the application exit, the cookies always exist unless
+/// call [delete] explicitly.
 class PersistCookieJar extends DefaultCookieJar {
   ///
   /// [persistSession]: Whether persisting the cookies that without
@@ -23,7 +24,8 @@ class PersistCookieJar extends DefaultCookieJar {
   PersistCookieJar({this.persistSession = true, bool ignoreExpires = false})
       : super(ignoreExpires: ignoreExpires);
 
-  /// Whether persisting the cookies that without "expires" or "max-age" attribute;
+  /// Whether persisting the cookies that without "expires" or "max-age"
+  /// attribute;
   final bool persistSession;
 
   static const _indexKey = '.index';
@@ -140,7 +142,8 @@ class PersistCookieJar extends DefaultCookieJar {
   }
 
   /// Delete cookies for specified [uri].
-  /// This API will delete all cookies for the `uri.host`, it will ignored the `uri.path`.
+  /// This API will delete all cookies for the `uri.host`, it will ignored
+  /// the `uri.path`.
   ///
   /// [withDomainSharedCookie] `true` will delete the domain-shared cookies.
   @override
@@ -176,23 +179,17 @@ class PersistCookieJar extends DefaultCookieJar {
 
     if (!_hostSet.contains(host)) {
       _hostSet.add(host);
-      // do not need to wait for the data completely stored in physical for performance sake
-      //await App.storage.write(_indexKey, json.encode(_hostSet.toList()));
       App.storage.write(_indexKey, json.encode(_hostSet.toList()));
     }
     final cookies = hostCookies[host];
 
     if (cookies != null) {
-      // do not need to wait for the data completely stored in physical for performance sake
-      //await App.storage.write(host, json.encode(_filter(cookies)));
       App.storage.write(host, json.encode(_filter(cookies)));
     }
 
     if (withDomainSharedCookie) {
       final filterDomainCookies =
           domainCookies.map((key, value) => MapEntry(key, _filter(value)));
-      // do not need to wait for the data completely stored in physical for performance sake
-      //await App.storage.write(_domainsKey, json.encode(filterDomainCookies));
       App.storage.write(_domainsKey, json.encode(filterDomainCookies));
     }
   }
