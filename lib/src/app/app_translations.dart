@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:csv/csv.dart';
+import 'package:version/version.dart';
 
 import '../../aether_core.dart';
 
@@ -16,6 +17,7 @@ class AppTranslations extends Translations {
       languages[kv.first] = kv.last;
       _keys[kv.first] = value;
     });
+    //_writeToStorage();
   }
 
   /// Download translations which maintained in google sheets.
@@ -25,8 +27,11 @@ class AppTranslations extends Translations {
   ///   File -> Publish to the web, make sure to select the option
   ///   "Automatically republish when changes are made"
   ///   ..Copy the link provided by googleSheets for the csv connectivity url
-  Future download({required String url}) async {
-    _keys.clear();
+  Future download({required String url, bool force = false}) async {
+    final isDownloadRequired =
+        force || _versionOutdated() || !_readFromStorage();
+
+    if (!isDownloadRequired) return;
 
     final response = await url.api().external().get(
         timeout: const Duration(minutes: 10),
@@ -61,5 +66,31 @@ class AppTranslations extends Translations {
         lang[translationKey] = rowValues[c];
       }
     }
+    _writeToStorage();
+  }
+
+  bool _readFromStorage() {
+    final storedKeys = App.storage
+        .read<Map<String, Map<String, String>>>('${App.name}.tr.keys');
+    if (storedKeys == null) return false;
+    final storedLanguages =
+        App.storage.read<Map<String, String>>('${App.name}.tr.languages');
+    _keys.assignAll(storedKeys);
+    if (storedLanguages != null) {
+      languages.assignAll(storedLanguages);
+    }
+    return true;
+  }
+
+  void _writeToStorage() {
+    App.storage.write('${App.name}.tr.version', App.version);
+    App.storage.write('${App.name}.tr.keys', _keys);
+    App.storage.write('${App.name}.tr.languages', languages);
+  }
+
+  bool _versionOutdated() {
+    final storedVersion = App.storage.read<String>('${App.name}.tr.version');
+    return storedVersion.isNotNullOrEmpty &&
+        Version.parse(App.version) > Version.parse(storedVersion);
   }
 }
