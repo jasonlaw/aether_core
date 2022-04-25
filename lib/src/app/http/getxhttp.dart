@@ -96,6 +96,13 @@ class GetxHttp {
       } else {
         _queryBody = '$method { ${_gql['body']} }';
       }
+
+      if (method == 'debug') {
+        final debugResponse = Response(statusCode: 200, body: {
+          'data': {query.name: _queryBody}
+        });
+        return GraphQLResponse.fromResponse(debugResponse);
+      }
     } else {
       _queryBody = '$method $query';
     }
@@ -103,6 +110,9 @@ class GetxHttp {
     _showProgressIndicator();
     final encodedVariables = await _encodeJson(_variables);
     client.httpClient.timeout = timeout ?? client.timeout;
+
+    //if (kDebugMode) print(_queryBody);
+
     return client
         .query<T>(_queryBody,
             url: '/graphql', variables: encodedVariables, headers: headers)

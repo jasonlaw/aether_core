@@ -147,9 +147,9 @@ class GraphQLQuery {
           }
           if (x is GraphQLQuery) {
             final subquery = x.buildQuery();
-            vars.addAll(subquery['params']);
-            varTypes.addAll(subquery['paramTypes']);
-            return subquery['payload'];
+            vars.addAll(subquery['vars']);
+            varTypes.addAll(subquery['varTypes']);
+            return subquery['body'];
           }
           if (x is String) {
             return x;
@@ -190,6 +190,10 @@ class GraphQLQuery {
       decoder: decoder,
       disableLoadingIndicator: disableLoadingIndicator,
     );
+  }
+
+  Future<GraphQLResponse<T>> debug<T>() {
+    return _gql('debug');
   }
 
   Future<GraphQLResponse<T>> mutation<T>({
