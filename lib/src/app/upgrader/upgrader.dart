@@ -289,7 +289,7 @@ class Upgrader {
       }
     }
 
-    launchUrl(_appStoreListingURL!);
+    safeLaunchUrl(_appStoreListingURL!);
   }
 }
 

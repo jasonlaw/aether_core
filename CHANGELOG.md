@@ -1,3 +1,6 @@
+## 0.3.9
+* Upgrade url_launcher, custom safeLaunchUrl
+
 ## 0.3.8
 * Added AppTranslations
 

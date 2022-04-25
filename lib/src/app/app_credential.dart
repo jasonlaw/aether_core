@@ -37,6 +37,7 @@ class CredentialIdentity extends Entity {
   @mustCallSuper
   void signOut() {
     GetStorage().remove('CredentialIdentity.RefreshToken');
+    App.connect.clearCookies();
     reset();
   }
 }

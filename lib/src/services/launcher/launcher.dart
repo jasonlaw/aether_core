@@ -1,25 +1,26 @@
+import 'package:flutter/foundation.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../app/app.dart';
 
-Future<void> launchUrl(String url,
+Future<void> safeLaunchUrl(String url,
     {bool showError = false, String? defaultErrorText}) async {
   try {
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else if (showError && defaultErrorText != null) {
-      App.error(defaultErrorText);
-    }
+    await launchUrl(Uri.parse(url));
   } on Exception catch (error) {
     if (showError) {
-      App.error(error);
+      if (kDebugMode) {
+        App.error(error);
+      } else {
+        App.error(defaultErrorText ?? error);
+      }
     }
   }
 }
 
 Future<void> launchPhoneCall(String phoneNumber,
     {bool showError = false}) async {
-  return launchUrl('tel:$phoneNumber', showError: showError);
+  return safeLaunchUrl('tel:$phoneNumber', showError: showError);
 }
 
 Future<void> launchEmail(String recipients,
@@ -27,7 +28,7 @@ Future<void> launchEmail(String recipients,
     String subject = '',
     String body = '',
     bool showError = false}) async {
-  return launchUrl(
+  return safeLaunchUrl(
       'mailto:$recipients?bcc=$bcc&body=${Uri.encodeComponent(body)}&subject=${Uri.encodeComponent(subject)}',
       showError: showError,
       defaultErrorText: 'No email client found');
