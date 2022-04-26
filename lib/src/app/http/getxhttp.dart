@@ -107,14 +107,26 @@ class GetxHttp {
       _queryBody = '$method $query';
     }
 
+    return gqlRequest(
+      query,
+      variables: _variables,
+      headers: headers,
+      timeout: timeout,
+    );
+  }
+
+  Future<GraphQLResponse<T>> gqlRequest<T>(
+    String query, {
+    Map<String, dynamic>? variables,
+    Map<String, String>? headers,
+    Duration? timeout,
+  }) async {
     _showProgressIndicator();
-    final encodedVariables = await _encodeJson(_variables);
+    final encodedVariables = await _encodeJson(variables);
     client.httpClient.timeout = timeout ?? client.timeout;
 
-    //if (kDebugMode) print(_queryBody);
-
     return client
-        .query<T>(_queryBody,
+        .query<T>(query,
             url: '/graphql', variables: encodedVariables, headers: headers)
         .onError((error, stackTrace) {
       return GraphQLResponse<T>(graphQLErrors: [
