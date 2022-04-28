@@ -1,23 +1,21 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:get/get_connect/http/src/interceptors/get_modifiers.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 
 import '../entity/entity.dart';
 import '../extensions/extensions.dart';
 import '../services/models/overlay_response.dart';
 import '../services/services.dart';
 import '../utils/utils.dart';
+import 'app_settings.dart';
 import 'app_theme.dart';
 import 'app_translations.dart';
-import 'config.dart';
+import 'appbuilder.dart';
 import 'http/getxhttp.dart';
 import 'upgrader/upgrader.dart';
 
@@ -25,14 +23,16 @@ export 'package:flutter_easyloading/flutter_easyloading.dart'
     show EasyLoadingIndicatorType;
 export 'package:get/get.dart';
 
+export 'app_settings.dart';
 export 'app_theme_sheet.dart';
+export 'appbuilder.dart';
 
 ///import '../entity.dart';
 export 'http/getxhttp.dart';
 
 part 'app_credential.dart';
 part 'app_getxconnect.dart';
-part 'app_settings.dart';
+//part 'app_settings.dart';
 
 const String kSystemPath = 'assets/system';
 const String kImagesPath = 'assets/images';
@@ -50,68 +50,76 @@ final kBuildArguments =
 AppService get App => Get.find();
 
 class AppService extends GetxService {
-  final String name;
-  final String version;
-  final String buildNumber;
-  final String packageName;
+  final AppInfo appInfo;
+  final CredentialActions? _credentialActions;
+  final DialogSettings? _dialogSettings;
+  final SnackbarSettings _snackbarSettings;
 
-  //final SnackbarService snackbar = SnackbarService();
-  //final DialogService dialog = DialogService();
   late final CredentialIdentity identity =
       Get.isRegistered() ? Get.find() : CredentialIdentity();
-  late final AppSettings settings;
+  final AppSettings settings;
   late final GetxConnect connect = GetxConnect._();
   late final GetxHttp http = GetxHttp();
   late final GetStorage storage = GetStorage();
   late final AppTheme theme = AppTheme();
-  late final AppConfig config = const AppConfig();
   late final AppTranslations tr = AppTranslations();
 
-  static Future init([String? appName]) async {
-    Get.log('Startup AppService...');
+  // static Future init([String? appName]) async {
+  //   Get.log('Startup AppService...');
 
-    //WidgetsFlutterBinding.ensureInitialized();
+  //   //WidgetsFlutterBinding.ensureInitialized();
 
-    Get.isLogEnable = kDebugMode;
+  //   Get.isLogEnable = kDebugMode;
 
-    final packageInfo = await PackageInfo.fromPlatform();
+  //   final packageInfo = await PackageInfo.fromPlatform();
 
-    if (kStagingMode && appName != null) appName = '$appName (Staging)';
+  //   if (kStagingMode && appName != null) appName = '$appName (Staging)';
 
-    final appService = AppService._(
-      name: appName ?? packageInfo.appName,
-      version: packageInfo.version,
-      buildNumber: packageInfo.buildNumber,
-      packageName: packageInfo.packageName.isEmpty
-          ? packageInfo.appName
-          : packageInfo.packageName,
-    );
+  //   final appInfo = AppInfo(
+  //     appName ?? packageInfo.appName,
+  //     packageInfo.version,
+  //     packageInfo.buildNumber,
+  //     packageInfo.packageName.isEmpty
+  //         ? packageInfo.appName
+  //         : packageInfo.packageName,
+  //   );
 
-    Get.put(appService);
+  //   final settings = await AppSettings.init();
 
-    await GetStorage.init();
+  //   final _name = (appName ?? packageInfo.appName) + (kDebugMode ? '*' : '');
+  //   final appService = AppService(
+  //     appInfo: appInfo,
+  //     settings: settings,
+  //     notificationSettings: const NotificationSettings(),
+  //     name: _name,
+  //     version: packageInfo.version,
+  //     buildNumber: packageInfo.buildNumber,
+  //     packageName: packageInfo.packageName.isEmpty
+  //         ? packageInfo.appName
+  //         : packageInfo.packageName,
+  //   );
 
-    appService.settings = await AppSettings._init();
+  //   // Get.put(appService);
 
-    AppActions.resetDefaultLoading();
+  //   await GetStorage.init();
 
-    Get.lazyPut(() => DialogService());
-    Get.lazyPut(() => SnackbarService());
+  //   AppActions.resetDefaultLoading();
 
-    Get.log('Startup AppService Done.');
-  }
+  //   //Get.lazyPut(() => DialogService());
+  //   //Get.lazyPut(() => SnackbarService());
 
-  AppService._({
-    required String name,
-    required this.version,
-    required this.buildNumber,
-    required this.packageName,
-  }) : name = name + (kDebugMode ? '*' : '') {
-    Get.log('              App Name : ${this.name}');
-    Get.log('           App Version : $version');
-    Get.log('          Build Number : $buildNumber');
-    Get.log('          Package Name : $packageName');
-  }
+  //   Get.log('Startup AppService Done.');
+  // }
+
+  AppService({
+    required this.appInfo,
+    required this.settings,
+    CredentialActions? credentialActions,
+    DialogSettings? dialogSettings,
+    required SnackbarSettings notificationSettings,
+  })  : _credentialActions = credentialActions,
+        _dialogSettings = dialogSettings,
+        _snackbarSettings = notificationSettings;
 
   Future<void> initUpgrader({
     required String updateVersion,
@@ -138,19 +146,19 @@ class AppService extends GetxService {
   Future<void> error(dynamic error, {String? title}) async {
     if (error == null) return;
     Get.snackbar(
-      title ?? AppActions.notifySettings.infoTitle ?? 'Error'.tr,
+      title ?? _snackbarSettings.infoTitle ?? 'Error'.tr,
       error.toString().truncate(1000),
-      snackPosition: AppActions.notifySettings.snackPosition,
-      icon: AppActions.notifySettings.errorIcon,
+      snackPosition: _snackbarSettings.snackPosition,
+      icon: _snackbarSettings.errorIcon,
     );
   }
 
   /// Information snackbar notification
   Future<void> info(String info, {String? title}) async => Get.snackbar(
-        title ?? AppActions.notifySettings.infoTitle ?? 'Info'.tr,
+        title ?? _snackbarSettings.infoTitle ?? 'Info'.tr,
         info,
-        snackPosition: AppActions.notifySettings.snackPosition,
-        icon: AppActions.notifySettings.infoIcon,
+        snackPosition: _snackbarSettings.snackPosition,
+        icon: _snackbarSettings.infoIcon,
       );
 
   /// Confirmation dialog
@@ -163,14 +171,12 @@ class AppService extends GetxService {
     final response = await Get.find<DialogService>().showDialog(
       title: title,
       description: question,
-      buttonTitle:
-          buttonTitle ?? AppActions.dialogSettings.buttonTitle ?? 'OK'.tr,
-      cancelTitle: cancelButtonTitle ??
-          AppActions.dialogSettings.cancelTitle ??
-          'CANCEL'.tr,
-      buttonTitleColor: AppActions.dialogSettings.buttonTitleColor,
-      cancelTitleColor: AppActions.dialogSettings.cancelTitleColor,
-      dialogPlatform: AppActions.dialogSettings.dialogPlatform,
+      buttonTitle: buttonTitle ?? _dialogSettings?.buttonTitle ?? 'OK'.tr,
+      cancelTitle:
+          cancelButtonTitle ?? _dialogSettings?.cancelTitle ?? 'CANCEL'.tr,
+      buttonTitleColor: _dialogSettings?.buttonTitleColor,
+      cancelTitleColor: _dialogSettings?.cancelTitleColor,
+      dialogPlatform: _dialogSettings?.dialogPlatform,
       barrierDismissible: true,
     );
     return response?.confirmed ?? false;
@@ -190,16 +196,14 @@ class AppService extends GetxService {
       Get.find<DialogService>().showDialog(
           title: title,
           description: description,
-          buttonTitle:
-              buttonTitle ?? AppActions.dialogSettings.buttonTitle ?? 'OK'.tr,
-          cancelTitle: cancelTitle ?? AppActions.dialogSettings.cancelTitle,
+          buttonTitle: buttonTitle ?? _dialogSettings?.buttonTitle ?? 'OK'.tr,
+          cancelTitle: cancelTitle ?? _dialogSettings?.cancelTitle,
           buttonTitleColor:
-              buttonTitleColor ?? AppActions.dialogSettings.buttonTitleColor,
+              buttonTitleColor ?? _dialogSettings?.buttonTitleColor,
           cancelTitleColor:
-              cancelTitleColor ?? AppActions.dialogSettings.cancelTitleColor,
+              cancelTitleColor ?? _dialogSettings?.cancelTitleColor,
           barrierDismissible: barrierDismissible,
-          dialogPlatform:
-              dialogPlatform ?? AppActions.dialogSettings.dialogPlatform);
+          dialogPlatform: dialogPlatform ?? _dialogSettings?.dialogPlatform);
 
   // Progress indicator actions
   void showProgressIndicator({String? status}) {
@@ -210,13 +214,20 @@ class AppService extends GetxService {
 
   void dismissProgressIndicator() => EasyLoading.dismiss();
 
-  // Credential actions
-  /// Silent login credential, implementation required in App.init.silentLogin
-  Future silentLogin() async => AppActions.silentLogin?.call();
+  // // Credential actions
+  // /// Silent login credential, implementation required in App.init.silentLogin
+  // Future silentLogin() async => AppActions.silentLogin?.call();
 
-  /// Login credential, implementation required in App.init.login
-  Future login(dynamic request) async => AppActions.login?.call(request);
+  // /// Login credential, implementation required in App.init.login
+  // Future login(dynamic request) async => AppActions.login?.call(request);
 
-  /// Logout credential, implementation required in App.init.logout
-  Future logout() async => AppActions.logout?.call();
+  // /// Logout credential, implementation required in App.init.logout
+  // Future logout() async => AppActions.logout?.call();
+
+  Future signIn(dynamic request) async =>
+      _credentialActions?.signIn?.call(request);
+
+  Future signOut() async => _credentialActions?.signOut?.call();
+
+  Future signInRefresh() async => _credentialActions?.signInRefresh?.call();
 }

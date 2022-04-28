@@ -28,7 +28,7 @@ class CredentialIdentity extends Entity {
     //   print('Write token = $refreshToken');
   }
 
-  static String? get refreshToken {
+  String? get refreshToken {
     final token = GetStorage().read<String>('CredentialIdentity.RefreshToken');
     if (token == null || token == '') return null;
     return '$token ${Crypto.checkSum(token)}';

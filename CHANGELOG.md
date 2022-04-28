@@ -1,3 +1,6 @@
+## 0.4.0
+* Introduce AppBuilder
+
 ## 0.3.9
 * Upgrade url_launcher, custom safeLaunchUrl
 

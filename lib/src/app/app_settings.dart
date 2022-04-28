@@ -1,4 +1,9 @@
-part of 'app.dart';
+import 'dart:convert';
+
+import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
+
+import '../../aether_core.dart';
 
 class AppSettings extends Entity {
   late final Field<String> apiBaseUrl = field('ApiBaseUrl');
@@ -24,7 +29,7 @@ class AppSettings extends Entity {
         });
   }
 
-  static Future<AppSettings> _init() async {
+  static Future<AppSettings> init() async {
     var settings = AppSettings._();
 
     /// Loading a json configuration file from a custom [path] into the current app config./

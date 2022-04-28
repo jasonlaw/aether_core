@@ -71,10 +71,10 @@ class AppTranslations extends Translations {
 
   bool _readFromStorage() {
     final storedKeys = App.storage
-        .read<Map<String, Map<String, String>>>('${App.name}.tr.keys');
+        .read<Map<String, Map<String, String>>>('${App.appInfo.name}.tr.keys');
     if (storedKeys == null) return false;
-    final storedLanguages =
-        App.storage.read<Map<String, String>>('${App.name}.tr.languages');
+    final storedLanguages = App.storage
+        .read<Map<String, String>>('${App.appInfo.name}.tr.languages');
     _keys.assignAll(storedKeys);
     if (storedLanguages != null) {
       languages.assignAll(storedLanguages);
@@ -83,14 +83,15 @@ class AppTranslations extends Translations {
   }
 
   void _writeToStorage() {
-    App.storage.write('${App.name}.tr.version', App.version);
-    App.storage.write('${App.name}.tr.keys', _keys);
-    App.storage.write('${App.name}.tr.languages', languages);
+    App.storage.write('${App.appInfo.name}.tr.version', App.appInfo.version);
+    App.storage.write('${App.appInfo.name}.tr.keys', _keys);
+    App.storage.write('${App.appInfo.name}.tr.languages', languages);
   }
 
   bool _versionOutdated() {
-    final storedVersion = App.storage.read<String>('${App.name}.tr.version');
+    final storedVersion =
+        App.storage.read<String>('${App.appInfo.name}.tr.version');
     return storedVersion.isNotNullOrEmpty &&
-        Version.parse(App.version) > Version.parse(storedVersion);
+        Version.parse(App.appInfo.version) > Version.parse(storedVersion);
   }
 }

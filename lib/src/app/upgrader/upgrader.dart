@@ -90,7 +90,7 @@ class Upgrader {
 
   String getMessage() {
     return '%s %s - A new version is available now! Please update to enjoy the latest features.'
-        .trArgs([App.name, updateVersion!]);
+        .trArgs([App.appInfo.name, updateVersion!]);
   }
 
   String getTitle() {
@@ -140,7 +140,7 @@ class Upgrader {
   bool isUpdateAvailable() {
     if (_updateAvailable == null) {
       final appStoreVersion = Version.parse(updateVersion);
-      final installedVersion = Version.parse(App.version);
+      final installedVersion = Version.parse(App.appInfo.version);
 
       final available = appStoreVersion > installedVersion;
       _updateAvailable = available ? updateVersion : null;
@@ -148,7 +148,8 @@ class Upgrader {
       if (debugLogging) {
         if (kDebugMode) {
           print('upgrader: appStoreVersion: $updateVersion');
-          print('upgrader: installedVersion: ${App.version.toString()}');
+          print(
+              'upgrader: installedVersion: ${App.appInfo.version.toString()}');
           print('upgrader: isUpdateAvailable: $available');
         }
       }
