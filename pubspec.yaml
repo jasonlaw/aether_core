@@ -45,7 +45,7 @@ dependencies:
   version: ^2.0.0
   
   # https://pub.dev/packages/crypto
-  crypto: ^3.0.1
+  crypto: ^3.0.2
 
   # https://pub.dev/packages/cross_file
   cross_file: ^0.3.2

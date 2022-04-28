@@ -58,6 +58,7 @@ class Upgrader {
 
   bool _displayed = false;
   bool _initCalled = false;
+  bool _checked = false;
 
   //String _installedVersion;
   //String _appStoreVersion;
@@ -111,6 +112,8 @@ class Upgrader {
 
   void checkVersion() {
     if (!_initCalled || _displayed) return;
+    if (_checked && _updateAvailable == null) return;
+    _checked = true;
     if (shouldDisplayUpgrade()) {
       _displayed = true;
       Future.delayed(const Duration(milliseconds: 0), () {

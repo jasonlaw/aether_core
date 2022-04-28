@@ -190,7 +190,9 @@ class CredentialActions {
     final result = await '/api/credential/refresh'
         .api(body: {'refreshToken': App.identity.refreshToken}).post();
     if (result.hasError) {
-      App.connect.clearCookies();
+      if (result.statusCode != null) {
+        App.connect.clearCookies();
+      }
     } else if (result.isOk) {
       App.identity.load(result.body);
     }

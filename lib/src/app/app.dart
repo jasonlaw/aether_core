@@ -13,8 +13,6 @@ import '../services/models/overlay_response.dart';
 import '../services/services.dart';
 import '../utils/utils.dart';
 import 'app_settings.dart';
-import 'app_theme.dart';
-import 'app_translations.dart';
 import 'appbuilder.dart';
 import 'http/getxhttp.dart';
 import 'upgrader/upgrader.dart';
@@ -24,21 +22,15 @@ export 'package:flutter_easyloading/flutter_easyloading.dart'
 export 'package:get/get.dart';
 
 export 'app_settings.dart';
-export 'app_theme_sheet.dart';
 export 'appbuilder.dart';
 
-///import '../entity.dart';
 export 'http/getxhttp.dart';
 
 part 'app_credential.dart';
 part 'app_getxconnect.dart';
-//part 'app_settings.dart';
 
 const String kSystemPath = 'assets/system';
 const String kImagesPath = 'assets/images';
-const String kSettingsFilePath = '$kSystemPath/settings.json';
-const String kSettingsFilePathDebug = '$kSystemPath/settings.debug.json';
-const String kSettingsFilePathStaging = '$kSystemPath/settings.staging.json';
 
 final kStagingMode = kBuildArguments.contains('staging');
 final kHuaweiAppGallery = kBuildArguments.contains('huawei');
@@ -61,55 +53,8 @@ class AppService extends GetxService {
   late final GetxConnect connect = GetxConnect._();
   late final GetxHttp http = GetxHttp();
   late final GetStorage storage = GetStorage();
-  late final AppTheme theme = AppTheme();
-  late final AppTranslations tr = AppTranslations();
-
-  // static Future init([String? appName]) async {
-  //   Get.log('Startup AppService...');
-
-  //   //WidgetsFlutterBinding.ensureInitialized();
-
-  //   Get.isLogEnable = kDebugMode;
-
-  //   final packageInfo = await PackageInfo.fromPlatform();
-
-  //   if (kStagingMode && appName != null) appName = '$appName (Staging)';
-
-  //   final appInfo = AppInfo(
-  //     appName ?? packageInfo.appName,
-  //     packageInfo.version,
-  //     packageInfo.buildNumber,
-  //     packageInfo.packageName.isEmpty
-  //         ? packageInfo.appName
-  //         : packageInfo.packageName,
-  //   );
-
-  //   final settings = await AppSettings.init();
-
-  //   final _name = (appName ?? packageInfo.appName) + (kDebugMode ? '*' : '');
-  //   final appService = AppService(
-  //     appInfo: appInfo,
-  //     settings: settings,
-  //     notificationSettings: const NotificationSettings(),
-  //     name: _name,
-  //     version: packageInfo.version,
-  //     buildNumber: packageInfo.buildNumber,
-  //     packageName: packageInfo.packageName.isEmpty
-  //         ? packageInfo.appName
-  //         : packageInfo.packageName,
-  //   );
-
-  //   // Get.put(appService);
-
-  //   await GetStorage.init();
-
-  //   AppActions.resetDefaultLoading();
-
-  //   //Get.lazyPut(() => DialogService());
-  //   //Get.lazyPut(() => SnackbarService());
-
-  //   Get.log('Startup AppService Done.');
-  // }
+  //late final AppTheme theme = AppTheme();
+  //late final AppTranslations tr = AppTranslations();
 
   AppService({
     required this.appInfo,
@@ -214,20 +159,33 @@ class AppService extends GetxService {
 
   void dismissProgressIndicator() => EasyLoading.dismiss();
 
-  // // Credential actions
-  // /// Silent login credential, implementation required in App.init.silentLogin
-  // Future silentLogin() async => AppActions.silentLogin?.call();
-
-  // /// Login credential, implementation required in App.init.login
-  // Future login(dynamic request) async => AppActions.login?.call(request);
-
-  // /// Logout credential, implementation required in App.init.logout
-  // Future logout() async => AppActions.logout?.call();
-
   Future signIn(dynamic request) async =>
       _credentialActions?.signIn?.call(request);
 
   Future signOut() async => _credentialActions?.signOut?.call();
 
   Future signInRefresh() async => _credentialActions?.signInRefresh?.call();
+
+  ThemeMode _themeMode = ThemeMode.system;
+  ThemeMode get themeMode => _themeMode;
+
+  void changeThemeMode(ThemeMode themeMode) {
+    _themeMode = themeMode;
+    App.storage.write('App.Theme.Mode', _themeMode.toString().split('.')[1]);
+    Get.changeThemeMode(_themeMode);
+  }
+
+  void restoreThemeMode({ThemeMode defaultMode = ThemeMode.system}) {
+    _themeMode = defaultMode;
+    final storedThemeMode = App.storage.read<String>('App.Theme.Mode');
+    try {
+      if (storedThemeMode != null && storedThemeMode.isNotEmpty) {
+        _themeMode = ThemeMode.values
+            .firstWhere((e) => describeEnum(e) == storedThemeMode);
+      }
+    } on Exception catch (_) {
+      _themeMode = defaultMode;
+      App.storage.remove('App.Theme.Mode');
+    }
+  }
 }

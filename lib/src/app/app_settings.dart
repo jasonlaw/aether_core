@@ -5,6 +5,10 @@ import 'package:flutter/services.dart';
 
 import '../../aether_core.dart';
 
+const String kSettingsFilePath = '$kSystemPath/settings.json';
+const String kSettingsFilePathDebug = '$kSystemPath/settings.debug.json';
+const String kSettingsFilePathStaging = '$kSystemPath/settings.staging.json';
+
 class AppSettings extends Entity {
   late final Field<String> apiBaseUrl = field('ApiBaseUrl');
   late final Field<String> apiKey = field('ApiKey');
