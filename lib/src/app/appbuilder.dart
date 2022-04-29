@@ -170,32 +170,42 @@ class CredentialActions {
         authenticator: authenticator ?? _authenticator,
       );
 
-  static Future _signIn(dynamic request) async {
-    final result = await '/api/credential/signin'.api(body: request).post();
-    if (result.hasError) return Future.error(result.errorText);
-    App.identity.load(result.body);
+  static Future<void> _signIn(dynamic request) {
+    return '/api/credential/signin'.api(body: request).post().then((response) {
+      if (response.hasError) return Future.error(response.errorText);
+      App.identity.load(response.body);
+    });
   }
 
-  static Future _signOut() async {
-    final result = await '/api/credential/signout'.api().post();
-    if (result.hasError) {
-      // if failed to logout, we manually clear the cookies.
-      App.connect.clearCookies();
-    }
-    App.identity.signOut();
-  }
-
-  static Future _signInRefresh() async {
-    if (App.identity.refreshToken.isNullOrEmpty) return;
-    final result = await '/api/credential/refresh'
-        .api(body: {'refreshToken': App.identity.refreshToken}).post();
-    if (result.hasError) {
-      if (result.statusCode != null) {
+  static Future<void> _signOut() {
+    return '/api/credential/signout'.api().post().then((response) {
+      if (response.hasError) {
+        // if failed to logout, we manually clear the cookies.
         App.connect.clearCookies();
       }
-    } else if (result.isOk) {
-      App.identity.load(result.body);
+      App.identity.load(response.body);
+    }).whenComplete(() {
+      App.identity.signOut();
+    });
+  }
+
+  static Future<void> _signInRefresh() async {
+    if (App.identity.refreshToken.isNullOrEmpty) {
+      return Future.error('Empty refresh token');
     }
+
+    '/api/credential/refresh'
+        .api(body: {'refreshToken': App.identity.refreshToken})
+        .post()
+        .then((response) {
+          if (response.hasError) {
+            if (response.statusCode != null) {
+              App.connect.clearCookies();
+            }
+            return Future.error(response.errorText);
+          }
+          App.identity.load(response.body);
+        });
   }
 
   // ignore: prefer_function_declarations_over_variables
@@ -205,6 +215,7 @@ class CredentialActions {
           .api(body: {'refreshToken': App.identity.refreshToken}).post();
       if (result.hasError) {
         App.connect.clearCookies();
+        return Future.error(result.errorText);
       }
     }
     return request;
