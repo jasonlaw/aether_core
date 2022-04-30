@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:get/get_connect/http/src/interceptors/get_modifiers.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -66,13 +65,7 @@ class AppBuilder {
     Get.lazyPut(() => DialogService());
     Get.lazyPut(() => SnackbarService());
 
-    if (_credentialActions?.authenticator != null) {
-      app.connect.addAuthenticator(_credentialActions!.authenticator!);
-    }
-    if (_credentialActions?.unauthorizedHandler != null) {
-      app.connect.addUnauthorizedResponseHandler(
-          _credentialActions!.unauthorizedHandler!);
-    }
+    CredentialActions._finalize(_credentialActions);
 
     return app;
   }
@@ -144,36 +137,45 @@ class SnackbarSettings {
 class CredentialActions {
   final Future Function(dynamic)? signIn;
   final Future Function()? signOut;
-  final Future Function()? signInRefresh;
-  final RequestModifier? authenticator;
+
+  final Future Function()? refreshCredential;
+  final Future Function()? getCredential;
   final void Function(Response response)? unauthorizedHandler;
+
+  final Future<String?> Function()? getRefreshToken;
+  static Future<String?> Function()? _getRefreshToken;
 
   const CredentialActions({
     this.signIn,
     this.signOut,
-    this.signInRefresh,
-    this.authenticator,
+    this.refreshCredential,
+    this.getRefreshToken,
+    this.getCredential,
     this.unauthorizedHandler,
   });
 
   static CredentialActions aether({
     Future Function(dynamic)? signIn,
     Future Function()? signOut,
-    Future Function()? signInRefresh,
-    RequestModifier? authenticator,
+    Future<String?> Function()? getRefreshToken,
+    Future Function()? refreshCredential,
+    Future Function()? getCredential,
     void Function(Response response)? unauthorizedHandler,
   }) =>
       CredentialActions(
         signIn: signIn ?? _signIn,
         signOut: signOut ?? _signOut,
-        signInRefresh: signInRefresh ?? _signInRefresh,
-        authenticator: authenticator ?? _authenticator,
+        getRefreshToken: getRefreshToken ?? _getRefreshToken,
+        refreshCredential: refreshCredential ?? _refreshCredential,
+        getCredential: getCredential ?? _getCredential,
+        unauthorizedHandler: unauthorizedHandler,
       );
 
   static Future<void> _signIn(dynamic request) {
     return '/api/credential/signin'.api(body: request).post().then((response) {
-      if (response.hasError) return Future.error(response.errorText);
-      App.identity.load(response.body);
+      if (response.isOk) {
+        App.identity.load(response.body);
+      }
     });
   }
 
@@ -189,37 +191,55 @@ class CredentialActions {
     });
   }
 
-  static Future<void> _signInRefresh() async {
-    if (App.identity.refreshToken.isNullOrEmpty) {
-      return Future.error('Empty refresh token');
-    }
+  static Future<void> _refreshCredential() async {
+    final refreshToken = await _getRefreshToken!.call();
 
-    '/api/credential/refresh'
-        .api(body: {'refreshToken': App.identity.refreshToken})
+    if (refreshToken.isNullOrEmpty) return;
+
+    return '/api/credential/refresh'
+        .api(body: {'refreshToken': refreshToken})
         .post()
         .then((response) {
           if (response.hasError) {
             if (response.statusCode != null) {
               App.connect.clearCookies();
             }
-            return Future.error(response.errorText);
+            return;
           }
           App.identity.load(response.body);
         });
   }
 
-  // ignore: prefer_function_declarations_over_variables
-  static final RequestModifier _authenticator = (request) async {
-    if (App.identity.refreshToken.isNotNullOrEmpty) {
-      final result = await '/api/credential/refresh'
-          .api(body: {'refreshToken': App.identity.refreshToken}).post();
-      if (result.hasError) {
-        App.connect.clearCookies();
-        return Future.error(result.errorText);
+  static Future<void> _getCredential() {
+    return '/api/credential'
+        .api()
+        .get(timeout: const Duration(seconds: 10))
+        .then((response) {
+      if (response.hasError) {
+        if (response.statusCode != null) {
+          App.connect.clearCookies();
+        }
+        return;
       }
+      App.identity.load(response.body);
+    });
+  }
+
+  static void _finalize(CredentialActions? actions) {
+    _getRefreshToken =
+        actions?.getRefreshToken ?? () async => App.identity.refreshToken;
+
+    if (actions?.refreshCredential != null) {
+      App.connect.addAuthenticator<void>((request) async {
+        await actions!.refreshCredential!.call();
+        return request;
+      });
     }
-    return request;
-  };
+
+    if (actions?.unauthorizedHandler != null) {
+      App.connect.addUnauthorizedResponseHandler(actions!.unauthorizedHandler!);
+    }
+  }
 
   static Map<String, String> userPass(
     String username,

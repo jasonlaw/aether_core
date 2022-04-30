@@ -1,3 +1,6 @@
+## 0.4.1
+* Credential actions
+
 ## 0.4.0
 * Introduce AppBuilder
 

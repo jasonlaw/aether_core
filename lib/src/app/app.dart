@@ -164,7 +164,9 @@ class AppService extends GetxService {
 
   Future signOut() async => _credentialActions?.signOut?.call();
 
-  Future signInRefresh() async => _credentialActions?.signInRefresh?.call();
+  //Future signInRefresh() async => _credentialActions?.signInRefresh?.call();
+
+  Future refreshCredential() async => _credentialActions?.getCredential?.call();
 
   ThemeMode _themeMode = ThemeMode.system;
   ThemeMode get themeMode => _themeMode;

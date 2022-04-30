@@ -31,6 +31,8 @@ class GetxHttp {
   bool _disableLoadingIndicator = false;
   bool _disableLoadingIndicatorPermanent = false;
 
+  Duration? onlyOnceTimeout;
+
   void disableLoadingIndicator({bool oneTimeOnly = true}) {
     _disableLoadingIndicator = true;
     _disableLoadingIndicatorPermanent = !oneTimeOnly;
@@ -123,7 +125,7 @@ class GetxHttp {
   }) async {
     _showProgressIndicator();
     final encodedVariables = await _encodeJson(variables);
-    client.httpClient.timeout = timeout ?? client.timeout;
+    client.httpClient.timeout = timeout ?? onlyOnceTimeout ?? client.timeout;
 
     return client
         .query<T>(query,
@@ -135,7 +137,10 @@ class GetxHttp {
           message: error?.toString(),
         )
       ]);
-    }).whenComplete(_dismissProgressIndicator);
+    }).whenComplete(() async {
+      onlyOnceTimeout = null;
+      _dismissProgressIndicator();
+    });
   }
 
   String _gqlDataType(dynamic value) {
@@ -213,7 +218,10 @@ class GetxHttp {
             headers: headers,
             contentType: contentType,
             decoder: decoder)
-        .whenComplete(_dismissProgressIndicator);
+        .whenComplete(() async {
+      onlyOnceTimeout = null;
+      _dismissProgressIndicator();
+    });
 
     if (result.unauthorized && _unauthorizedResponseHandler != null) {
       GetMicrotask().exec(() => _unauthorizedResponseHandler!.call(result));
