@@ -29,19 +29,40 @@ Example
 }
 ~~~
 
-## AppService
-Before runApp, initialize AppService. After that, you may access the service via App instance.
+## Building App Service
+Before RunApp, build the AppService via AppBuilder.
 ~~~dart
-await AppService.init(); 
+final builder = AppBuilder();
+
+// Customize the credential actions
+builder.useCredentialActions(
+    CredentialActions(
+        signIn: (request) => CredentialManager.login(request),
+        signOut: () => CredentialManager.logout(),
+        refreshCredential: () => CredentialManager.loginRefresh(),
+        getCredential: () => CredentialManager.refreshCredential()),
+  );
+
+// Customize dialog settings
+builder.useDialogSettings(
+  const DialogSettings(
+    buttonTitleColor: MainTheme,
+  ),
+);
+
+// Customize snackbar settings
+builder.useSnackbarSettings(
+  const SnackbarSettings(
+      errorIcon: Icon(AppIcons.snackbarError, color: Colors.red),
+      infoIcon: Icon(AppIcons.snackbarInfo, color: MainTheme)),
+);
+
+// Build the app service
+await builder.build(appName: 'VIQ Community Admin');
 ~~~
 
-### Dialog, Notification and Progress indicator
+### Dialog, Snackbar and Progress indicator
 ~~~dart
-// Configurations
-App.config.dialog(void Function(DialogDefaultSettings settings) configure)
-App.config.notification(void Function(NotificationDefaultSettings settings) configure)
-App.config.progressIndicator(void Function(EasyLoading easyLoading) configure)
-
 // Dialog
 App.dialog({String? title, 
             String? description, 
@@ -64,66 +85,6 @@ App.error(dynamic error, {String? title})
 // Progress indicator
 App.showProgressIndicator({String? status})
 App.dismissProgressIndicator()
-~~~
-
-## Credential Management
-Example:
-~~~dart
-class CredentialManager {
-  static void init() {
-    App.config.silentLogin(() => CredentialManager.silentLogin());
-    App.config.login((request) => CredentialManager.login(request));
-    App.config.logout(() => CredentialManager.logout());
-
-    App.connect.addAuthenticator<void>((request) async {
-      final token = CredentialIdentity.refreshToken;
-      if (token != null) {
-        final result = await '/api/login/refresh'
-            .api()
-            .post(headers: {'x-refresh-token': token});
-        if (result.hasError) {
-          //AppAuth.reset();
-          App.identity.signOut();
-        }
-      }
-      return request;
-    });
-  }
-
-  static Future<void> login(LoginRequest request) async {
-    if (!request.validated()) return LoginStatus.failed;
-
-    final result = await '/api/login/admin'
-        .api(body: request.toMap())
-        .post(timeout: const Duration(seconds: 5));
-
-    if (result.hasError) return Future.error(result.errorText);
-    
-    App.identity.load(result.body);    
-  }
-
-  static Future<void> silentLogin() async {
-    final result = await '/api/mylogin/silentlogin'
-        .api()
-        .post(timeout: const Duration(seconds: 10));
-
-    if (result.isOk) {
-      App.identity.load(result.body);
-    }
-  }
-
-  static Future<void> logout() async {
-    final result =
-        await '/api/logout'.api().post(timeout: const Duration(seconds: 5));
-    if (result.hasError) {
-      // if failed to logout, we manually clear the cookies.
-      App.connect.clearCookies();
-    }
-    //AppAuth.reset();
-    App.identity.signOut();
-    return await Get.toNamed('/');
-  }
-}
 ~~~
 
 ## Entity
@@ -163,18 +124,6 @@ class PlanQuality extends Entity {}
 ~~~
 
 ## API Connect
-
-### Unauthorized handler (401 error)
-~~~dart
- App.connect.addUnauthorizedResponseHandler((response) async {
-    await App.dialog(
-      description: 'Your login session may have expired. Please re-login again.',
-      title: 'Unauthorized',
-      barrierDismissible: true,
-    );
-    App.identity.signOut();
-  });
-~~~
 
 ### Quick REST API Access
 ~~~dart
