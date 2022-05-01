@@ -12,6 +12,11 @@ class AppBuilder {
     _setDefaultLoading();
   }
 
+  CredentialIdentity? _credentialIdentity;
+  void useCredentialIdentity(CredentialIdentity identity) {
+    _credentialIdentity = identity;
+  }
+
   CredentialActions? _credentialActions;
   void useCredentialActions(CredentialActions actions) {
     _credentialActions = actions;
@@ -56,6 +61,7 @@ class AppBuilder {
     final app = AppService(
       appInfo: appInfo,
       settings: settings,
+      credentialIdentity: _credentialIdentity,
       credentialActions: _credentialActions,
       notificationSettings: _snackbarSettings ?? const SnackbarSettings(),
       dialogSettings: _dialogSettings,
@@ -180,13 +186,7 @@ class CredentialActions {
   }
 
   static Future<void> _signOut() {
-    return '/api/credential/signout'.api().post().then((response) {
-      if (response.hasError) {
-        // if failed to logout, we manually clear the cookies.
-        App.connect.clearCookies();
-      }
-      App.identity.load(response.body);
-    }).whenComplete(() {
+    return '/api/credential/signout'.api().post().whenComplete(() {
       App.identity.signOut();
     });
   }
@@ -202,7 +202,7 @@ class CredentialActions {
         .then((response) {
           if (response.hasError) {
             if (response.statusCode != null) {
-              App.connect.clearCookies();
+              App.connect.clearIdentityCache();
             }
             return;
           }
@@ -217,7 +217,7 @@ class CredentialActions {
         .then((response) {
       if (response.hasError) {
         if (response.statusCode != null) {
-          App.connect.clearCookies();
+          App.connect.clearIdentityCache();
         }
         return;
       }
@@ -227,7 +227,7 @@ class CredentialActions {
 
   static void _finalize(CredentialActions? actions) {
     _getRefreshToken =
-        actions?.getRefreshToken ?? () async => App.identity.refreshToken;
+        actions?.getRefreshToken ?? () async => App.connect.refreshToken;
 
     if (actions?.refreshCredential != null) {
       App.connect.addAuthenticator<void>((request) async {

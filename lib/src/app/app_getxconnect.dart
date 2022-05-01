@@ -25,9 +25,8 @@ class GetxConnect extends GetxHttp {
 
     client.httpClient.addResponseModifier<void>((request, response) async {
       await _cookie.saveFromResponse(response);
-      if (response.headers?.containsKey('x-refresh-token') ?? false) {
-        CredentialIdentity._writeRefreshToken(
-            response.headers!['x-refresh-token']);
+      if (response.headers?.containsKey(refreshTokenKey) ?? false) {
+        refreshToken = response.headers![refreshTokenKey];
       }
       return response;
     });
@@ -37,7 +36,19 @@ class GetxConnect extends GetxHttp {
     client.httpClient.addAuthenticator(auth);
   }
 
-  void clearCookies() {
+  final String refreshTokenKey = 'x-refresh-token';
+  String? get refreshToken =>
+      App.storage.read<String>('getxconnect-$refreshTokenKey');
+  set refreshToken(String? token) {
+    if (token == null) {
+      App.storage.remove('getxconnect-$refreshTokenKey');
+    } else {
+      App.storage.write('getxconnect-$refreshTokenKey', token);
+    }
+  }
+
+  void clearIdentityCache() {
+    refreshToken = null;
     _cookie.deleteAll();
   }
 }
