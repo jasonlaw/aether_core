@@ -23,6 +23,7 @@ abstract class FieldBase<T> {
   ValueTransform<T>? _fieldOnLoading;
   ValueChanged<T?>? _fieldOnLoaded;
   ValueChanged<T?>? _fieldOnChanged;
+  void Function()? _fieldOnReset;
 
   Computed<T?>? _compute;
   Set<FieldBase>? _computeBindings;
@@ -31,7 +32,10 @@ abstract class FieldBase<T> {
 
   T? get value;
 
-  void onLoaded({required ValueChanged<T?> action}) => _fieldOnLoaded = action;
+  void onLoaded({required ValueChanged<T?> action, void Function()? reset}) {
+    _fieldOnLoaded = action;
+    _fieldOnReset = reset;
+  }
 
   void onChanged({required ValueChanged<T?> action}) =>
       _fieldOnChanged = action;
@@ -89,6 +93,7 @@ abstract class FieldBase<T> {
       entity.data.remove(name);
       updateState();
     }
+    _fieldOnReset?.call();
   }
 
   @mustCallSuper

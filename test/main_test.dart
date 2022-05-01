@@ -125,5 +125,39 @@ void main() {
       expect(capacity, 11);
       expect(totalCapacity, 19);
     });
+
+    test('Entity identity', () {
+      final identity = CredentialIdentity();
+      identity.signIn(
+        '123',
+        'jasonlaw',
+        'Jason Law',
+        'jason.cclaw@gmail.com',
+        roles: 'SystemAdmin,ABC, CDE  ,ABC, ',
+      );
+
+      final _roles = identity
+          .roles()
+          .split(',')
+          .map((e) => e.trim())
+          .where((element) => element.isNotEmpty)
+          .toSet();
+      expect(3, _roles.length, reason: _roles.toString());
+      expect(true, identity.isAuthenticated, reason: 'isAuthenticated');
+      expect(true, identity.hasRoles({'SystemAdmin'}),
+          reason: 'Has SystemAdmin role');
+      expect(true, identity.hasRoles({'CDE'}), reason: 'Has CDE role');
+      expect(true, identity.hasRoles({'ABC', 'CDE'}),
+          reason: 'Has ABC and CDE role');
+      expect(false, identity.hasRoles({'ZZZ', 'CDE'}),
+          reason: 'Has ZZZ and CDE role');
+      expect(true, identity.anyRoles({'ZZZ', 'CDE'}),
+          reason: 'Has ZZZ or CDE role');
+
+      identity.reset();
+      expect(false, identity.hasRoles({'SystemAdmin'}),
+          reason: 'No more SystemAdmin role');
+      expect(false, identity.isAuthenticated, reason: 'No more authenticated');
+    });
   });
 }

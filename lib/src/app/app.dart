@@ -46,9 +46,11 @@ class AppService extends GetxService {
   final CredentialActions? _credentialActions;
   final DialogSettings? _dialogSettings;
   final SnackbarSettings _snackbarSettings;
+  final CredentialIdentity? _credentialIdentity;
 
   late final CredentialIdentity identity =
-      Get.isRegistered() ? Get.find() : CredentialIdentity();
+      _credentialIdentity ?? CredentialIdentity();
+
   final AppSettings settings;
   late final GetxConnect connect = GetxConnect._();
   late final GetxHttp http = GetxHttp();
@@ -59,10 +61,12 @@ class AppService extends GetxService {
   AppService({
     required this.appInfo,
     required this.settings,
+    CredentialIdentity? credentialIdentity,
     CredentialActions? credentialActions,
     DialogSettings? dialogSettings,
     required SnackbarSettings notificationSettings,
-  })  : _credentialActions = credentialActions,
+  })  : _credentialIdentity = credentialIdentity,
+        _credentialActions = credentialActions,
         _dialogSettings = dialogSettings,
         _snackbarSettings = notificationSettings;
 
