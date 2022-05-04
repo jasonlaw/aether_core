@@ -1,3 +1,6 @@
+## 0.4.2
+* Credential actions error handling issue
+
 ## 0.4.1
 * Credential actions
 
