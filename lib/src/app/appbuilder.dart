@@ -179,14 +179,17 @@ class CredentialActions {
 
   static Future<void> _signIn(dynamic request) {
     return '/api/credential/signin'.api(body: request).post().then((response) {
-      if (response.isOk) {
-        App.identity.load(response.body);
-      }
+      if (response.hasError) return Future.error(response.errorText);
+      App.identity.load(response.body);
     });
   }
 
   static Future<void> _signOut() {
-    return '/api/credential/signout'.api().post().whenComplete(() {
+    return '/api/credential/signout'
+        .api()
+        .post()
+        .catchError((_) {})
+        .whenComplete(() {
       App.identity.signOut();
     });
   }
@@ -203,11 +206,12 @@ class CredentialActions {
           if (response.hasError) {
             if (response.statusCode != null) {
               App.connect.clearIdentityCache();
+              return;
             }
-            return;
           }
           App.identity.load(response.body);
-        });
+        })
+        .catchError((_) {});
   }
 
   static Future<void> _getCredential() {
@@ -219,7 +223,7 @@ class CredentialActions {
         if (response.statusCode != null) {
           App.connect.clearIdentityCache();
         }
-        return;
+        return Future.error(response.errorText);
       }
       App.identity.load(response.body);
     });
@@ -231,7 +235,7 @@ class CredentialActions {
 
     if (actions?.refreshCredential != null) {
       App.connect.addAuthenticator<void>((request) async {
-        await actions!.refreshCredential!.call();
+        await actions!.refreshCredential!.call().catchError((_) {});
         return request;
       });
     }
