@@ -1,3 +1,6 @@
+## 0.4.3
+* Fixed gql query typo
+
 ## 0.4.2
 * Credential actions error handling issue
 

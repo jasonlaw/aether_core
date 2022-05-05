@@ -110,7 +110,7 @@ class GetxHttp {
     }
 
     return gqlRequest(
-      query,
+      _queryBody,
       variables: _variables,
       headers: headers,
       timeout: timeout,
