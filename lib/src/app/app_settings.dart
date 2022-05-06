@@ -18,7 +18,7 @@ class AppSettings extends Entity {
 
   // EasyLoading get easyLoading => EasyLoading.instance;
 
-  AppSettings._() {
+  AppSettings() {
     final _google = field<String>('GooglePlayURL');
     final _apple = field<String>('AppleAppStoreURL');
     final _huawei = field<String>('HuaweiAppGalleryURL');
@@ -33,9 +33,7 @@ class AppSettings extends Entity {
         });
   }
 
-  static Future<AppSettings> init() async {
-    var settings = AppSettings._();
-
+  static Future loadFiles(AppSettings settings) async {
     /// Loading a json configuration file from a custom [path] into the current app config./
     Future loadFromPath(String path) async {
       final content = await rootBundle.loadString(path);
@@ -61,8 +59,6 @@ class AppSettings extends Entity {
       } on Exception catch (_) {}
     }
 
-    if (kDebugMode) print(settings.toMap());
-
-    return settings;
+    // if (kDebugMode) print(settings.toMap());
   }
 }

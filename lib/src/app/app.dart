@@ -85,11 +85,16 @@ class AppService extends GetxService {
     Upgrader().debugLogging = kDebugMode;
   }
 
-  Widget builder(BuildContext contxet, Widget? widget) => UpgradeAlert(
-        child: FlutterEasyLoading(
-          child: widget,
-        ),
-      );
+  Widget builder(BuildContext contxet, Widget? widget) {
+    if (kIsWeb) {
+      return FlutterEasyLoading(child: widget);
+    }
+    return UpgradeAlert(
+      child: FlutterEasyLoading(
+        child: widget,
+      ),
+    );
+  }
 
   /// Error snackbar notification
   Future<void> error(dynamic error, {String? title}) async {

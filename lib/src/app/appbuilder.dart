@@ -8,6 +8,7 @@ import '../../aether_core.dart';
 
 class AppBuilder {
   AppBuilder() {
+    WidgetsFlutterBinding.ensureInitialized();
     Get.isLogEnable = kDebugMode;
     _setDefaultLoading();
   }
@@ -32,6 +33,11 @@ class AppBuilder {
     _snackbarSettings = settings;
   }
 
+  AppSettings? _appSettings;
+  void useAppSettings(AppSettings settings) {
+    _appSettings = settings;
+  }
+
   void useProgressIndicatorSettings(
     void Function(EasyLoading easyLoading) configure,
   ) =>
@@ -42,7 +48,12 @@ class AppBuilder {
 
     await GetStorage.init();
 
-    final settings = await AppSettings.init();
+    var appSettings = _appSettings;
+
+    if (appSettings == null) {
+      appSettings = AppSettings();
+      await AppSettings.loadFiles(appSettings);
+    }
 
     final packageInfo = await PackageInfo.fromPlatform();
 
@@ -56,11 +67,14 @@ class AppBuilder {
           : packageInfo.packageName,
     );
 
-    if (kDebugMode) appInfo.printLog();
+    if (kDebugMode) {
+      appInfo.printLog();
+      print(appSettings.toMap());
+    }
 
     final app = AppService(
       appInfo: appInfo,
-      settings: settings,
+      settings: appSettings,
       credentialIdentity: _credentialIdentity,
       credentialActions: _credentialActions,
       notificationSettings: _snackbarSettings ?? const SnackbarSettings(),
