@@ -159,14 +159,20 @@ class AppService extends GetxService {
           barrierDismissible: barrierDismissible,
           dialogPlatform: dialogPlatform ?? _dialogSettings?.dialogPlatform);
 
+  bool get isLoading => EasyLoading.isShow;
+
   // Progress indicator actions
   void showProgressIndicator({String? status}) {
     if (EasyLoading.instance.overlayEntry != null) {
+      //isLoading(true);
       EasyLoading.show(status: status);
     }
   }
 
-  void dismissProgressIndicator() => EasyLoading.dismiss();
+  void dismissProgressIndicator() {
+    EasyLoading.dismiss();
+    //isLoading(false);
+  }
 
   Future signIn(dynamic request) async =>
       _credentialActions?.signIn?.call(request);

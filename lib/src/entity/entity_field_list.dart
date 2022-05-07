@@ -42,6 +42,8 @@ class ListField<E extends Entity> extends FieldBase<List<E>> {
   void innerLoad(dynamic rawData, {bool copy = false}) {
     if (isComputed) return;
     if (rawData != null) {
+      assert(
+          _fieldOnLoading != null, 'Register is required before load action.');
       entity[name] = _fieldOnLoading!.call(rawData);
     }
     if (!copy) _fieldOnLoaded?.call(value);
