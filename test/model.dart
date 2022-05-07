@@ -20,7 +20,7 @@ class Company extends Entity {
       compute: () => machines.fold(0, (p, e) => p! + e.capacity()),
     );
     machines.register(() => Machine());
-    settings.register(() => Settings(), auto: true);
+    settings.register(() => Settings(), defaultInstance: true);
     if (kDebugMode) {
       print('End of Company constructor');
     }

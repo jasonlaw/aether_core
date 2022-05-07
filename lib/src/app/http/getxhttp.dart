@@ -84,7 +84,7 @@ class GetxHttp {
     var _variables = variables;
 
     if (query is GraphQLQuery) {
-      final _gql = query.buildQuery();
+      final _gql = query._buildQuery();
 
       _variables ??= _gql['vars'];
 

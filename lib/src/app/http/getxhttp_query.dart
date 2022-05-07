@@ -128,7 +128,7 @@ class GraphQLQuery {
     return use(App.http);
   }
 
-  Map<String, dynamic> buildQuery() {
+  Map<String, dynamic> _buildQuery() {
     final result = <String, dynamic>{};
     final vars = <String, dynamic>{};
     final varTypes = <String, String>{};
@@ -146,7 +146,7 @@ class GraphQLQuery {
             return x.name;
           }
           if (x is GraphQLQuery) {
-            final subquery = x.buildQuery();
+            final subquery = x._buildQuery();
             vars.addAll(subquery['vars']);
             varTypes.addAll(subquery['varTypes']);
             return subquery['body'];

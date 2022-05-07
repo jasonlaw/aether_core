@@ -84,9 +84,11 @@ extension FieldExtensions<T> on Field<T> {
 extension FieldOfEntityExtensions<E extends Entity> on Field<E> {
   Field<E> register(
     EntityBuilder<E> createEntity, {
-    bool auto = false,
+    bool defaultInstance = false,
   }) {
-    if (auto) _createDefault = () => createEntity().._parentRef = this;
+    if (defaultInstance) {
+      _createDefault = () => createEntity().._parentRef = this;
+    }
     _fieldOnLoading = (rawData) {
       final instance = value ?? createEntity()
         .._parentRef = this;

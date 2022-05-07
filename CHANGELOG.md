@@ -1,3 +1,10 @@
+## 0.4.5
+* Rollback the entity field default instance changes
+
+## 0.4.4
+* Fixed AppSettings issue
+* Make entity field default instance true
+
 ## 0.4.3
 * Fixed gql query typo
 
