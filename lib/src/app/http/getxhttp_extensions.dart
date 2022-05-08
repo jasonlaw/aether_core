@@ -32,12 +32,8 @@ extension GetxResponseExtensions on Response {
 }
 
 extension QuickApiOnStringExtensions on String {
-  GraphQLQuery gql(
-    List<dynamic> fields, {
-    Map<String, dynamic>? params,
-    Map<String, String>? paramTypes,
-  }) {
-    return GraphQLQuery(this, fields, params: params, paramTypes: paramTypes);
+  GraphQLQuery gql(List<dynamic> fields, {Map<String, dynamic>? params}) {
+    return GraphQLQuery(this, fields, params: params);
   }
 
   RestQuery api({
@@ -49,11 +45,7 @@ extension QuickApiOnStringExtensions on String {
 }
 
 extension QuickApiOnFieldExtensions on FieldBase {
-  GraphQLQuery gql(
-    List<dynamic> fields, {
-    Map<String, dynamic>? params,
-    Map<String, String>? paramTypes,
-  }) {
-    return GraphQLQuery(name, fields, params: params, paramTypes: paramTypes);
+  GraphQLQuery gql(List<dynamic> fields, {Map<String, dynamic>? params}) {
+    return GraphQLQuery(name, fields, params: params);
   }
 }

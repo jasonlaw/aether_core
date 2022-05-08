@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cross_file/cross_file.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get_connect/http/src/exceptions/exceptions.dart';
@@ -80,38 +82,22 @@ class GetxHttp {
     Map<String, String>? headers,
     Duration? timeout,
   }) async {
-    String _queryBody;
-    var _variables = variables;
+    String _query;
 
     if (query is GraphQLQuery) {
-      final _gql = query._buildQuery();
-
-      _variables ??= _gql['vars'];
-
-      if (_variables!.isNotEmpty) {
-        final Map<String, String> _gqlVarTypes = _gql['varTypes'];
-        final _vars = _variables.entries.map((x) {
-          final _varType = _gqlVarTypes[x.key] ?? _gqlDataType(x.value);
-          return '\$${x.key}: $_varType';
-        }).join(', ');
-        _queryBody = '$method ( $_vars ) { ${_gql['body']} }';
-      } else {
-        _queryBody = '$method { ${_gql['body']} }';
-      }
-
-      if (method == 'debug') {
-        final debugResponse = Response(statusCode: 200, body: {
-          'data': {query.name: _queryBody}
-        });
-        return GraphQLResponse.fromResponse(debugResponse);
-      }
+      _query = query._buildQuery();
     } else {
-      _queryBody = '$method $query';
+      _query = '$query';
+    }
+
+    final body = '$method { $_query }';
+    if (kDebugMode) {
+      print(body);
     }
 
     return gqlRequest(
-      _queryBody,
-      variables: _variables,
+      body,
+      variables: variables,
       headers: headers,
       timeout: timeout,
     );
@@ -141,19 +127,6 @@ class GetxHttp {
       onlyOnceTimeout = null;
       _dismissProgressIndicator();
     });
-  }
-
-  String _gqlDataType(dynamic value) {
-    if (value is String || value is String?) return GraphQLDataType.string;
-    if (value is bool || value is bool?) return GraphQLDataType.boolean;
-    if (value is int || value is int?) return GraphQLDataType.integer;
-    if (value is double || value is double?) return GraphQLDataType.double;
-    if (value is DateTime || value is DateTime?) {
-      return GraphQLDataType.dateTime;
-    }
-
-    if (value is Parameter) return value.type;
-    return value.runtimeType.toString();
   }
 
   Future<Response<T>> get<T>(

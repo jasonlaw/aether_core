@@ -89,34 +89,10 @@ class RestQuery {
 class GraphQLQuery {
   final String name;
   final List<dynamic> fields;
-  late final Map<String, dynamic>? params;
-  late final Map<String, String>? paramTypes;
+  final Map<String, dynamic>? params;
   GetxHttp? _http;
 
-  GraphQLQuery(this.name, this.fields,
-      {Map<String, dynamic>? params, Map<String, String>? paramTypes}) {
-    _initParams(params, paramTypes);
-  }
-
-  void _initParams(
-      Map<String, dynamic>? inputParams, Map<String, String>? inputParamTypes) {
-    Map<String, dynamic>? _params;
-    if (inputParams != null) {
-      _params = <String, dynamic>{};
-      for (var item in inputParams.entries) {
-        var key = item.key;
-        if (key.contains(':')) {
-          final keys = key.split(':');
-          key = keys[0];
-          inputParamTypes ??= <String, String>{};
-          inputParamTypes[key] = keys[1];
-        }
-        _params[key] = item.value;
-      }
-    }
-    paramTypes = inputParamTypes;
-    params = _params;
-  }
+  GraphQLQuery(this.name, this.fields, {this.params});
 
   // ignore: avoid_returning_this
   GraphQLQuery use(GetxHttp http) {
@@ -128,53 +104,58 @@ class GraphQLQuery {
     return use(App.http);
   }
 
-  Map<String, dynamic> _buildQuery() {
-    final result = <String, dynamic>{};
-    final vars = <String, dynamic>{};
-    final varTypes = <String, String>{};
-
-    if (params != null && params!.isNotEmpty) {
-      vars.addAll(params!);
-      if (paramTypes != null) {
-        varTypes.addAll(paramTypes!);
-      }
-    }
-
+  String _buildQuery() {
+    // build fields
     final _fields = fields
         .map((x) {
+          if (x is String) {
+            return x;
+          }
           if (x is FieldBase) {
             return x.name;
           }
           if (x is GraphQLQuery) {
-            final subquery = x._buildQuery();
-            vars.addAll(subquery['vars']);
-            varTypes.addAll(subquery['varTypes']);
-            return subquery['body'];
+            return x._buildQuery();
           }
-          if (x is String) {
-            return x;
-          }
+          assert(false, 'Not supported field type');
           return null;
         })
         .where((x) => x != null)
         .join(', ');
 
-    final _variables = params?.entries.map((x) {
-      if (x.value is Parameter) {
-        varTypes[x.key] ??= x.value.type;
-      }
-      return '${x.key}: \$${x.key}';
-    }).join(', ');
+    // build params
+    final _params = _buildParams(params);
 
-    final payload = _variables == null
+    final query = _params == null
         ? '$name { $_fields }'
-        : '$name ( $_variables ) { $_fields }';
+        : '$name ( $_params ) { $_fields }';
 
-    result['body'] = payload;
-    result['vars'] = vars;
-    result['varTypes'] = varTypes;
+    return query;
+  }
 
-    return result;
+  String? _buildParams(Map<String, dynamic>? params) {
+    if (params == null || params.isEmpty) return null;
+    final _params = <String>[];
+    params.forEach((key, value) {
+      _params.add('$key: ${_parseParamValue(value)}');
+    });
+    return _params.join(', ');
+  }
+
+  String _parseParamValue(dynamic value) {
+    if (value is int || value is num || value is bool) {
+      return value.toString();
+    }
+    if (value is Map) {
+      return json.encode(value);
+    }
+    if (value is Field) {
+      return _parseParamValue(value.value);
+    }
+    if (value is Entity) {
+      return _parseParamValue(value.toMap());
+    }
+    return '"$value"';
   }
 
   Future<GraphQLResponse<T>> query<T>({
@@ -190,10 +171,6 @@ class GraphQLQuery {
       decoder: decoder,
       disableLoadingIndicator: disableLoadingIndicator,
     );
-  }
-
-  Future<GraphQLResponse<T>> debug<T>() {
-    return _gql('debug');
   }
 
   Future<GraphQLResponse<T>> mutation<T>({
@@ -239,13 +216,4 @@ class GraphQLQuery {
     }
     return GraphQLResponse(graphQLErrors: result.graphQLErrors);
   }
-}
-
-class GraphQLDataType {
-  static const boolean = 'Boolean';
-  static const string = 'String';
-  static const dateTime = 'DateTime';
-  static const guid = 'Uuid';
-  static const double = 'Double';
-  static const integer = 'Int';
 }

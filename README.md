@@ -144,17 +144,20 @@ final response = await 'https://oauth2.googleapis.com/token'
           .external() // Indicate this is an external API
           .post();
 ~~~
+
 ### Quick GraphQL API Access
 ~~~dart
-final result = await 'register'
-        .gql([
-          'customerId'
-        ], params: {
-          'input:RegisterCustomerInput': {
-            'name': name.value,
-            'email': email.value,
-            'password': password.value
+ 'community'
+        .gql([...data.fragment, 'location'.gql(Location().fragment)],
+            params: {'id': communityId})
+        .query()
+        .then((response) {
+          if (response.hasError) {
+            App.error(response.errorText);
+            return;
           }
-        })
-        .mutation();
+          if (response.isOk) {
+            data.load(response.body);
+          }
+        });
 ~~~

@@ -25,9 +25,8 @@ extension EntityExtensions<E extends Entity> on E {
     String name,
     List<dynamic> Function(E entity) query, {
     Map<String, dynamic>? params,
-    Map<String, String>? paramTypes,
   }) {
-    return GraphQLEntity<E>._(name, this, query(this), params, paramTypes);
+    return GraphQLEntity<E>._(name, this, query(this), params);
   }
 }
 
