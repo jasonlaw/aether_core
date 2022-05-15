@@ -18,7 +18,7 @@ dependencies:
     sdk: flutter
 
   # https://pub.dev/packages/get 
-  get: ^4.6.1
+  get: ^4.6.3
 
   # https://pub.dev/packages/get_storage 
   get_storage: ^2.0.3
@@ -27,7 +27,7 @@ dependencies:
   package_info_plus: ^1.4.2
   
   # https://pub.dev/packages/url_launcher 
-  url_launcher: ^6.1.0
+  url_launcher: ^6.1.2
 
   # https://pub.dev/packages/flutter_easyloading 
   flutter_easyloading: ^3.0.3
@@ -39,7 +39,10 @@ dependencies:
   crypto: ^3.0.2
 
   # https://pub.dev/packages/cross_file
-  cross_file: ^0.3.2
+  cross_file: ^0.3.3
+
+  # https://pub.dev/packages/money2
+  # money2: ^3.1.2
 
 dev_dependencies:
   flutter_test:

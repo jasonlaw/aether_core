@@ -36,6 +36,6 @@ extension EntityFieldStringExtensions on Field<String> {
 }
 
 extension ListOfEntityExtensions<E extends Entity> on List<E> {
-  ListField<E> obsx({EntityBuilder<E>? register}) =>
+  ListField<E> of(EntityBuilder<E>? register) =>
       ListField.create<E>(register: register);
 }

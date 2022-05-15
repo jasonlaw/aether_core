@@ -228,7 +228,7 @@ class SnackbarService extends GetxService {
       return getBar.show();
     } else {
       final completer = Completer();
-      WidgetsBinding.instance?.addPostFrameCallback((_) async {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
         final result = getBar.show();
         completer.complete(result);
       });

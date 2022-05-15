@@ -43,6 +43,11 @@ class AppBuilder {
   ) =>
       configure(EasyLoading.instance);
 
+  // Map<dynamic, DialogBuilder>? _dialogBuilders;
+  // void useDialogBuilders(Map<dynamic, DialogBuilder> builders) {
+  //   _dialogBuilders = builders;
+  // }
+
   Future<AppService> build({String? appName}) async {
     Get.isLogEnable = kDebugMode;
 
@@ -84,6 +89,10 @@ class AppBuilder {
     Get.put(app);
     Get.lazyPut(() => DialogService());
     Get.lazyPut(() => SnackbarService());
+
+    // if (_dialogBuilders != null) {
+    //   Get.find<DialogService>().registerCustomDialogBuilders(_dialogBuilders!);
+    // }
 
     CredentialActions._finalize(_credentialActions);
 

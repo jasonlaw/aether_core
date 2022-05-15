@@ -58,7 +58,7 @@ class RestQuery {
     bool disableLoadingIndicator = false,
   }) async {
     _http ??= App.connect;
-    if (disableLoadingIndicator) _http!.disableLoadingIndicator();
+    //if (disableLoadingIndicator) _http!.disableLoadingIndicator();
     var result = await _http!.request(
       method,
       url,
@@ -67,6 +67,7 @@ class RestQuery {
       headers: headers,
       contentType: contentType,
       timeout: timeout,
+      disableLoadingIndicator: disableLoadingIndicator,
     );
     if (result.isOk) {
       return Response(
@@ -117,14 +118,15 @@ class GraphQLQuery {
           if (x is GraphQLQuery) {
             return x._buildQuery();
           }
-          assert(false, 'Not supported field type');
+          assert(false,
+              'GraphQLQuery::_buildQuery => Not supported field type "${x.runtimeType}"');
           return null;
         })
         .where((x) => x != null)
         .join(', ');
 
     // build params
-    final _params = _buildParams(params);
+    final _params = _parseParamMap(params);
 
     final query = _params == null
         ? '$name { $_fields }'
@@ -133,29 +135,36 @@ class GraphQLQuery {
     return query;
   }
 
-  String? _buildParams(Map<String, dynamic>? params) {
+  String? _parseParamMap(Map<String, dynamic>? params) {
     if (params == null || params.isEmpty) return null;
     final _params = <String>[];
     params.forEach((key, value) {
-      _params.add('$key: ${_parseParamValue(value)}');
+      _params.add('${paramCase(key)}: ${_parseParamValue(value)}');
     });
     return _params.join(', ');
   }
 
+  String paramCase(String param) =>
+      '${param[0].toLowerCase()}${param.substring(1)}';
+
   String _parseParamValue(dynamic value) {
     if (value is int || value is num || value is bool) {
       return value.toString();
-    }
-    if (value is Map) {
-      return json.encode(value);
-    }
-    if (value is Field) {
+    } else if (value is Field) {
       return _parseParamValue(value.value);
+    } else if (value is Map<String, dynamic>) {
+      return '{ ${_parseParamMap(value)!} }';
+    } else if (value is Entity) {
+      return '{ ${_parseParamMap(value.toMap())!} }';
+    } else if (value is List) {
+      final items = <String>[];
+      for (var item in value) {
+        items.add(_parseParamValue(item));
+      }
+      return items.toString();
+    } else {
+      return '"$value"';
     }
-    if (value is Entity) {
-      return _parseParamValue(value.toMap());
-    }
-    return '"$value"';
   }
 
   Future<GraphQLResponse<T>> query<T>({
@@ -196,12 +205,13 @@ class GraphQLQuery {
     bool disableLoadingIndicator = false,
   }) async {
     _http ??= App.connect;
-    if (disableLoadingIndicator) _http!.disableLoadingIndicator();
+    //if (disableLoadingIndicator) _http!.disableLoadingIndicator();
     final result = await _http!.gql(
       method,
       this,
       headers: headers,
       timeout: timeout,
+      disableLoadingIndicator: disableLoadingIndicator,
     );
     if (result.isOk) {
       var response = Response(

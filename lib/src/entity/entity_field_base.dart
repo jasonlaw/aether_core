@@ -64,6 +64,8 @@ abstract class FieldBase<T> {
       entity[name] = innerDefaultValue();
       //}
     } else {
+      assert(_fieldOnLoading != null || T is! Entity,
+          'Register is required for Entity field type.');
       final transformer = _fieldOnLoading ?? ValueTransformers.system();
       entity[name] = transformer(rawData);
     }

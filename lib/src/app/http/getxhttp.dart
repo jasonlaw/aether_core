@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:cross_file/cross_file.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get_connect/http/src/exceptions/exceptions.dart';
@@ -50,6 +48,7 @@ class GetxHttp {
     Map<String, dynamic>? variables,
     Map<String, String>? headers,
     Duration? timeout,
+    bool disableLoadingIndicator = false,
   }) {
     return gql(
       'query',
@@ -57,6 +56,7 @@ class GetxHttp {
       variables: variables,
       headers: headers,
       timeout: timeout,
+      disableLoadingIndicator: disableLoadingIndicator,
     );
   }
 
@@ -65,6 +65,7 @@ class GetxHttp {
     Map<String, dynamic>? variables,
     Map<String, String>? headers,
     Duration? timeout,
+    bool disableLoadingIndicator = false,
   }) {
     return gql(
       'mutation',
@@ -72,6 +73,7 @@ class GetxHttp {
       variables: variables,
       headers: headers,
       timeout: timeout,
+      disableLoadingIndicator: disableLoadingIndicator,
     );
   }
 
@@ -81,6 +83,7 @@ class GetxHttp {
     Map<String, dynamic>? variables,
     Map<String, String>? headers,
     Duration? timeout,
+    bool disableLoadingIndicator = false,
   }) async {
     String _query;
 
@@ -100,6 +103,7 @@ class GetxHttp {
       variables: variables,
       headers: headers,
       timeout: timeout,
+      disableLoadingIndicator: disableLoadingIndicator,
     );
   }
 
@@ -108,8 +112,9 @@ class GetxHttp {
     Map<String, dynamic>? variables,
     Map<String, String>? headers,
     Duration? timeout,
+    bool disableLoadingIndicator = false,
   }) async {
-    _showProgressIndicator();
+    if (!disableLoadingIndicator) _showProgressIndicator();
     final encodedVariables = await _encodeJson(variables);
     client.httpClient.timeout = timeout ?? onlyOnceTimeout ?? client.timeout;
 
@@ -125,7 +130,7 @@ class GetxHttp {
       ]);
     }).whenComplete(() async {
       onlyOnceTimeout = null;
-      _dismissProgressIndicator();
+      if (!disableLoadingIndicator) _dismissProgressIndicator();
     });
   }
 
@@ -136,6 +141,7 @@ class GetxHttp {
     String? contentType,
     T Function(dynamic)? decoder,
     Duration? timeout,
+    bool disableLoadingIndicator = false,
   }) async {
     return request<T>(
       'get',
@@ -156,6 +162,7 @@ class GetxHttp {
     String? contentType,
     T Function(dynamic)? decoder,
     Duration? timeout,
+    bool disableLoadingIndicator = false,
   }) {
     return request<T>(
       'post',
@@ -169,17 +176,21 @@ class GetxHttp {
     );
   }
 
-  Future<Response<T>> request<T>(String method, String api,
-      {dynamic body,
-      Map<String, dynamic>? query,
-      Map<String, String>? headers,
-      String? contentType,
-      T Function(dynamic)? decoder,
-      Duration? timeout}) async {
+  Future<Response<T>> request<T>(
+    String method,
+    String api, {
+    dynamic body,
+    Map<String, dynamic>? query,
+    Map<String, String>? headers,
+    String? contentType,
+    T Function(dynamic)? decoder,
+    Duration? timeout,
+    bool disableLoadingIndicator = false,
+  }) async {
     final encodedBody = await _encodeBody(body);
     final encodedQuery = _encodeQuery(query);
 
-    _showProgressIndicator();
+    if (!disableLoadingIndicator) _showProgressIndicator();
     client.httpClient.timeout = timeout ?? client.timeout;
 
     if (kDebugMode) print('${method.toUpperCase()} request: $api');
@@ -193,7 +204,7 @@ class GetxHttp {
             decoder: decoder)
         .whenComplete(() async {
       onlyOnceTimeout = null;
-      _dismissProgressIndicator();
+      if (!disableLoadingIndicator) _dismissProgressIndicator();
     });
 
     if (result.unauthorized && _unauthorizedResponseHandler != null) {
@@ -205,6 +216,7 @@ class GetxHttp {
   }
 
   Future<dynamic> _encodeBody(dynamic body) async {
+    if (body == null) return null;
     if (body is RestBody) {
       final encoded = await _encodeJson(body.data);
       if (body._formDataMode) {
@@ -212,7 +224,14 @@ class GetxHttp {
       }
       return encoded;
     }
-    return await _encodeJson(body);
+    final encodedBody = await _encodeJson(body);
+    if (encodedBody == null) return null;
+    if (encodedBody is Map<String, dynamic> &&
+        encodedBody.values.any((element) =>
+            element is MultipartFile || element is List<MultipartFile>)) {
+      return FormData(encodedBody);
+    }
+    return encodedBody;
   }
 
   void _showProgressIndicator() {
