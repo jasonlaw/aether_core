@@ -93,11 +93,19 @@ class GraphQLQuery {
   final Map<String, dynamic>? params;
   GetxHttp? _http;
 
+  final List<GraphQLQuery> _gqls = [];
+
   GraphQLQuery(this.name, this.fields, {this.params});
 
   // ignore: avoid_returning_this
   GraphQLQuery use(GetxHttp http) {
     _http ??= http;
+    return this;
+  }
+
+  // ignore: avoid_returning_this
+  GraphQLQuery and(GraphQLQuery gql) {
+    _gqls.add(gql);
     return this;
   }
 
@@ -128,11 +136,18 @@ class GraphQLQuery {
     // build params
     final _params = _parseParamMap(params);
 
+    final fullQueries = <String>[];
     final query = _params == null
         ? '$name { $_fields }'
         : '$name ( $_params ) { $_fields }';
 
-    return query;
+    fullQueries.add(query);
+
+    for (var subgql in _gqls) {
+      fullQueries.add(subgql._buildQuery());
+    }
+
+    return fullQueries.join(', ');
   }
 
   String? _parseParamMap(Map<String, dynamic>? params) {
@@ -215,7 +230,13 @@ class GraphQLQuery {
     );
     if (result.isOk) {
       var response = Response(
-          body: {'data': decoder?.call(result.body[name]) ?? result.body[name]},
+          body: _gqls.isEmpty
+              ? {
+                  'data': decoder?.call(result.body[name]) ?? result.body[name],
+                }
+              : {
+                  'data': result.body,
+                },
           request: result.request,
           bodyString: result.bodyString,
           bodyBytes: result.bodyBytes,
