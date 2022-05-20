@@ -11,8 +11,8 @@ class Field<T> extends FieldBase<T> {
   })  : assert(T is! List),
         assert(T is! Entity || defaultValue == null),
         super(entity, name: name, label: label) {
-    final _value = defaultValue ?? T.getDefault();
-    if (_value != null) _createDefault = () => _value;
+    final val = defaultValue ?? T.getDefault();
+    if (val != null) _createDefault = () => val;
   }
 
   T Function()? _createDefault;
@@ -25,9 +25,9 @@ class Field<T> extends FieldBase<T> {
   T? get value {
     _getDefault() {
       if (isLoaded) return null;
-      final _value = innerDefaultValue();
-      entity.data[name] = _value;
-      return _value;
+      final val = innerDefaultValue();
+      entity.data[name] = val;
+      return val;
     }
 
     return entity[name] ?? _getDefault();
@@ -45,8 +45,8 @@ class Field<T> extends FieldBase<T> {
   /// In order to assign null value, use [value] instead.
   T call([T? value]) {
     if (value != null) this.value = value;
-    final _value = this.value;
-    assert(_value != null, '${entity.runtimeType}.$name() has a null value!');
+    final val = this.value;
+    assert(val != null, '${entity.runtimeType}.$name() has a null value!');
     return this.value!;
   }
 

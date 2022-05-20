@@ -62,9 +62,9 @@ class AppBuilder {
 
     final packageInfo = await PackageInfo.fromPlatform();
 
-    final _name = (appName ?? packageInfo.appName) + (kDebugMode ? '*' : '');
+    final name = (appName ?? packageInfo.appName) + (kDebugMode ? '*' : '');
     final appInfo = AppInfo(
-      _name,
+      name,
       packageInfo.version,
       packageInfo.buildNumber,
       packageInfo.packageName.isEmpty

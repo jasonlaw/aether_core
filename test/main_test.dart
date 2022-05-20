@@ -136,13 +136,13 @@ void main() {
         roles: 'SystemAdmin,ABC, CDE  ,ABC, ',
       );
 
-      final _roles = identity
+      final roles = identity
           .roles()
           .split(',')
           .map((e) => e.trim())
           .where((element) => element.isNotEmpty)
           .toSet();
-      expect(3, _roles.length, reason: _roles.toString());
+      expect(3, roles.length, reason: roles.toString());
       expect(true, identity.isAuthenticated, reason: 'isAuthenticated');
       expect(true, identity.hasRoles({'SystemAdmin'}),
           reason: 'Has SystemAdmin role');

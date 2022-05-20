@@ -85,15 +85,15 @@ class GetxHttp {
     Duration? timeout,
     bool disableLoadingIndicator = false,
   }) async {
-    String _query;
+    String bodyQuery;
 
     if (query is GraphQLQuery) {
-      _query = query._buildQuery();
+      bodyQuery = query._buildQuery();
     } else {
-      _query = '$query';
+      bodyQuery = '$query';
     }
 
-    final body = '$method { $_query }';
+    final body = '$method { $bodyQuery }';
     if (kDebugMode) {
       print(body);
     }

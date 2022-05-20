@@ -19,17 +19,17 @@ class AppSettings extends Entity {
   // EasyLoading get easyLoading => EasyLoading.instance;
 
   AppSettings() {
-    final _google = field<String>('GooglePlayURL');
-    final _apple = field<String>('AppleAppStoreURL');
-    final _huawei = field<String>('HuaweiAppGalleryURL');
+    final google = field<String>('GooglePlayURL');
+    final apple = field<String>('AppleAppStoreURL');
+    final huawei = field<String>('HuaweiAppGalleryURL');
 
     appStoreURL.computed(
-        bindings: [_google, _apple, _huawei],
+        bindings: [google, apple, huawei],
         compute: () {
           if (kIsWeb) return null;
-          if (GetPlatform.isIOS) return _apple();
-          if (kHuaweiAppGallery) return _huawei();
-          return _google();
+          if (GetPlatform.isIOS) return apple();
+          if (kHuaweiAppGallery) return huawei();
+          return google();
         });
   }
 

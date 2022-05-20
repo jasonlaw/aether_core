@@ -247,6 +247,7 @@ class SnackbarService extends GetxService {
 
     return TextButton(
       key: const Key('snackbar_touchable_mainButton'),
+      onPressed: onMainButtonTapped,
       child: Text(
         mainButtonTitle,
         key: const Key('snackbar_text_mainButtonTitle'),
@@ -255,7 +256,6 @@ class SnackbarService extends GetxService {
               config?.mainButtonTextColor ?? config?.textColor ?? Colors.white,
         ),
       ),
-      onPressed: onMainButtonTapped,
     );
   }
 }

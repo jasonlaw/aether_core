@@ -30,9 +30,9 @@ class ListField<E extends Entity> extends FieldBase<List<E>> {
   @override
   List<E> get value {
     _getDefault() {
-      final _value = innerDefaultValue();
-      entity.data[name] = _value;
-      return _value;
+      final val = innerDefaultValue();
+      entity.data[name] = val;
+      return val;
     }
 
     return entity[name] ?? _getDefault();

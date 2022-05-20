@@ -1,5 +1,36 @@
-import '../../app/app.dart';
 import '../../entity/entity.dart';
+
+class SearchResults {
+  late final List data;
+  late final PageInfo pageInfo;
+
+  SearchResults(Map<String, dynamic> map) {
+    data = map['results'];
+    final pinfo = map['pageIno'];
+    pageInfo = PageInfo(pinfo['endOfPage'], pinfo['totalCount']);
+  }
+
+  List<E> of<E extends Entity>(EntityBuilder<E> builder) {
+    final result = <E>[];
+    for (final item in data) {
+      result.add(builder()..load(item));
+    }
+    return result;
+  }
+}
+
+class PageInfo {
+  final bool endOfPage;
+  final int totalCount;
+
+  PageInfo(this.endOfPage, this.totalCount);
+}
+
+class Paging extends Entity {
+  Paging({required int size, required int page}) {
+    load({'size': size, 'page': page});
+  }
+}
 
 class SearchParams extends Entity {
   SearchParams() {
@@ -20,30 +51,32 @@ class SearchParams extends Entity {
   }
 }
 
-class SearchResults<T extends Entity> extends Entity {
-  SearchResults(EntityBuilder<T> createEntity, {required this.searchParams}) {
-    results.register(createEntity);
-  }
+// @Deprecated('Use SearchResults2')
+// class SearchResults<T extends Entity> extends Entity {
+//   SearchResults(EntityBuilder<T> createEntity, {required this.searchParams}) {
+//     results.register(createEntity);
+//   }
 
-  final SearchParams searchParams;
-  Field<int> get totalCount => field('totalCount');
-  ListField<T> get results => fieldList('results');
-}
+//   final SearchParams searchParams;
+//   Field<int> get totalCount => field('totalCount');
+//   ListField<T> get results => fieldList('results');
+// }
 
-extension AetherStringForEntitySearchExtensions on String {
-  Future<SearchResults<T>> apiSearch<T extends Entity>({
-    required SearchParams params,
-    required EntityBuilder<T> createEntity,
-    Map<String, String>? headers,
-    Duration? timeout,
-    bool disableLoadingIndicator = false,
-  }) async {
-    final result = await api(query: params.queryData).get(
-        headers: headers,
-        timeout: timeout,
-        disableLoadingIndicator: disableLoadingIndicator);
-    if (result.hasError) return Future.error(result.errorText);
-    return SearchResults<T>(createEntity, searchParams: params)
-      ..load(result.body);
-  }
-}
+// extension AetherStringForEntitySearchExtensions on String {
+//   @deprecated
+//   Future<SearchResults<T>> apiSearch<T extends Entity>({
+//     required SearchParams params,
+//     required EntityBuilder<T> createEntity,
+//     Map<String, String>? headers,
+//     Duration? timeout,
+//     bool disableLoadingIndicator = false,
+//   }) async {
+//     final result = await api(query: params.queryData).get(
+//         headers: headers,
+//         timeout: timeout,
+//         disableLoadingIndicator: disableLoadingIndicator);
+//     if (result.hasError) return Future.error(result.errorText);
+//     return SearchResults<T>(createEntity, searchParams: params)
+//       ..load(result.body);
+//   }
+// }

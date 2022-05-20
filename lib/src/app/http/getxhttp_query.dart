@@ -115,7 +115,7 @@ class GraphQLQuery {
 
   String _buildQuery() {
     // build fields
-    final _fields = fields
+    final retFields = fields
         .map((x) {
           if (x is String) {
             return x;
@@ -134,29 +134,29 @@ class GraphQLQuery {
         .join(', ');
 
     // build params
-    final _params = _parseParamMap(params);
+    final retParams = _parseParamMap(params);
 
-    final fullQueries = <String>[];
-    final query = _params == null
-        ? '$name { $_fields }'
-        : '$name ( $_params ) { $_fields }';
+    final retQueries = <String>[];
+    final query = retParams == null
+        ? '$name { $retFields }'
+        : '$name ( $retParams ) { $retFields }';
 
-    fullQueries.add(query);
+    retQueries.add(query);
 
     for (var subgql in _gqls) {
-      fullQueries.add(subgql._buildQuery());
+      retQueries.add(subgql._buildQuery());
     }
 
-    return fullQueries.join(', ');
+    return retQueries.join(', ');
   }
 
   String? _parseParamMap(Map<String, dynamic>? params) {
     if (params == null || params.isEmpty) return null;
-    final _params = <String>[];
+    final retParams = <String>[];
     params.forEach((key, value) {
-      _params.add('${paramCase(key)}: ${_parseParamValue(value)}');
+      retParams.add('${paramCase(key)}: ${_parseParamValue(value)}');
     });
-    return _params.join(', ');
+    return retParams.join(', ');
   }
 
   String paramCase(String param) =>

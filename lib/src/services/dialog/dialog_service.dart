@@ -67,9 +67,6 @@ class DialogService extends GetxService {
         barrierDismissible: barrierDismissible,
       );
     } else {
-      var _dialogType = GetPlatform.isIOS
-          ? DialogPlatform.Cupertino
-          : DialogPlatform.Material;
       return _showDialog(
         title: title,
         description: description,
@@ -77,7 +74,9 @@ class DialogService extends GetxService {
         cancelTitleColor: cancelTitleColor,
         buttonTitle: buttonTitle,
         buttonTitleColor: buttonTitleColor,
-        dialogPlatform: _dialogType,
+        dialogPlatform: GetPlatform.isIOS
+            ? DialogPlatform.Cupertino
+            : DialogPlatform.Material,
         barrierDismissible: barrierDismissible,
       );
     }
