@@ -1,3 +1,6 @@
+## 0.5.2
+* Enum checking is not working in web release mode, workaround with EnumSafeType
+
 ## 0.5.1
 * Support gql enum 
 

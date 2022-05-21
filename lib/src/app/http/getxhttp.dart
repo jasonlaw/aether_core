@@ -1,4 +1,5 @@
 import 'package:cross_file/cross_file.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get_connect/http/src/exceptions/exceptions.dart';
 
 import '../../entity/entity.dart';
@@ -257,9 +258,6 @@ class GetxHttp {
 
 Future<dynamic> _encodeJson(dynamic payload) async {
   if (payload == null) return null;
-  if (payload is Parameter) {
-    return await _encodeJson(payload.value);
-  }
   if (payload is! Map<String, dynamic>) return payload;
   final encoded = <String, dynamic>{};
 
@@ -292,8 +290,6 @@ Future<dynamic> _encodeJson(dynamic payload) async {
               filename: file.name,
               contentType: file.mimeType ?? 'application/octet-stream'))
           .toList());
-    } else if (value is Parameter) {
-      encoded[key] = await _encodeJson(value.value);
     } else {
       encoded[key] = value;
     }

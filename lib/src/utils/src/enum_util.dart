@@ -1,7 +1,7 @@
 import 'words.dart';
 
 class EnumUtils {
-  static bool isEnumItem(dynamic enumItem) {
+  static bool _isEnumItem(dynamic enumItem) {
     final splitEnum = enumItem.toString().split('.');
     return splitEnum.length > 1 &&
         splitEnum[0] == enumItem.runtimeType.toString();
@@ -16,7 +16,7 @@ class EnumUtils {
   /// So TestEnum.valueOne will become Value One
   static String convertToString(dynamic enumItem, {bool camelCase = false}) {
     assert(enumItem != null);
-    assert(isEnumItem(enumItem),
+    assert(_isEnumItem(enumItem),
         '$enumItem of type ${enumItem.runtimeType.toString()} is not an enum item');
     final tmp = enumItem.toString().split('.')[1];
     return !camelCase ? tmp : camelCaseToWords(tmp);
@@ -28,7 +28,7 @@ class EnumUtils {
   /// It will return the striped off value so "VALUE_ONE".
   static String convertToGqlWords(dynamic enumItem) {
     assert(enumItem != null);
-    assert(isEnumItem(enumItem),
+    assert(_isEnumItem(enumItem),
         '$enumItem of type ${enumItem.runtimeType.toString()} is not an enum item');
     final tmp = enumItem.toString().split('.')[1];
     return camelCaseToWords(tmp, separator: '_').toUpperCase();
