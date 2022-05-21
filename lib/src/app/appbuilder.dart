@@ -72,10 +72,8 @@ class AppBuilder {
           : packageInfo.packageName,
     );
 
-    if (kDebugMode) {
-      appInfo.printLog();
-      print(appSettings.toMap());
-    }
+    appInfo.printLog();
+    Debug.print(appSettings.toMap());
 
     final app = AppService(
       appInfo: appInfo,
@@ -124,10 +122,10 @@ class AppInfo {
   const AppInfo(this.name, this.version, this.buildNumber, this.packageName);
 
   void printLog() {
-    Get.log('              App Name : $name');
-    Get.log('           App Version : $version');
-    Get.log('          Build Number : $buildNumber');
-    Get.log('          Package Name : $packageName');
+    Debug.print('              App Name : $name');
+    Debug.print('           App Version : $version');
+    Debug.print('          Build Number : $buildNumber');
+    Debug.print('          Package Name : $packageName');
   }
 }
 

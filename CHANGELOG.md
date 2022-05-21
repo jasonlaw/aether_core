@@ -1,3 +1,6 @@
+## 0.5.1
+* Support gql enum 
+
 ## 0.5.0
 * Flutter 3.0
 

@@ -177,6 +177,8 @@ class GraphQLQuery {
         items.add(_parseParamValue(item));
       }
       return items.toString();
+    } else if (EnumUtils.isEnumItem(value)) {
+      return EnumUtils.convertToGqlWords(value);
     } else {
       return '"$value"';
     }

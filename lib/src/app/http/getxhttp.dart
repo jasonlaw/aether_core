@@ -1,9 +1,10 @@
 import 'package:cross_file/cross_file.dart';
-import 'package:flutter/foundation.dart';
 import 'package:get/get_connect/http/src/exceptions/exceptions.dart';
 
 import '../../entity/entity.dart';
 import '../../models/models.dart';
+import '../../utils/src/debug.dart';
+import '../../utils/src/enum_util.dart';
 import '../app.dart';
 
 export 'cookie/cookie_manager.dart';
@@ -94,9 +95,7 @@ class GetxHttp {
     }
 
     final body = '$method { $bodyQuery }';
-    if (kDebugMode) {
-      print(body);
-    }
+    Debug.print(body);
 
     return gqlRequest(
       body,
@@ -193,7 +192,7 @@ class GetxHttp {
     if (!disableLoadingIndicator) _showProgressIndicator();
     client.httpClient.timeout = timeout ?? client.timeout;
 
-    if (kDebugMode) print('${method.toUpperCase()} request: $api');
+    Debug.print('${method.toUpperCase()} request: $api');
 
     var result = await client
         .request(api, method,

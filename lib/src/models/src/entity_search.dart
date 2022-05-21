@@ -1,13 +1,18 @@
+import '../../app/http/getxhttp.dart';
 import '../../entity/entity.dart';
 
 class SearchResults {
   late final List data;
-  late final PageInfo pageInfo;
+  late final PageInfo? pageInfo;
 
   SearchResults(Map<String, dynamic> map) {
     data = map['results'];
-    final pinfo = map['pageIno'];
-    pageInfo = PageInfo(pinfo['endOfPage'], pinfo['totalCount']);
+    if (map.containsKey('pageInfo')) {
+      final pinfo = map['pageIno'];
+      pageInfo = PageInfo(pinfo['endOfPage'], pinfo['totalCount']);
+    } else {
+      pageInfo = null;
+    }
   }
 
   List<E> of<E extends Entity>(EntityBuilder<E> builder) {
@@ -17,6 +22,8 @@ class SearchResults {
     }
     return result;
   }
+
+  static GraphQLQuery fragment(List fields) => 'results'.gql(fields);
 }
 
 class PageInfo {
@@ -24,6 +31,9 @@ class PageInfo {
   final int totalCount;
 
   PageInfo(this.endOfPage, this.totalCount);
+
+  static GraphQLQuery get fragment =>
+      'pageInfo'.gql(['endOfPage', 'totalCount']);
 }
 
 class Paging extends Entity {
