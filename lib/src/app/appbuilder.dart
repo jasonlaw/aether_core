@@ -8,8 +8,14 @@ import '../../aether_core.dart';
 
 class AppBuilder {
   AppBuilder() {
+    WidgetsFlutterBinding.ensureInitialized();
     Get.isLogEnable = kDebugMode;
     _setDefaultLoading();
+  }
+
+  CredentialIdentity? _credentialIdentity;
+  void useCredentialIdentity(CredentialIdentity identity) {
+    _credentialIdentity = identity;
   }
 
   CredentialActions? _credentialActions;
@@ -27,23 +33,38 @@ class AppBuilder {
     _snackbarSettings = settings;
   }
 
+  AppSettings? _appSettings;
+  void useAppSettings(AppSettings settings) {
+    _appSettings = settings;
+  }
+
   void useProgressIndicatorSettings(
     void Function(EasyLoading easyLoading) configure,
   ) =>
       configure(EasyLoading.instance);
+
+  // Map<dynamic, DialogBuilder>? _dialogBuilders;
+  // void useDialogBuilders(Map<dynamic, DialogBuilder> builders) {
+  //   _dialogBuilders = builders;
+  // }
 
   Future<AppService> build({String? appName}) async {
     Get.isLogEnable = kDebugMode;
 
     await GetStorage.init();
 
-    final settings = await AppSettings.init();
+    var appSettings = _appSettings;
+
+    if (appSettings == null) {
+      appSettings = AppSettings();
+      await AppSettings.loadFiles(appSettings);
+    }
 
     final packageInfo = await PackageInfo.fromPlatform();
 
-    final _name = (appName ?? packageInfo.appName) + (kDebugMode ? '*' : '');
+    final name = (appName ?? packageInfo.appName) + (kDebugMode ? '*' : '');
     final appInfo = AppInfo(
-      _name,
+      name,
       packageInfo.version,
       packageInfo.buildNumber,
       packageInfo.packageName.isEmpty
@@ -51,11 +72,13 @@ class AppBuilder {
           : packageInfo.packageName,
     );
 
-    if (kDebugMode) appInfo.printLog();
+    appInfo.printLog();
+    Debug.print(appSettings.toMap());
 
     final app = AppService(
       appInfo: appInfo,
-      settings: settings,
+      settings: appSettings,
+      credentialIdentity: _credentialIdentity,
       credentialActions: _credentialActions,
       notificationSettings: _snackbarSettings ?? const SnackbarSettings(),
       dialogSettings: _dialogSettings,
@@ -64,6 +87,10 @@ class AppBuilder {
     Get.put(app);
     Get.lazyPut(() => DialogService());
     Get.lazyPut(() => SnackbarService());
+
+    // if (_dialogBuilders != null) {
+    //   Get.find<DialogService>().registerCustomDialogBuilders(_dialogBuilders!);
+    // }
 
     CredentialActions._finalize(_credentialActions);
 
@@ -95,10 +122,10 @@ class AppInfo {
   const AppInfo(this.name, this.version, this.buildNumber, this.packageName);
 
   void printLog() {
-    Get.log('              App Name : $name');
-    Get.log('           App Version : $version');
-    Get.log('          Build Number : $buildNumber');
-    Get.log('          Package Name : $packageName');
+    Debug.print('              App Name : $name');
+    Debug.print('           App Version : $version');
+    Debug.print('          Build Number : $buildNumber');
+    Debug.print('          Package Name : $packageName');
   }
 }
 
@@ -173,20 +200,17 @@ class CredentialActions {
 
   static Future<void> _signIn(dynamic request) {
     return '/api/credential/signin'.api(body: request).post().then((response) {
-      if (response.isOk) {
-        App.identity.load(response.body);
-      }
+      if (response.hasError) return Future.error(response.errorText);
+      App.identity.load(response.body);
     });
   }
 
   static Future<void> _signOut() {
-    return '/api/credential/signout'.api().post().then((response) {
-      if (response.hasError) {
-        // if failed to logout, we manually clear the cookies.
-        App.connect.clearCookies();
-      }
-      App.identity.load(response.body);
-    }).whenComplete(() {
+    return '/api/credential/signout'
+        .api()
+        .post()
+        .catchError((_) {})
+        .whenComplete(() {
       App.identity.signOut();
     });
   }
@@ -202,12 +226,13 @@ class CredentialActions {
         .then((response) {
           if (response.hasError) {
             if (response.statusCode != null) {
-              App.connect.clearCookies();
+              App.connect.clearIdentityCache();
+              return;
             }
-            return;
           }
           App.identity.load(response.body);
-        });
+        })
+        .catchError((_) {});
   }
 
   static Future<void> _getCredential() {
@@ -217,9 +242,9 @@ class CredentialActions {
         .then((response) {
       if (response.hasError) {
         if (response.statusCode != null) {
-          App.connect.clearCookies();
+          App.connect.clearIdentityCache();
         }
-        return;
+        return Future.error(response.errorText);
       }
       App.identity.load(response.body);
     });
@@ -227,11 +252,11 @@ class CredentialActions {
 
   static void _finalize(CredentialActions? actions) {
     _getRefreshToken =
-        actions?.getRefreshToken ?? () async => App.identity.refreshToken;
+        actions?.getRefreshToken ?? () async => App.connect.refreshToken;
 
     if (actions?.refreshCredential != null) {
       App.connect.addAuthenticator<void>((request) async {
-        await actions!.refreshCredential!.call();
+        await actions!.refreshCredential!.call().catchError((_) {});
         return request;
       });
     }

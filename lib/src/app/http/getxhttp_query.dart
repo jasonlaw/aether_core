@@ -58,7 +58,7 @@ class RestQuery {
     bool disableLoadingIndicator = false,
   }) async {
     _http ??= App.connect;
-    if (disableLoadingIndicator) _http!.disableLoadingIndicator();
+    //if (disableLoadingIndicator) _http!.disableLoadingIndicator();
     var result = await _http!.request(
       method,
       url,
@@ -67,6 +67,7 @@ class RestQuery {
       headers: headers,
       contentType: contentType,
       timeout: timeout,
+      disableLoadingIndicator: disableLoadingIndicator,
     );
     if (result.isOk) {
       return Response(
@@ -89,34 +90,12 @@ class RestQuery {
 class GraphQLQuery {
   final String name;
   final List<dynamic> fields;
-  late final Map<String, dynamic>? params;
-  late final Map<String, String>? paramTypes;
+  final Map<String, dynamic>? params;
   GetxHttp? _http;
 
-  GraphQLQuery(this.name, this.fields,
-      {Map<String, dynamic>? params, Map<String, String>? paramTypes}) {
-    _initParams(params, paramTypes);
-  }
+  final List<GraphQLQuery> _gqls = [];
 
-  void _initParams(
-      Map<String, dynamic>? inputParams, Map<String, String>? inputParamTypes) {
-    Map<String, dynamic>? _params;
-    if (inputParams != null) {
-      _params = <String, dynamic>{};
-      for (var item in inputParams.entries) {
-        var key = item.key;
-        if (key.contains(':')) {
-          final keys = key.split(':');
-          key = keys[0];
-          inputParamTypes ??= <String, String>{};
-          inputParamTypes[key] = keys[1];
-        }
-        _params[key] = item.value;
-      }
-    }
-    paramTypes = inputParamTypes;
-    params = _params;
-  }
+  GraphQLQuery(this.name, this.fields, {this.params});
 
   // ignore: avoid_returning_this
   GraphQLQuery use(GetxHttp http) {
@@ -124,57 +103,85 @@ class GraphQLQuery {
     return this;
   }
 
+  // ignore: avoid_returning_this
+  GraphQLQuery and(GraphQLQuery gql) {
+    _gqls.add(gql);
+    return this;
+  }
+
   GraphQLQuery external() {
     return use(App.http);
   }
 
-  Map<String, dynamic> buildQuery() {
-    final result = <String, dynamic>{};
-    final vars = <String, dynamic>{};
-    final varTypes = <String, String>{};
-
-    if (params != null && params!.isNotEmpty) {
-      vars.addAll(params!);
-      if (paramTypes != null) {
-        varTypes.addAll(paramTypes!);
-      }
-    }
-
-    final _fields = fields
+  String _build() {
+    // build fields
+    final retFields = fields
         .map((x) {
+          if (x is String) {
+            return x;
+          }
           if (x is FieldBase) {
             return x.name;
           }
           if (x is GraphQLQuery) {
-            final subquery = x.buildQuery();
-            vars.addAll(subquery['vars']);
-            varTypes.addAll(subquery['varTypes']);
-            return subquery['body'];
+            return x._build();
           }
-          if (x is String) {
-            return x;
-          }
+          assert(false,
+              'GraphQLQuery::_buildQuery => Not supported field type "${x.runtimeType}"');
           return null;
         })
         .where((x) => x != null)
         .join(', ');
 
-    final _variables = params?.entries.map((x) {
-      if (x.value is Parameter) {
-        varTypes[x.key] ??= x.value.type;
+    // build params
+    final retParams = _parseParamMap(params);
+
+    final retQueries = <String>[];
+    final query = retParams == null
+        ? '$name { $retFields }'
+        : '$name ( $retParams ) { $retFields }';
+
+    retQueries.add(query);
+
+    for (var subgql in _gqls) {
+      retQueries.add(subgql._build());
+    }
+
+    return retQueries.join(', ');
+  }
+
+  String? _parseParamMap(Map<String, dynamic>? params) {
+    if (params == null || params.isEmpty) return null;
+    final retParams = <String>[];
+    params.forEach((key, value) {
+      retParams.add('${paramCase(key)}: ${_parseParamValue(value)}');
+    });
+    return retParams.join(', ');
+  }
+
+  String paramCase(String param) =>
+      '${param[0].toLowerCase()}${param.substring(1)}';
+
+  String _parseParamValue(dynamic value) {
+    if (value is int || value is num || value is bool) {
+      return value.toString();
+    } else if (value is Field) {
+      return _parseParamValue(value.value);
+    } else if (value is Map<String, dynamic>) {
+      return '{ ${_parseParamMap(value)!} }';
+    } else if (value is Entity) {
+      return '{ ${_parseParamMap(value.toMap())!} }';
+    } else if (value is List) {
+      final items = <String>[];
+      for (var item in value) {
+        items.add(_parseParamValue(item));
       }
-      return '${x.key}: \$${x.key}';
-    }).join(', ');
-
-    final payload = _variables == null
-        ? '$name { $_fields }'
-        : '$name ( $_variables ) { $_fields }';
-
-    result['body'] = payload;
-    result['vars'] = vars;
-    result['varTypes'] = varTypes;
-
-    return result;
+      return items.toString();
+    } else if (value is EnumSafeType) {
+      return value.gqlWords;
+    } else {
+      return '"$value"';
+    }
   }
 
   Future<GraphQLResponse<T>> query<T>({
@@ -190,10 +197,6 @@ class GraphQLQuery {
       decoder: decoder,
       disableLoadingIndicator: disableLoadingIndicator,
     );
-  }
-
-  Future<GraphQLResponse<T>> debug<T>() {
-    return _gql('debug');
   }
 
   Future<GraphQLResponse<T>> mutation<T>({
@@ -219,16 +222,23 @@ class GraphQLQuery {
     bool disableLoadingIndicator = false,
   }) async {
     _http ??= App.connect;
-    if (disableLoadingIndicator) _http!.disableLoadingIndicator();
+    //if (disableLoadingIndicator) _http!.disableLoadingIndicator();
     final result = await _http!.gql(
       method,
       this,
       headers: headers,
       timeout: timeout,
+      disableLoadingIndicator: disableLoadingIndicator,
     );
     if (result.isOk) {
       var response = Response(
-          body: {'data': decoder?.call(result.body[name]) ?? result.body[name]},
+          body: _gqls.isEmpty
+              ? {
+                  'data': decoder?.call(result.body[name]) ?? result.body[name],
+                }
+              : {
+                  'data': result.body,
+                },
           request: result.request,
           bodyString: result.bodyString,
           bodyBytes: result.bodyBytes,
@@ -239,13 +249,4 @@ class GraphQLQuery {
     }
     return GraphQLResponse(graphQLErrors: result.graphQLErrors);
   }
-}
-
-class GraphQLDataType {
-  static const boolean = 'Boolean';
-  static const string = 'String';
-  static const dateTime = 'DateTime';
-  static const guid = 'Uuid';
-  static const double = 'Double';
-  static const integer = 'Int';
 }

@@ -30,9 +30,9 @@ class ListField<E extends Entity> extends FieldBase<List<E>> {
   @override
   List<E> get value {
     _getDefault() {
-      final _value = innerDefaultValue();
-      entity.data[name] = _value;
-      return _value;
+      final val = innerDefaultValue();
+      entity.data[name] = val;
+      return val;
     }
 
     return entity[name] ?? _getDefault();
@@ -42,6 +42,8 @@ class ListField<E extends Entity> extends FieldBase<List<E>> {
   void innerLoad(dynamic rawData, {bool copy = false}) {
     if (isComputed) return;
     if (rawData != null) {
+      assert(
+          _fieldOnLoading != null, 'Register is required before load action.');
       entity[name] = _fieldOnLoading!.call(rawData);
     }
     if (!copy) _fieldOnLoaded?.call(value);
@@ -169,8 +171,10 @@ class ListField<E extends Entity> extends FieldBase<List<E>> {
 
   void forEach(void Function(E element) f) => value.forEach(f);
 
-  static ListField<E> create<E extends Entity>() {
-    return Entity().fieldList(E.runtimeType.toString());
+  static ListField<E> create<E extends Entity>({EntityBuilder<E>? register}) {
+    final list = Entity().fieldList<E>(E.runtimeType.toString());
+    if (register != null) list.register(register);
+    return list;
   }
 
   /// Get the ListField (parent) of the entity

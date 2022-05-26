@@ -1,14 +1,14 @@
 name: aether_core
 description: Aether Core
-version: 0.4.1
+version: 0.5.2
 homepage: https://github.com/jasonlaw/aether_core.git
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `pub publish`. This is preferred for private packages.
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+# publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
 environment:
-  sdk: ">=2.12.0 <3.0.0"
+  sdk: ">=2.13.0 <3.0.0"
   flutter: ">=2.10.0"
 
 dependencies:
@@ -17,31 +17,20 @@ dependencies:
   flutter_web_plugins:
     sdk: flutter
 
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
-  #cupertino_icons: ^0.1.3
-
   # https://pub.dev/packages/get 
-  get: ^4.6.1
-
-  # https://pub.dev/packages/mime_type 
-  # mime_type: ^1.0.0
+  get: ^4.6.5
 
   # https://pub.dev/packages/get_storage 
   get_storage: ^2.0.3
-  # get_storage:
-  #   git:
-  #     url: https://github.com/yutae/get_storage
-  #     ref: master
 
   # https://pub.dev/packages/package_info_plus 
   package_info_plus: ^1.4.2
   
   # https://pub.dev/packages/url_launcher 
-  url_launcher: ^6.1.0
+  url_launcher: ^6.1.2
 
   # https://pub.dev/packages/flutter_easyloading 
-  flutter_easyloading: ^3.0.3
+  flutter_easyloading: ^3.0.5
 
   # https://pub.flutter-io.cn/packages/version
   version: ^2.0.0
@@ -50,11 +39,10 @@ dependencies:
   crypto: ^3.0.2
 
   # https://pub.dev/packages/cross_file
-  cross_file: ^0.3.2
+  cross_file: ^0.3.3+1
 
-  # # https://pub.dev/packages/csv
-  # csv: ^5.0.1
-
+  # https://pub.dev/packages/money2
+  # money2: ^3.1.2
 
 dev_dependencies:
   flutter_test:
@@ -66,7 +54,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.  
-  flutter_lints: ^1.0.4
+  flutter_lints: ^2.0.1
 
 
 # The following section is specific to Flutter.

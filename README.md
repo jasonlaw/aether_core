@@ -1,3 +1,7 @@
+![](https://raw.githubusercontent.com/jasonlaw/aether-resources/master/Aether.png)
+
+[![Pub release](https://img.shields.io/pub/v/aether_core.svg?label=aether_core&color=blue)](https://pub.dev/packages/aether_core) [![GitHub Release Date](https://img.shields.io/github/release-date/jasonlaw/aether_core.svg)](https://github.com/jasonlaw/aether_core)
+
 # aether_core
 
 Aether Core for Flutter
@@ -144,17 +148,20 @@ final response = await 'https://oauth2.googleapis.com/token'
           .external() // Indicate this is an external API
           .post();
 ~~~
+
 ### Quick GraphQL API Access
 ~~~dart
-final result = await 'register'
-        .gql([
-          'customerId'
-        ], params: {
-          'input:RegisterCustomerInput': {
-            'name': name.value,
-            'email': email.value,
-            'password': password.value
+ 'community'
+        .gql([...data.fragment, 'location'.gql(Location().fragment)],
+            params: {'id': communityId})
+        .query()
+        .then((response) {
+          if (response.hasError) {
+            App.error(response.errorText);
+            return;
           }
-        })
-        .mutation();
+          if (response.isOk) {
+            data.load(response.body);
+          }
+        });
 ~~~

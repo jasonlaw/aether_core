@@ -1,9 +1,14 @@
 part of 'getxhttp.dart';
 
-class Parameter {
-  final String type;
+@immutable
+class EnumSafeType {
   final dynamic value;
-  const Parameter({required this.type, required this.value});
+  const EnumSafeType(this.value);
+  String get gqlWords => EnumUtils.convertToGqlWords(value);
+}
+
+extension EnumSafeTypeExt on Enum {
+  EnumSafeType get safeType => EnumSafeType(this);
 }
 
 class RestBody {
@@ -28,8 +33,8 @@ class RestBody {
   void addField(FieldBase field) {
     if (field is ListField<MediaFile>) {
       _formDataMode = true;
-      final _uploads = field.where((e) => e.canUpload).toList();
-      if (_uploads.isNotEmpty) _addParam(field.name, _uploads);
+      final uploads = field.where((e) => e.canUpload).toList();
+      if (uploads.isNotEmpty) _addParam(field.name, uploads);
       return;
     }
     if (field is Field<MediaFile>) {

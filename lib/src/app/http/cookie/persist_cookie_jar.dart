@@ -47,10 +47,9 @@ class PersistCookieJar extends DefaultCookieJar {
         try {
           final Map<String, dynamic> jsonData = json.decode(str);
 
-          final cookies = jsonData.map((String domain, dynamic _cookies) {
-            final domainCookies = _cookies
-                .cast<String, dynamic>()
-                .map((String path, dynamic map) {
+          final cookies = jsonData.map((String domain, dynamic cookies) {
+            final domainCookies =
+                cookies.cast<String, dynamic>().map((String path, dynamic map) {
               final cookieForPath = map.cast<String, String>();
               final realCookies =
                   cookieForPath.map<String, SerializableCookie>((
@@ -120,8 +119,8 @@ class PersistCookieJar extends DefaultCookieJar {
   ) {
     return domain
         .cast<String, Map<String, dynamic>>()
-        .map((String path, Map<String, dynamic> _cookies) {
-      final cookies = _cookies.map((String cookieName, dynamic cookie) {
+        .map((String path, Map<String, dynamic> cookies) {
+      final cleanCookies = cookies.map((String cookieName, dynamic cookie) {
         final isSession =
             cookie.cookie.expires == null && cookie.cookie.maxAge == null;
         if ((isSession && persistSession) ||
@@ -136,7 +135,7 @@ class PersistCookieJar extends DefaultCookieJar {
 
       return MapEntry<String, Map<String, SerializableCookie>>(
         path,
-        cookies.cast<String, SerializableCookie>(),
+        cleanCookies.cast<String, SerializableCookie>(),
       );
     });
   }

@@ -1,9 +1,11 @@
 import 'package:cross_file/cross_file.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get_connect/http/src/exceptions/exceptions.dart';
 
 import '../../entity/entity.dart';
 import '../../models/models.dart';
+import '../../utils/src/debug.dart';
+import '../../utils/src/enum_util.dart';
 import '../app.dart';
 
 export 'cookie/cookie_manager.dart';
@@ -48,6 +50,7 @@ class GetxHttp {
     Map<String, dynamic>? variables,
     Map<String, String>? headers,
     Duration? timeout,
+    bool disableLoadingIndicator = false,
   }) {
     return gql(
       'query',
@@ -55,6 +58,7 @@ class GetxHttp {
       variables: variables,
       headers: headers,
       timeout: timeout,
+      disableLoadingIndicator: disableLoadingIndicator,
     );
   }
 
@@ -63,6 +67,7 @@ class GetxHttp {
     Map<String, dynamic>? variables,
     Map<String, String>? headers,
     Duration? timeout,
+    bool disableLoadingIndicator = false,
   }) {
     return gql(
       'mutation',
@@ -70,6 +75,7 @@ class GetxHttp {
       variables: variables,
       headers: headers,
       timeout: timeout,
+      disableLoadingIndicator: disableLoadingIndicator,
     );
   }
 
@@ -79,41 +85,25 @@ class GetxHttp {
     Map<String, dynamic>? variables,
     Map<String, String>? headers,
     Duration? timeout,
+    bool disableLoadingIndicator = false,
   }) async {
-    String _queryBody;
-    var _variables = variables;
+    String bodyQuery;
 
     if (query is GraphQLQuery) {
-      final _gql = query.buildQuery();
-
-      _variables ??= _gql['vars'];
-
-      if (_variables!.isNotEmpty) {
-        final Map<String, String> _gqlVarTypes = _gql['varTypes'];
-        final _vars = _variables.entries.map((x) {
-          final _varType = _gqlVarTypes[x.key] ?? _gqlDataType(x.value);
-          return '\$${x.key}: $_varType';
-        }).join(', ');
-        _queryBody = '$method ( $_vars ) { ${_gql['body']} }';
-      } else {
-        _queryBody = '$method { ${_gql['body']} }';
-      }
-
-      if (method == 'debug') {
-        final debugResponse = Response(statusCode: 200, body: {
-          'data': {query.name: _queryBody}
-        });
-        return GraphQLResponse.fromResponse(debugResponse);
-      }
+      bodyQuery = query._build();
     } else {
-      _queryBody = '$method $query';
+      bodyQuery = '$query';
     }
 
+    final body = '$method { $bodyQuery }';
+    Debug.print(body);
+
     return gqlRequest(
-      query,
-      variables: _variables,
+      body,
+      variables: variables,
       headers: headers,
       timeout: timeout,
+      disableLoadingIndicator: disableLoadingIndicator,
     );
   }
 
@@ -122,8 +112,9 @@ class GetxHttp {
     Map<String, dynamic>? variables,
     Map<String, String>? headers,
     Duration? timeout,
+    bool disableLoadingIndicator = false,
   }) async {
-    _showProgressIndicator();
+    if (!disableLoadingIndicator) _showProgressIndicator();
     final encodedVariables = await _encodeJson(variables);
     client.httpClient.timeout = timeout ?? onlyOnceTimeout ?? client.timeout;
 
@@ -139,21 +130,8 @@ class GetxHttp {
       ]);
     }).whenComplete(() async {
       onlyOnceTimeout = null;
-      _dismissProgressIndicator();
+      if (!disableLoadingIndicator) _dismissProgressIndicator();
     });
-  }
-
-  String _gqlDataType(dynamic value) {
-    if (value is String || value is String?) return GraphQLDataType.string;
-    if (value is bool || value is bool?) return GraphQLDataType.boolean;
-    if (value is int || value is int?) return GraphQLDataType.integer;
-    if (value is double || value is double?) return GraphQLDataType.double;
-    if (value is DateTime || value is DateTime?) {
-      return GraphQLDataType.dateTime;
-    }
-
-    if (value is Parameter) return value.type;
-    return value.runtimeType.toString();
   }
 
   Future<Response<T>> get<T>(
@@ -163,6 +141,7 @@ class GetxHttp {
     String? contentType,
     T Function(dynamic)? decoder,
     Duration? timeout,
+    bool disableLoadingIndicator = false,
   }) async {
     return request<T>(
       'get',
@@ -183,6 +162,7 @@ class GetxHttp {
     String? contentType,
     T Function(dynamic)? decoder,
     Duration? timeout,
+    bool disableLoadingIndicator = false,
   }) {
     return request<T>(
       'post',
@@ -196,20 +176,24 @@ class GetxHttp {
     );
   }
 
-  Future<Response<T>> request<T>(String method, String api,
-      {dynamic body,
-      Map<String, dynamic>? query,
-      Map<String, String>? headers,
-      String? contentType,
-      T Function(dynamic)? decoder,
-      Duration? timeout}) async {
+  Future<Response<T>> request<T>(
+    String method,
+    String api, {
+    dynamic body,
+    Map<String, dynamic>? query,
+    Map<String, String>? headers,
+    String? contentType,
+    T Function(dynamic)? decoder,
+    Duration? timeout,
+    bool disableLoadingIndicator = false,
+  }) async {
     final encodedBody = await _encodeBody(body);
     final encodedQuery = _encodeQuery(query);
 
-    _showProgressIndicator();
+    if (!disableLoadingIndicator) _showProgressIndicator();
     client.httpClient.timeout = timeout ?? client.timeout;
 
-    if (kDebugMode) print('${method.toUpperCase()} request: $api');
+    Debug.print('${method.toUpperCase()} request: $api');
 
     var result = await client
         .request(api, method,
@@ -220,7 +204,7 @@ class GetxHttp {
             decoder: decoder)
         .whenComplete(() async {
       onlyOnceTimeout = null;
-      _dismissProgressIndicator();
+      if (!disableLoadingIndicator) _dismissProgressIndicator();
     });
 
     if (result.unauthorized && _unauthorizedResponseHandler != null) {
@@ -232,6 +216,7 @@ class GetxHttp {
   }
 
   Future<dynamic> _encodeBody(dynamic body) async {
+    if (body == null) return null;
     if (body is RestBody) {
       final encoded = await _encodeJson(body.data);
       if (body._formDataMode) {
@@ -239,7 +224,14 @@ class GetxHttp {
       }
       return encoded;
     }
-    return await _encodeJson(body);
+    final encodedBody = await _encodeJson(body);
+    if (encodedBody == null) return null;
+    if (encodedBody is Map<String, dynamic> &&
+        encodedBody.values.any((element) =>
+            element is MultipartFile || element is List<MultipartFile>)) {
+      return FormData(encodedBody);
+    }
+    return encodedBody;
   }
 
   void _showProgressIndicator() {
@@ -266,9 +258,6 @@ class GetxHttp {
 
 Future<dynamic> _encodeJson(dynamic payload) async {
   if (payload == null) return null;
-  if (payload is Parameter) {
-    return await _encodeJson(payload.value);
-  }
   if (payload is! Map<String, dynamic>) return payload;
   final encoded = <String, dynamic>{};
 
@@ -301,8 +290,6 @@ Future<dynamic> _encodeJson(dynamic payload) async {
               filename: file.name,
               contentType: file.mimeType ?? 'application/octet-stream'))
           .toList());
-    } else if (value is Parameter) {
-      encoded[key] = await _encodeJson(value.value);
     } else {
       encoded[key] = value;
     }

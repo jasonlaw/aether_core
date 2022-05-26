@@ -25,9 +25,8 @@ extension EntityExtensions<E extends Entity> on E {
     String name,
     List<dynamic> Function(E entity) query, {
     Map<String, dynamic>? params,
-    Map<String, String>? paramTypes,
   }) {
-    return GraphQLEntity<E>._(name, this, query(this), params, paramTypes);
+    return GraphQLEntity<E>._(name, this, query(this), params);
   }
 }
 
@@ -37,5 +36,6 @@ extension EntityFieldStringExtensions on Field<String> {
 }
 
 extension ListOfEntityExtensions<E extends Entity> on List<E> {
-  ListField<E> get obsx => ListField.create<E>();
+  ListField<E> of(EntityBuilder<E>? register) =>
+      ListField.create<E>(register: register);
 }

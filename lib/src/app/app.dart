@@ -9,7 +9,6 @@ import 'package:get_storage/get_storage.dart';
 
 import '../entity/entity.dart';
 import '../extensions/extensions.dart';
-import '../services/models/overlay_response.dart';
 import '../services/services.dart';
 import '../utils/utils.dart';
 import 'app_settings.dart';
@@ -85,14 +84,19 @@ class AppService extends GetxService {
     Upgrader().debugLogging = kDebugMode;
   }
 
-  Widget builder(BuildContext contxet, Widget? widget) => UpgradeAlert(
-        child: FlutterEasyLoading(
-          child: widget,
-        ),
-      );
+  Widget builder(BuildContext contxet, Widget? widget) {
+    if (kIsWeb) {
+      return FlutterEasyLoading(child: widget);
+    }
+    return UpgradeAlert(
+      child: FlutterEasyLoading(
+        child: widget,
+      ),
+    );
+  }
 
   /// Error snackbar notification
-  Future<void> error(dynamic error, {String? title}) async {
+  void error(dynamic error, {String? title}) {
     if (error == null) return;
     Get.snackbar(
       title ?? _snackbarSettings.infoTitle ?? 'Error'.tr,
@@ -103,7 +107,7 @@ class AppService extends GetxService {
   }
 
   /// Information snackbar notification
-  Future<void> info(String info, {String? title}) async => Get.snackbar(
+  void info(String info, {String? title}) => Get.snackbar(
         title ?? _snackbarSettings.infoTitle ?? 'Info'.tr,
         info,
         snackPosition: _snackbarSettings.snackPosition,
@@ -154,23 +158,27 @@ class AppService extends GetxService {
           barrierDismissible: barrierDismissible,
           dialogPlatform: dialogPlatform ?? _dialogSettings?.dialogPlatform);
 
+  bool get isLoading => EasyLoading.isShow;
+
   // Progress indicator actions
   void showProgressIndicator({String? status}) {
     if (EasyLoading.instance.overlayEntry != null) {
+      //isLoading(true);
       EasyLoading.show(status: status);
     }
   }
 
-  void dismissProgressIndicator() => EasyLoading.dismiss();
+  void dismissProgressIndicator() {
+    EasyLoading.dismiss();
+    //isLoading(false);
+  }
 
   Future signIn(dynamic request) async =>
       _credentialActions?.signIn?.call(request);
 
   Future signOut() async => _credentialActions?.signOut?.call();
 
-  //Future signInRefresh() async => _credentialActions?.signInRefresh?.call();
-
-  Future refreshCredential() async => _credentialActions?.getCredential?.call();
+  Future getCredential() async => _credentialActions?.getCredential?.call();
 
   ThemeMode _themeMode = ThemeMode.system;
   ThemeMode get themeMode => _themeMode;
@@ -194,4 +202,57 @@ class AppService extends GetxService {
       App.storage.remove('App.Theme.Mode');
     }
   }
+
+  void registerCustomDialogBuilders(Map<dynamic, DialogBuilder> builders) {
+    Get.find<DialogService>().registerCustomDialogBuilders(builders);
+  }
+
+  /// Creates a popup with the given widget, a scale animation, and faded background.
+  ///
+  /// The first generic type argument will be the [DialogResponse]
+  /// while the second generic type argument is the [DialogRequest]
+  ///
+  /// e.g.
+  /// ```dart
+  /// await App.customDialog<GenericDialogResponse, GenericDialogRequest>();
+  /// ```
+  ///
+  /// Where [GenericDialogResponse] is a defined model response,
+  /// and [GenericDialogRequest] is the request model.
+  Future<DialogResponse<T>?> customDialog<T, R>({
+    dynamic variant,
+    String? title,
+    String? description,
+    bool hasImage = false,
+    String? imageUrl,
+    bool showIconInMainButton = false,
+    String? mainButtonTitle,
+    bool showIconInSecondaryButton = false,
+    String? secondaryButtonTitle,
+    bool showIconInAdditionalButton = false,
+    String? additionalButtonTitle,
+    bool takesInput = false,
+    Color barrierColor = Colors.black54,
+    bool barrierDismissible = false,
+    String barrierLabel = '',
+    R? data,
+  }) =>
+      Get.find<DialogService>().showCustomDialog<T, R>(
+        variant: variant,
+        title: title,
+        description: description,
+        hasImage: hasImage,
+        imageUrl: imageUrl,
+        showIconInMainButton: showIconInMainButton,
+        mainButtonTitle: mainButtonTitle,
+        showIconInSecondaryButton: showIconInSecondaryButton,
+        secondaryButtonTitle: secondaryButtonTitle,
+        showIconInAdditionalButton: showIconInAdditionalButton,
+        additionalButtonTitle: additionalButtonTitle,
+        takesInput: takesInput,
+        barrierColor: barrierColor,
+        barrierDismissible: barrierDismissible,
+        barrierLabel: barrierLabel,
+        data: data,
+      );
 }

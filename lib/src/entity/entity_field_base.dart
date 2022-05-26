@@ -58,14 +58,14 @@ abstract class FieldBase<T> {
   void innerLoad(dynamic rawData, {bool copy = false}) {
     if (isComputed) return;
     if (rawData == null) {
-      if (copy) {
-        entity[name] = null;
-      } else {
-        //final defaultValue = this.value;
-        //entity.data.remove(name);
-        entity[name] = innerDefaultValue();
-      }
+      //if (copy) {
+      //  entity[name] = null;
+      //} else {
+      entity[name] = innerDefaultValue();
+      //}
     } else {
+      assert(_fieldOnLoading != null || T is! Entity,
+          'Register is required for Entity field type.');
       final transformer = _fieldOnLoading ?? ValueTransformers.system();
       entity[name] = transformer(rawData);
     }

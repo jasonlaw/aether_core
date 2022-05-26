@@ -25,8 +25,9 @@ linter:
     public_member_api_docs: false
     # Desirable, but would be breaking changes:
     avoid_positional_boolean_parameters: false
-    constant_identifier_names: false
+    # constant_identifier_names: true
     include_file_not_found: false
+    provide_deprecation_message: false
 
     # INCLUDE_FIX (copy of effective dart 1.2.0)
     # STYLE

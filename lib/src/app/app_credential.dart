@@ -37,24 +37,24 @@ class CredentialIdentity extends Entity {
     });
   }
 
-  static void _writeRefreshToken(String? token) {
-    if (token == null) {
-      GetStorage().remove('CredentialIdentity.RefreshToken');
-      return;
-    }
-    GetStorage().write('CredentialIdentity.RefreshToken', token);
-    //   print('Write token = $refreshToken');
-  }
+  // static void _writeRefreshToken(String? token) {
+  //   if (token == null) {
+  //     GetStorage().remove('CredentialIdentity.RefreshToken');
+  //     return;
+  //   }
+  //   GetStorage().write('CredentialIdentity.RefreshToken', token);
+  //   //   print('Write token = $refreshToken');
+  // }
 
-  String? get refreshToken {
-    final token = GetStorage().read<String>('CredentialIdentity.RefreshToken');
-    if (token == null || token == '') return null;
-    return '$token ${Crypto.checkSum(token)}';
-  }
+  // String? get refreshToken {
+  //   final token = GetStorage().read<String>('CredentialIdentity.RefreshToken');
+  //   if (token == null || token == '') return null;
+  //   return '$token ${Crypto.checkSum(token)}';
+  // }
 
-  Future<String?> getRefreshTokenAsync() async {
-    return GetStorage().read<String>('CredentialIdentity.RefreshToken');
-  }
+  // Future<String?> getRefreshTokenAsync() async {
+  //   return GetStorage().read<String>('CredentialIdentity.RefreshToken');
+  // }
 
   bool hasRoles(Set<String> roles) {
     if (_roles.isEmpty || roles.isEmpty) return false;
@@ -68,8 +68,7 @@ class CredentialIdentity extends Entity {
 
   @mustCallSuper
   void signOut() {
-    GetStorage().remove('CredentialIdentity.RefreshToken');
-    App.connect.clearCookies();
+    App.connect.clearIdentityCache();
     reset();
   }
 }

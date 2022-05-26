@@ -1,3 +1,25 @@
+## 0.5.2
+* Enum checking is not working in web release mode, workaround with EnumSafeType
+
+## 0.5.1
+* Support gql enum 
+
+## 0.5.0
+* Flutter 3.0
+
+## 0.4.5
+* Rollback the entity field default instance changes
+
+## 0.4.4
+* Fixed AppSettings issue
+* Make entity field default instance true
+
+## 0.4.3
+* Fixed gql query typo
+
+## 0.4.2
+* Credential actions error handling issue
+
 ## 0.4.1
 * Credential actions
 
