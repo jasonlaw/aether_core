@@ -30,7 +30,7 @@ dependencies:
   url_launcher: ^6.1.2
 
   # https://pub.dev/packages/flutter_easyloading 
-  flutter_easyloading: ^3.0.3
+  flutter_easyloading: ^3.0.5
 
   # https://pub.flutter-io.cn/packages/version
   version: ^2.0.0
@@ -39,7 +39,7 @@ dependencies:
   crypto: ^3.0.2
 
   # https://pub.dev/packages/cross_file
-  cross_file: ^0.3.3
+  cross_file: ^0.3.3+1
 
   # https://pub.dev/packages/money2
   # money2: ^3.1.2
