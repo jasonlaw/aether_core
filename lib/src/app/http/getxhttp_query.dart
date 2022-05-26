@@ -113,7 +113,7 @@ class GraphQLQuery {
     return use(App.http);
   }
 
-  String _buildQuery() {
+  String _build() {
     // build fields
     final retFields = fields
         .map((x) {
@@ -124,7 +124,7 @@ class GraphQLQuery {
             return x.name;
           }
           if (x is GraphQLQuery) {
-            return x._buildQuery();
+            return x._build();
           }
           assert(false,
               'GraphQLQuery::_buildQuery => Not supported field type "${x.runtimeType}"');
@@ -144,7 +144,7 @@ class GraphQLQuery {
     retQueries.add(query);
 
     for (var subgql in _gqls) {
-      retQueries.add(subgql._buildQuery());
+      retQueries.add(subgql._build());
     }
 
     return retQueries.join(', ');

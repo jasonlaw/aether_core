@@ -90,7 +90,7 @@ class GetxHttp {
     String bodyQuery;
 
     if (query is GraphQLQuery) {
-      bodyQuery = query._buildQuery();
+      bodyQuery = query._build();
     } else {
       bodyQuery = '$query';
     }

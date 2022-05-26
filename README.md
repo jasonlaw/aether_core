@@ -1,3 +1,7 @@
+![](https://raw.githubusercontent.com/jasonlaw/aether-resources/master/Aether.png)
+
+[![Pub release](https://img.shields.io/pub/v/aether_core.svg?label=aether_core&color=blue)](https://pub.dev/packages/aether_core) [![GitHub Release Date](https://img.shields.io/github/release-date/jasonlaw/aether_core.svg)](https://github.com/jasonlaw/aether_core)
+
 # aether_core
 
 Aether Core for Flutter
