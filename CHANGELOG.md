@@ -1,3 +1,7 @@
+## 0.5.3
+* Added text input filtering for money input
+* Added text input filtering for profanity censor
+
 ## 0.5.2
 * Enum checking is not working in web release mode, workaround with EnumSafeType
 
