@@ -469,10 +469,6 @@ class ProfanityFilter {
   ///Returns a censored version of the [inputString], with asterisk (*) pattern as default.
   static String censorString(String inputString) => inputString
       .replaceAllMapped(pattern, (match) => ''.padLeft(match[0]!.length, '*'));
-
-  ///Returns a text input formatter which will filter out the profanity words.
-  static TextInputFormatter get inputFormatter =>
-      CensorProfanityInputFormatter();
 }
 
 class CensorProfanityInputFormatter extends TextInputFormatter {

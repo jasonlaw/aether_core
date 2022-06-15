@@ -32,9 +32,10 @@ class GetxConnect extends GetxHttp {
     });
   }
 
-  void addAuthenticator<T>(RequestModifier<T> auth) {
-    client.httpClient.addAuthenticator(auth);
-  }
+  // void addAuthenticator<T>(RequestModifier<T> auth) {
+  //   _authenticator = auth as RequestModifier;
+  //   client.httpClient.addAuthenticator(auth);
+  // }
 
   final String refreshTokenKey = 'x-refresh-token';
   String? get refreshToken =>

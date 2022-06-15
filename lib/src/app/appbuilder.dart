@@ -255,10 +255,7 @@ class CredentialActions {
         actions?.getRefreshToken ?? () async => App.connect.refreshToken;
 
     if (actions?.refreshCredential != null) {
-      App.connect.addAuthenticator<void>((request) async {
-        await actions!.refreshCredential!.call().catchError((_) {});
-        return request;
-      });
+      App.connect.addAuthenticator(actions!.refreshCredential!);
     }
 
     if (actions?.unauthorizedHandler != null) {

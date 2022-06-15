@@ -49,3 +49,7 @@ extension QuickApiOnFieldExtensions on FieldBase {
     return GraphQLQuery(name, fields, params: params);
   }
 }
+
+extension QuickApiOnMapExtensions on Map<String, dynamic> {
+  RestBody get asFormData => RestBody(formData: true)..addMap(this);
+}

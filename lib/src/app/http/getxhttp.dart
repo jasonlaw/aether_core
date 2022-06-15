@@ -17,11 +17,22 @@ part 'getxhttp_query.dart';
 class GetxHttp {
   late final GetConnect client;
 
+  //RequestModifier? _authenticator;
+  Future Function()? _authenticator;
+
   GetxHttp({bool allowAutoSignedCert = false, bool withCredentials = false}) {
     client = GetConnect(
       allowAutoSignedCert: allowAutoSignedCert,
       withCredentials: withCredentials,
     );
+  }
+
+  void addAuthenticator(Future Function() auth) {
+    _authenticator = auth;
+    client.httpClient.addAuthenticator<void>((request) async {
+      await auth.call().catchError((_) {});
+      return request;
+    });
   }
 
   void Function(Response response)? _unauthorizedResponseHandler;
@@ -118,9 +129,42 @@ class GetxHttp {
     final encodedVariables = await _encodeJson(variables);
     client.httpClient.timeout = timeout ?? onlyOnceTimeout ?? client.timeout;
 
-    return client
+    return _gqlRequest<T>(
+      query,
+      variables: encodedVariables,
+      headers: headers,
+    ).whenComplete(() {
+      onlyOnceTimeout = null;
+      if (!disableLoadingIndicator) _dismissProgressIndicator();
+    });
+
+    // return client
+    //     .query<T>(query,
+    //         url: '/graphql', variables: encodedVariables, headers: headers)
+    //     .onError((error, stackTrace) {
+    //   return GraphQLResponse<T>(graphQLErrors: [
+    //     GraphQLError(
+    //       code: null,
+    //       message: error?.toString(),
+    //     )
+    //   ]);
+    // }).whenComplete(() async {
+    //   onlyOnceTimeout = null;
+    //   if (!disableLoadingIndicator) _dismissProgressIndicator();
+    // });
+  }
+
+  Future<GraphQLResponse<T>> _gqlRequest<T>(
+    String query, {
+    Map<String, dynamic>? variables,
+    Map<String, String>? headers,
+    bool authenticate = false,
+  }) async {
+    if (authenticate) await _authenticator!.call().catchError((_) {});
+
+    final response = await client
         .query<T>(query,
-            url: '/graphql', variables: encodedVariables, headers: headers)
+            url: '/graphql', variables: variables, headers: headers)
         .onError((error, stackTrace) {
       return GraphQLResponse<T>(graphQLErrors: [
         GraphQLError(
@@ -128,10 +172,22 @@ class GetxHttp {
           message: error?.toString(),
         )
       ]);
-    }).whenComplete(() async {
-      onlyOnceTimeout = null;
-      if (!disableLoadingIndicator) _dismissProgressIndicator();
     });
+
+    if ((response.graphQLErrors
+                ?.any((err) => err.code == "UNAUTHORIZED_ACCESS") ??
+            false) &&
+        !authenticate &&
+        _authenticator != null) {
+      return await _gqlRequest(
+        query,
+        variables: variables,
+        headers: headers,
+        authenticate: true,
+      );
+    }
+
+    return response;
   }
 
   Future<Response<T>> get<T>(
@@ -264,7 +320,9 @@ Future<dynamic> _encodeJson(dynamic payload) async {
   for (final entry in payload.entries) {
     final key = entry.key;
     final value = entry.value;
-    if (value is List<DateTime>) {
+    if (value == null) {
+      // do nothing
+    } else if (value is List<DateTime>) {
       encoded[key] = value.map((e) => e.toIso8601String()).toList();
     } else if (value is DateTime) {
       encoded[key] = value.toIso8601String();

@@ -142,7 +142,7 @@ class Upgrader {
 
   bool isUpdateAvailable() {
     if (_updateAvailable == null) {
-      final appStoreVersion = Version.parse(updateVersion);
+      final appStoreVersion = Version.parse(updateVersion!);
       final installedVersion = Version.parse(App.appInfo.version);
 
       final available = appStoreVersion > installedVersion;

@@ -1,6 +1,6 @@
 name: aether_core
 description: Aether Core
-version: 0.5.2
+version: 0.5.3
 homepage: https://github.com/jasonlaw/aether_core.git
 
 # The following line prevents the package from being accidentally published to
@@ -33,7 +33,7 @@ dependencies:
   flutter_easyloading: ^3.0.5
 
   # https://pub.flutter-io.cn/packages/version
-  version: ^2.0.0
+  version: ^2.0.2
   
   # https://pub.dev/packages/crypto
   crypto: ^3.0.2
