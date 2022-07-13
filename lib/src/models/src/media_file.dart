@@ -12,4 +12,6 @@ class MediaFile extends Entity {
 
   bool get isNew => id.valueIsNullOrEmpty;
   bool get canUpload => isNew && file != null;
+
+  static List get fragment => ['id', 'name', 'url'];
 }

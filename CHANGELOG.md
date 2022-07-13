@@ -1,3 +1,6 @@
+## 0.5.4
+* Added Field<MediaFile> as default gql field
+
 ## 0.5.3
 * Added text input filtering for money input
 * Added text input filtering for profanity censor

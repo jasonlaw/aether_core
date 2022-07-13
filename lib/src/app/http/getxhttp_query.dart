@@ -120,6 +120,9 @@ class GraphQLQuery {
           if (x is String) {
             return x;
           }
+          if (x is Field<MediaFile>) {
+            return x.gql(MediaFile.fragment)._build();
+          }
           if (x is FieldBase) {
             return x.name;
           }
