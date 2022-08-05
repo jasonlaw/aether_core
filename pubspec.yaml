@@ -27,7 +27,7 @@ dependencies:
   package_info_plus: ^1.4.2
   
   # https://pub.dev/packages/url_launcher 
-  url_launcher: ^6.1.4
+  url_launcher: ^6.1.5
 
   # https://pub.dev/packages/flutter_easyloading 
   flutter_easyloading: ^3.0.5
@@ -41,9 +41,15 @@ dependencies:
   # https://pub.dev/packages/cross_file
   cross_file: ^0.3.3+1
 
+  # https://pub.dev/packages/connectivity_plus
+  connectivity_plus: ^2.3.6
+
   # https://pub.dev/packages/money2
   # money2: ^3.1.2
 
+  # https://pub.dev/packages/dio
+  # dio: ^4.0.6
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter

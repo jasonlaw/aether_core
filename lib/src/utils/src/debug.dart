@@ -17,4 +17,8 @@ class Debug {
     //developer.log('\x1B[35m$object\x1B[0m', name: 'AETHER');
     debugPrint('\x1B[36m[AETHER]\x1B[0m \x1B[35m$object\x1B[0m');
   }
+
+  static void printIf(bool condition, Object? object) {
+    if (condition) print(object);
+  }
 }

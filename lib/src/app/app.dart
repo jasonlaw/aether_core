@@ -10,6 +10,7 @@ import '../entity/entity.dart';
 import '../extensions/extensions.dart';
 import '../services/services.dart';
 import '../utils/utils.dart';
+import 'app_connectivity.dart';
 import 'app_settings.dart';
 import 'appbuilder.dart';
 import 'http/getxhttp.dart';
@@ -19,9 +20,9 @@ export 'package:flutter_easyloading/flutter_easyloading.dart'
     show EasyLoadingIndicatorType;
 export 'package:get/get.dart';
 
+export 'app_connectivity.dart' show ConnectivityResult;
 export 'app_settings.dart';
 export 'appbuilder.dart';
-
 export 'http/getxhttp.dart';
 
 part 'app_credential.dart';
@@ -53,8 +54,8 @@ class AppService extends GetxService {
   late final GetxConnect connect = GetxConnect._();
   late final GetxHttp http = GetxHttp();
   late final GetStorage storage = GetStorage();
-  //late final AppTheme theme = AppTheme();
-  //late final AppTranslations tr = AppTranslations();
+
+  late final AppConnectivity connectivity = AppConnectivity();
 
   AppService({
     required this.appInfo,
@@ -254,4 +255,9 @@ class AppService extends GetxService {
         barrierLabel: barrierLabel,
         data: data,
       );
+
+  @override
+  void onClose() {
+    AppConnectivity.dispose();
+  }
 }
