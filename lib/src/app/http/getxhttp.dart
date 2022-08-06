@@ -137,21 +137,6 @@ class GetxHttp {
       onlyOnceTimeout = null;
       if (!disableLoadingIndicator) _dismissProgressIndicator();
     });
-
-    // return client
-    //     .query<T>(query,
-    //         url: '/graphql', variables: encodedVariables, headers: headers)
-    //     .onError((error, stackTrace) {
-    //   return GraphQLResponse<T>(graphQLErrors: [
-    //     GraphQLError(
-    //       code: null,
-    //       message: error?.toString(),
-    //     )
-    //   ]);
-    // }).whenComplete(() async {
-    //   onlyOnceTimeout = null;
-    //   if (!disableLoadingIndicator) _dismissProgressIndicator();
-    // });
   }
 
   Future<GraphQLResponse<T>> _gqlRequest<T>(

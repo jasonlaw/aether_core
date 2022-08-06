@@ -28,34 +28,35 @@ class AppConnectivity {
     _timeoutDuration = Duration(milliseconds: timeoutMilliSec);
   }
 
-  Future<bool> checkServerConnection() async {
-    Debug.print(DateTime.now());
+  Future<void> check() async {
+    final result = await Connectivity().checkConnectivity();
+    _updateNetworkConnectivity(result);
+  }
+
+  Future<bool> _checkServerConnection() async {
     _timer?.cancel();
     if (networkType() == ConnectivityResult.none) {
       hasServerConnection(false);
     } else {
-      await '/ping'
+      final response = await '/ping'
           .api()
           .get(
             timeout: _pingDuration,
             disableLoadingIndicator: true,
           )
-          .then((result) {
-        hasServerConnection(result.isOk);
-        Debug.printIf(!result.isOk, result.errorText);
-      }).catchError((_) {
-        hasServerConnection(false);
-      });
-      if (!hasServerConnection()) {
-        _timer = Timer(_timeoutDuration, checkServerConnection);
+          .catchError((error) => App.connect.error(error.toString()));
+      if (!response.isOk) {
+        _timer?.cancel();
+        _timer = Timer(_timeoutDuration, _checkServerConnection);
       }
+      hasServerConnection(response.isOk);
     }
     return hasServerConnection();
   }
 
   Future<void> _updateNetworkConnectivity(ConnectivityResult result) async {
     networkType(result);
-    checkServerConnection();
+    _checkServerConnection();
   }
 
   void cancel() {

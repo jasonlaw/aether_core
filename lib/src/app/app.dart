@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
+import 'package:hive/hive.dart';
 
 import '../entity/entity.dart';
 import '../extensions/extensions.dart';
@@ -53,7 +53,8 @@ class AppService extends GetxService {
   final AppSettings settings;
   late final GetxConnect connect = GetxConnect._();
   late final GetxHttp http = GetxHttp();
-  late final GetStorage storage = GetStorage();
+  //late final GetStorage storage = GetStorage();
+  late final box = Hive.box<String>('defaultBox');
 
   late final AppConnectivity connectivity = AppConnectivity();
 
@@ -185,13 +186,13 @@ class AppService extends GetxService {
 
   void changeThemeMode(ThemeMode themeMode) {
     _themeMode = themeMode;
-    App.storage.write('App.Theme.Mode', _themeMode.toString().split('.')[1]);
+    App.box.put('App.Theme.Mode', _themeMode.toString().split('.')[1]);
     Get.changeThemeMode(_themeMode);
   }
 
   void restoreThemeMode({ThemeMode defaultMode = ThemeMode.system}) {
     _themeMode = defaultMode;
-    final storedThemeMode = App.storage.read<String>('App.Theme.Mode');
+    final storedThemeMode = App.box.get('App.Theme.Mode');
     try {
       if (storedThemeMode != null && storedThemeMode.isNotEmpty) {
         _themeMode = ThemeMode.values
@@ -199,7 +200,7 @@ class AppService extends GetxService {
       }
     } on Exception catch (_) {
       _themeMode = defaultMode;
-      App.storage.remove('App.Theme.Mode');
+      App.box.delete('App.Theme.Mode');
     }
   }
 
@@ -259,5 +260,6 @@ class AppService extends GetxService {
   @override
   void onClose() {
     AppConnectivity.dispose();
+    Hive.close();
   }
 }

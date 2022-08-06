@@ -1,5 +1,6 @@
 ## 0.5.5
 * Connectivity status
+* Replace GetStorage with Hive
 
 ## 0.5.4
 * Added Field<MediaFile> as default gql field
