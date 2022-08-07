@@ -1,5 +1,5 @@
-import '../../app/http/getxhttp.dart';
-import '../../entity/entity.dart';
+import '../../app/http_client/app_http_client.dart';
+import '../../entity/entity.dart' show Entity, EntityBuilder, Field;
 
 class SearchResults {
   late final List data;

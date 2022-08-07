@@ -68,7 +68,7 @@ class CredentialIdentity extends Entity {
 
   @mustCallSuper
   void signOut() {
-    App.connect.clearIdentityCache();
+    App.httpClient.clearIdentityCache();
     reset();
   }
 }

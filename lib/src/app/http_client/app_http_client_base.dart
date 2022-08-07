@@ -1,5 +1,4 @@
-import 'package:dio/dio.dart';
-import 'app_http_client_exceptions.dart';
+part of 'app_http_client.dart';
 
 /// A callback that returns a Dio response, presumably from a Dio method
 /// it has called which performs an HTTP request, such as `dio.get()`,
@@ -157,12 +156,50 @@ class AppHttpClientBase {
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
   }) {
+    Debug.print(method);
+    Debug.print(path);
     return _mapException(
       () => dio.request(
         path,
         data: data,
         queryParameters: queryParameters,
         options: DioMixin.checkOptions(method, options),
+        cancelToken: cancelToken,
+        onSendProgress: onSendProgress,
+        onReceiveProgress: onReceiveProgress,
+      ),
+    );
+  }
+
+  Future<Response<T>> gql<T>(
+    String method,
+    dynamic query, {
+    String? path,
+    Map<String, dynamic>? variables,
+    Options? options,
+    CancelToken? cancelToken,
+    ProgressCallback? onSendProgress,
+    ProgressCallback? onReceiveProgress,
+  }) {
+    String bodyQuery;
+
+    if (query is GraphQLQuery) {
+      bodyQuery = query.build();
+    } else {
+      bodyQuery = '$query';
+    }
+
+    final body = '$method { $bodyQuery }';
+
+    options ??= Options();
+    options.extra ??= {};
+    options.extra!.addAll({'GQL': true});
+
+    return _mapException(
+      () => dio.post(
+        path ?? '/graphql',
+        data: {'query': body, 'variables': variables},
+        options: options,
         cancelToken: cancelToken,
         onSendProgress: onSendProgress,
         onReceiveProgress: onReceiveProgress,

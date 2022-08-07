@@ -9,24 +9,31 @@ import 'package:hive/hive.dart';
 import '../entity/entity.dart';
 import '../extensions/extensions.dart';
 import '../services/services.dart';
-import '../utils/utils.dart';
 import 'app_connectivity.dart';
 import 'app_settings.dart';
 import 'appbuilder.dart';
-import 'http/getxhttp.dart';
+import 'http_client/app_http_client.dart';
 import 'upgrader/upgrader.dart';
 
 export 'package:flutter_easyloading/flutter_easyloading.dart'
     show EasyLoadingIndicatorType;
-export 'package:get/get.dart';
+export 'package:get/get.dart'
+    hide
+        Response,
+        MultipartFile,
+        GetConnect,
+        FormData,
+        GetConnectInterface,
+        GetHttpClient,
+        GraphQLResponse;
 
 export 'app_connectivity.dart' show ConnectivityResult;
 export 'app_settings.dart';
 export 'appbuilder.dart';
-export 'http/getxhttp.dart';
+export 'http_client/app_http_client.dart';
 
 part 'app_credential.dart';
-part 'app_getxconnect.dart';
+//part 'app_getxconnect.dart';
 
 const String kSystemPath = 'assets/system';
 const String kImagesPath = 'assets/images';
@@ -51,12 +58,17 @@ class AppService extends GetxService {
       _credentialIdentity ?? CredentialIdentity();
 
   final AppSettings settings;
-  late final GetxConnect connect = GetxConnect._();
-  late final GetxHttp http = GetxHttp();
+  //late final GetxConnect connect = GetxConnect._();
+  //late final GetxHttp http = GetxHttp();
   //late final GetStorage storage = GetStorage();
-  late final box = Hive.box<String>('defaultBox');
+  late final Box<String> box = Hive.box<String>('defaultBox');
+
+  late final AppHttpClient httpClient = AppHttpClient();
 
   late final AppConnectivity connectivity = AppConnectivity();
+
+  /// Use with care, not govern by any management.
+  final system = <String, dynamic>{};
 
   AppService({
     required this.appInfo,
@@ -163,6 +175,7 @@ class AppService extends GetxService {
 
   // Progress indicator actions
   void showProgressIndicator({String? status}) {
+    if (progressIndicatorLocked) return;
     if (EasyLoading.instance.overlayEntry != null) {
       //isLoading(true);
       EasyLoading.show(status: status);
@@ -170,9 +183,11 @@ class AppService extends GetxService {
   }
 
   void dismissProgressIndicator() {
+    if (progressIndicatorLocked) return;
     EasyLoading.dismiss();
-    //isLoading(false);
   }
+
+  bool progressIndicatorLocked = false;
 
   Future signIn(dynamic request) async =>
       _credentialActions?.signIn?.call(request);
@@ -180,6 +195,8 @@ class AppService extends GetxService {
   Future signOut() async => _credentialActions?.signOut?.call();
 
   Future getCredential() async => _credentialActions?.getCredential?.call();
+
+  Future renewCredential() async => _credentialActions?.renewCredential?.call();
 
   ThemeMode _themeMode = ThemeMode.system;
   ThemeMode get themeMode => _themeMode;

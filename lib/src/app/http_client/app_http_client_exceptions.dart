@@ -1,3 +1,5 @@
+part of 'app_http_client.dart';
+
 /// Base exception for all exceptions thrown by AppHttpClient.
 /// You can create instances of this to create "unknown" error exceptions.
 ///
@@ -24,6 +26,15 @@ class AppHttpClientException<OriginalException extends Exception>
 
   /// Exception which was caught.
   final OriginalException exception;
+
+  @override
+  String toString() {
+    final dioError = exception as DioError?;
+    if (dioError != null && dioError.response != null) {
+      return 'Error ${dioError.response!.statusCode}: ${dioError.response!.statusMessage}';
+    }
+    return dioError?.message ?? exception.toString();
+  }
 }
 
 /// Reason for a network exception.

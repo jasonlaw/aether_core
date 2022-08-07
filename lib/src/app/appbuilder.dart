@@ -89,11 +89,7 @@ class AppBuilder {
     Get.lazyPut(() => DialogService());
     Get.lazyPut(() => SnackbarService());
 
-    // if (_dialogBuilders != null) {
-    //   Get.find<DialogService>().registerCustomDialogBuilders(_dialogBuilders!);
-    // }
-
-    CredentialActions._finalize(_credentialActions);
+    // CredentialActions._finalize(_credentialActions);
 
     return app;
   }
@@ -166,18 +162,18 @@ class CredentialActions {
   final Future Function(dynamic)? signIn;
   final Future Function()? signOut;
 
-  final Future Function()? refreshCredential;
+  final Future Function()? renewCredential;
   final Future Function()? getCredential;
   final void Function(Response response)? unauthorizedHandler;
 
-  final Future<String?> Function()? getRefreshToken;
-  static Future<String?> Function()? _getRefreshToken;
+  //final Future<String?> Function() getRefreshToken;
+  //static Future<String?> Function()? _getRefreshToken;
 
   const CredentialActions({
     this.signIn,
     this.signOut,
-    this.refreshCredential,
-    this.getRefreshToken,
+    this.renewCredential,
+    //Future<String?> Function()? getRefreshToken,
     this.getCredential,
     this.unauthorizedHandler,
   });
@@ -185,84 +181,74 @@ class CredentialActions {
   static CredentialActions aether({
     Future Function(dynamic)? signIn,
     Future Function()? signOut,
-    Future<String?> Function()? getRefreshToken,
-    Future Function()? refreshCredential,
+    //Future<String?> Function()? getRefreshToken,
+    Future Function()? renewCredential,
     Future Function()? getCredential,
     void Function(Response response)? unauthorizedHandler,
   }) =>
       CredentialActions(
         signIn: signIn ?? _signIn,
         signOut: signOut ?? _signOut,
-        getRefreshToken: getRefreshToken ?? _getRefreshToken,
-        refreshCredential: refreshCredential ?? _refreshCredential,
+        //   getRefreshToken: getRefreshToken ?? _getRefreshToken,
+        renewCredential: renewCredential ?? _renewCredential,
         getCredential: getCredential ?? _getCredential,
         unauthorizedHandler: unauthorizedHandler,
       );
 
-  static Future<void> _signIn(dynamic request) {
-    return '/api/credential/signin'.api(body: request).post().then((response) {
-      if (response.hasError) return Future.error(response.errorText);
-      App.identity.load(response.body);
-    });
+  static Future<void> _signIn(dynamic request) async {
+    final response = await '/api/credential/signin'.api(body: request).post();
+    App.identity.load(response.data);
   }
 
-  static Future<void> _signOut() {
-    return '/api/credential/signout'
-        .api()
-        .post()
-        .catchError((_) {})
-        .whenComplete(() {
+  static Future<void> _signOut() async {
+    try {
+      await '/api/credential/signout'.api().post();
+    } on Exception catch (_) {
+    } finally {
       App.identity.signOut();
-    });
-  }
-
-  static Future<void> _refreshCredential() async {
-    final refreshToken = await _getRefreshToken!.call();
-
-    if (refreshToken.isNullOrEmpty) return;
-
-    return '/api/credential/refresh'
-        .api(body: {'refreshToken': refreshToken})
-        .post()
-        .then((response) {
-          if (response.hasError) {
-            if (response.statusCode != null) {
-              App.connect.clearIdentityCache();
-              return;
-            }
-          }
-          App.identity.load(response.body);
-        })
-        .catchError((_) {});
-  }
-
-  static Future<void> _getCredential() {
-    return '/api/credential'
-        .api()
-        .get(timeout: const Duration(seconds: 10))
-        .then((response) {
-      if (response.hasError) {
-        if (response.statusCode != null) {
-          App.connect.clearIdentityCache();
-        }
-        return Future.error(response.errorText);
-      }
-      App.identity.load(response.body);
-    });
-  }
-
-  static void _finalize(CredentialActions? actions) {
-    _getRefreshToken =
-        actions?.getRefreshToken ?? () async => App.connect.refreshToken;
-
-    if (actions?.refreshCredential != null) {
-      App.connect.addAuthenticator(actions!.refreshCredential!);
-    }
-
-    if (actions?.unauthorizedHandler != null) {
-      App.connect.addUnauthorizedResponseHandler(actions!.unauthorizedHandler!);
     }
   }
+
+  static Future<void> _renewCredential() async {
+    try {
+      final response = await '/api/credential/refresh'
+          .api(body: {'refreshToken': App.httpClient.refreshToken}).post(
+        extra: {
+          'RENEW_CREDENTIAL': true,
+        },
+      );
+      App.identity.load(response.data);
+    } on AppNetworkResponseException catch (_) {
+      App.httpClient.clearIdentityCache();
+      rethrow;
+    }
+  }
+
+  static Future<void> _getCredential() async {
+    try {
+      final response = await '/api/credential'.api().get(
+            timeout: const Duration(seconds: 10),
+          );
+      App.identity.load(response.data);
+    } on AppNetworkResponseException catch (_) {
+      App.httpClient.clearIdentityCache();
+    } on Exception catch (err) {
+      return Future.error(err.toString());
+    }
+  }
+
+  // static void _finalize(CredentialActions? actions) {
+  //   _getRefreshToken =
+  //       actions?.getRefreshToken ?? () async => App.httpClient.refreshToken;
+
+  //   if (actions?.refreshCredential != null) {
+  //     //App.connect.addAuthenticator(actions!.refreshCredential!);
+  //   }
+
+  //   if (actions?.unauthorizedHandler != null) {
+  //     //  App.connect.addUnauthorizedResponseHandler(actions!.unauthorizedHandler!);
+  //   }
+  // }
 
   static Map<String, String> userPass(
     String username,

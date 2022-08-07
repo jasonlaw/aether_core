@@ -38,18 +38,17 @@ class AppConnectivity {
     if (networkType() == ConnectivityResult.none) {
       hasServerConnection(false);
     } else {
-      final response = await '/ping'
-          .api()
-          .get(
-            timeout: _pingDuration,
-            disableLoadingIndicator: true,
-          )
-          .catchError((error) => App.connect.error(error.toString()));
-      if (!response.isOk) {
+      try {
+        await '/ping'.api().get(
+              timeout: _pingDuration,
+              showLoadingIndicator: false,
+            );
+        hasServerConnection(true);
+      } on Exception catch (_) {
+        hasServerConnection(false);
         _timer?.cancel();
         _timer = Timer(_timeoutDuration, _checkServerConnection);
       }
-      hasServerConnection(response.isOk);
     }
     return hasServerConnection();
   }
