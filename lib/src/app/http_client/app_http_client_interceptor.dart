@@ -46,9 +46,6 @@ class AppHttpClientInterceptor extends Interceptor {
 
   @override
   void onError(DioError err, ErrorInterceptorHandler handler) async {
-    print('AppHttpClientInterceptor: ${err.response?.statusCode}');
-    print('AppHttpClientInterceptor: ${err.requestOptions.path}');
-    print('AppHttpClientInterceptor: ${err.requestOptions.extra}');
     if (err.type == DioErrorType.response &&
         (err.requestOptions.extra['GQL'] ?? false) &&
         err.response?.data != null) {

@@ -164,18 +164,12 @@ class CredentialActions {
 
   final Future Function()? renewCredential;
   final Future Function()? getCredential;
-  final void Function(Response response)? unauthorizedHandler;
-
-  //final Future<String?> Function() getRefreshToken;
-  //static Future<String?> Function()? _getRefreshToken;
 
   const CredentialActions({
     this.signIn,
     this.signOut,
     this.renewCredential,
-    //Future<String?> Function()? getRefreshToken,
     this.getCredential,
-    this.unauthorizedHandler,
   });
 
   static CredentialActions aether({
@@ -192,7 +186,6 @@ class CredentialActions {
         //   getRefreshToken: getRefreshToken ?? _getRefreshToken,
         renewCredential: renewCredential ?? _renewCredential,
         getCredential: getCredential ?? _getCredential,
-        unauthorizedHandler: unauthorizedHandler,
       );
 
   static Future<void> _signIn(dynamic request) async {
@@ -236,19 +229,6 @@ class CredentialActions {
       return Future.error(err.toString());
     }
   }
-
-  // static void _finalize(CredentialActions? actions) {
-  //   _getRefreshToken =
-  //       actions?.getRefreshToken ?? () async => App.httpClient.refreshToken;
-
-  //   if (actions?.refreshCredential != null) {
-  //     //App.connect.addAuthenticator(actions!.refreshCredential!);
-  //   }
-
-  //   if (actions?.unauthorizedHandler != null) {
-  //     //  App.connect.addUnauthorizedResponseHandler(actions!.unauthorizedHandler!);
-  //   }
-  // }
 
   static Map<String, String> userPass(
     String username,
