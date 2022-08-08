@@ -183,7 +183,7 @@ class AppService extends GetxService {
   }
 
   void dismissProgressIndicator() {
-    if (progressIndicatorLocked) return;
+    //if (progressIndicatorLocked) return;
     EasyLoading.dismiss();
   }
 

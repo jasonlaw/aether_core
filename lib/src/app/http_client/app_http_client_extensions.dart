@@ -1,9 +1,23 @@
 part of 'app_http_client.dart';
 
-extension AppHttpClientResponseExtensions on Response? {
-  bool hasDataErrorCode(String code) {
-    return this?.data != null &&
-        this!.data['errors']?.any((e) => e['code'] == code);
+extension AppHttpClientResponseNullExtensions on Response? {}
+
+extension AppHttpClientResponseExtensions on Response {
+  E toEntity<E extends Entity>(EntityBuilder<E> createEntity) {
+    return createEntity()..load(data);
+  }
+
+  List<T> toList<T extends Entity>(EntityBuilder<T> createEntity) {
+    return (data as List).map((item) => createEntity()..load(item)).toList();
+  }
+
+  bool isUnauthorized() {
+    return !(extra['RENEW_CREDENTIAL'] ?? false) &&
+        ((statusCode == 401) ||
+            ((extra['GQL'] ?? false) &&
+                data != null &&
+                data['errors'] != null &&
+                data['errors'].any((e) => e['code'] == 'UNAUTHORIZED_ACCESS')));
   }
 }
 
@@ -14,9 +28,9 @@ extension AppHttpClientApiOnStringExtensions on String {
 
   RestQuery api({
     dynamic body,
-    Map<String, dynamic>? query,
+    Map<String, dynamic>? queryParameters,
   }) {
-    return RestQuery(this, body: body, query: query);
+    return RestQuery(this, body: body, queryParameters: queryParameters);
   }
 }
 

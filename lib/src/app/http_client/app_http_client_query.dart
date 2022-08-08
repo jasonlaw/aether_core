@@ -1,29 +1,39 @@
+// ignore_for_file: avoid_returning_this
+
 part of 'app_http_client.dart';
 
 class RestQuery {
   // final String action;
   final String url;
   final dynamic body;
-  final Map<String, dynamic>? query;
+  final Map<String, dynamic>? queryParameters;
   AppHttpClientBase? _client;
 
-  RestQuery(this.url, {this.body, this.query});
+  Map<String, String>? _headers;
+  Map<String, dynamic>? _extra;
+  Duration? _timeout;
 
-  // ignore: avoid_returning_this
-  RestQuery use(AppHttpClientBase client) {
-    _client ??= client;
+  RestQuery(this.url, {this.body, this.queryParameters});
+
+  RestQuery timeout(Duration value) {
+    _timeout = value;
     return this;
   }
 
-  // RestQuery external() {
-  //   return use(App.http);
-  // }
+  RestQuery headers(Map<String, String> value) {
+    _headers = value;
+    return this;
+  }
+
+  RestQuery extra(Map<String, String> value) {
+    _extra = value;
+    return this;
+  }
 
   Future<Response<T>> get<T>({
     Map<String, String>? headers,
     Map<String, dynamic>? extra,
     Duration? timeout,
-    bool disableLoadingIndicator = false,
     bool showLoadingIndicator = true,
   }) {
     return _request(
@@ -31,7 +41,7 @@ class RestQuery {
       headers: headers,
       extra: extra,
       timeout: timeout,
-      showLoadingIndicator: showLoadingIndicator && !disableLoadingIndicator,
+      showLoadingIndicator: showLoadingIndicator,
     );
   }
 
@@ -39,7 +49,6 @@ class RestQuery {
     Map<String, String>? headers,
     Map<String, dynamic>? extra,
     Duration? timeout,
-    bool disableLoadingIndicator = false,
     bool showLoadingIndicator = true,
   }) {
     return _request(
@@ -47,7 +56,7 @@ class RestQuery {
       headers: headers,
       extra: extra,
       timeout: timeout,
-      showLoadingIndicator: showLoadingIndicator && !disableLoadingIndicator,
+      showLoadingIndicator: showLoadingIndicator,
     );
   }
 
@@ -59,15 +68,18 @@ class RestQuery {
     bool showLoadingIndicator = true,
   }) async {
     _client ??= App.httpClient;
+    _headers ??= headers;
+    _extra ??= extra;
+    _timeout ??= timeout;
     return await _client!.request(
       method,
       url,
       data: body is List<dynamic> ? RestBody.params(body) : body,
-      queryParameters: query,
+      queryParameters: queryParameters,
       options: Options(
-        headers: headers,
-        sendTimeout: timeout?.inSeconds,
-        extra: extra.union({'LOADING_INDICATOR': showLoadingIndicator}),
+        headers: _headers,
+        sendTimeout: _timeout?.inMilliseconds,
+        extra: _extra.union({'LOADING_INDICATOR': showLoadingIndicator}),
       ),
     );
   }
@@ -79,25 +91,33 @@ class GraphQLQuery {
   final Map<String, dynamic>? params;
   AppHttpClientBase? _client;
 
+  Map<String, String>? _headers;
+  Map<String, dynamic>? _extra;
+  Duration? _timeout;
+
   final List<GraphQLQuery> _gqls = [];
 
   GraphQLQuery(this.name, this.fields, {this.params});
 
-  // ignore: avoid_returning_this
-  GraphQLQuery use(AppHttpClientBase client) {
-    _client ??= client;
+  GraphQLQuery timeout(Duration value) {
+    _timeout = value;
     return this;
   }
 
-  // ignore: avoid_returning_this
+  GraphQLQuery headers(Map<String, String> value) {
+    _headers = value;
+    return this;
+  }
+
+  GraphQLQuery extra(Map<String, String> value) {
+    _extra = value;
+    return this;
+  }
+
   GraphQLQuery and(GraphQLQuery gql) {
     _gqls.add(gql);
     return this;
   }
-
-  // GraphQLQuery external() {
-  //   return use(App.http);
-  // }
 
   String build() {
     // build fields
@@ -211,13 +231,16 @@ class GraphQLQuery {
     bool showLoadingIndicator = true,
   }) async {
     _client ??= App.httpClient;
+    _headers ??= headers;
+    _extra ??= extra;
+    _timeout ??= timeout;
     return await _client!.gql(
       method,
       this,
       options: Options(
-        headers: headers,
-        sendTimeout: timeout?.inSeconds,
-        extra: extra.union({'LOADING_INDICATOR': showLoadingIndicator}),
+        headers: _headers,
+        sendTimeout: _timeout?.inMilliseconds,
+        extra: _extra.union({'LOADING_INDICATOR': showLoadingIndicator}),
       ),
     );
   }

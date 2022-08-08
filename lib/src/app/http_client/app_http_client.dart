@@ -17,11 +17,10 @@ class AppHttpClient extends AppHttpClientBase {
   AppHttpClient() : super(dio: Dio()) {
     dio
       ..options.baseUrl = App.settings.apiBaseUrl()
-      ..options.sendTimeout = App.settings.apiConnectTimeoutInSec()
+      ..options.sendTimeout = App.settings.apiConnectTimeoutInSec() * 1000
       ..allowSelfSignedCert()
       ..allowWithCredential()
       ..enableCookieManager()
-      ..interceptors.add(AppHttpClientUnauthorizedInterceptor())
       ..interceptors.add(AppHttpClientInterceptor(this));
   }
 

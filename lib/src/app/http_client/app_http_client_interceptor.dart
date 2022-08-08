@@ -45,7 +45,10 @@ class AppHttpClientInterceptor extends Interceptor {
   }
 
   @override
-  void onError(DioError err, ErrorInterceptorHandler handler) {
+  void onError(DioError err, ErrorInterceptorHandler handler) async {
+    print('AppHttpClientInterceptor: ${err.response?.statusCode}');
+    print('AppHttpClientInterceptor: ${err.requestOptions.path}');
+    print('AppHttpClientInterceptor: ${err.requestOptions.extra}');
     if (err.type == DioErrorType.response &&
         (err.requestOptions.extra['GQL'] ?? false) &&
         err.response?.data != null) {
@@ -59,62 +62,52 @@ class AppHttpClientInterceptor extends Interceptor {
             .toList();
       }
     }
+
+    if (!(err.requestOptions.extra['RETRY'] ?? false) &&
+        err.response != null &&
+        err.response!.isUnauthorized()) {
+      if (await renewCredentialToken()) {
+        // retry again
+
+        final requestOptions = err.requestOptions;
+        try {
+          requestOptions.extra['RETRY'] = true;
+          final response = await App.httpClient.dio.request(requestOptions.path,
+              data: requestOptions.data,
+              queryParameters: requestOptions.queryParameters,
+              options: Options(
+                method: requestOptions.method,
+                extra: requestOptions.extra,
+                headers: requestOptions.headers,
+              ));
+          handler.resolve(response);
+          return;
+        } on DioError catch (retryErr) {
+          App.dismissProgressIndicator();
+          handler.reject(retryErr);
+          return;
+        } on Exception catch (_) {}
+      }
+    }
+
     if (err.requestOptions.extra['LOADING_INDICATOR'] ?? false) {
       App.dismissProgressIndicator();
     }
     handler.next(err);
   }
-}
 
-class AppHttpClientUnauthorizedInterceptor extends Interceptor {
-  AppHttpClientUnauthorizedInterceptor();
-// https://krishanmadushankadev.medium.com/how-to-handle-401-unauthorised-with-dio-interceptor-flutter-60398a914406
-  @override
-  void onError(DioError err, ErrorInterceptorHandler handler) async {
-    if (!(err.requestOptions.extra['RENEW_CREDENTIAL'] ?? false) &&
-        err.response != null &&
-        (err.response!.statusCode == 401 ||
-            err.response.hasDataErrorCode('UNAUTHORIZED_ACCESS')) &&
-        App.httpClient.refreshToken.isNotNullOrEmpty) {
-      // make new request
-      final oldProgressIndicatorLocked = App.progressIndicatorLocked;
-      try {
-        App.progressIndicatorLocked = true;
-        await App.renewCredential();
-      } on Exception catch (_) {
-        handler.next(err);
-        return;
-      } finally {
-        if (!oldProgressIndicatorLocked) {
-          App.progressIndicatorLocked = false;
-        }
-      }
-
-      final requestOptions = err.requestOptions;
-      try {
-        App.progressIndicatorLocked = true;
-        requestOptions.extra['RENEW_CREDENTIAL'] = true;
-        final response = await App.httpClient.dio.request(requestOptions.path,
-            data: requestOptions.data,
-            queryParameters: requestOptions.queryParameters,
-            options: Options(
-              method: requestOptions.method,
-              extra: requestOptions.extra,
-              headers: requestOptions.headers,
-            ));
-        handler.resolve(response);
-        return;
-      } on DioError catch (retryErr) {
-        handler.next(retryErr);
-        return;
-      } on Exception catch (_) {
-      } finally {
-        if (!oldProgressIndicatorLocked) {
-          App.progressIndicatorLocked = false;
-        }
-      }
+  Future<bool> renewCredentialToken() async {
+    if (App.httpClient.refreshToken.isNullOrEmpty) return false;
+    final oldProgressIndicatorLocked = App.progressIndicatorLocked;
+    App.progressIndicatorLocked = true;
+    try {
+      await App.renewCredential();
+    } on Exception catch (_) {
+      return false;
+    } finally {
+      App.progressIndicatorLocked = oldProgressIndicatorLocked;
     }
-    handler.next(err);
+    return true;
   }
 }
 
