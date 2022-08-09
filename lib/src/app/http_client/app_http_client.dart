@@ -21,12 +21,12 @@ class AppHttpClient extends AppHttpClientBase {
       ..allowSelfSignedCert()
       ..allowWithCredential()
       ..enableCookieManager()
-      ..interceptors.add(AppHttpClientInterceptor(this));
+      ..interceptors.add(AppHttpClientInterceptor());
   }
 
-  final String refreshTokenKey = 'x-refresh-token';
+  static const String refreshTokenKey = 'x-refresh-token';
   String? get refreshToken => App.box.get('apphttpclient-$refreshTokenKey');
-  void writeRefreshToken(String? token) {
+  static void writeRefreshToken(String? token) {
     if (token == null) {
       App.box.delete('apphttpclient-$refreshTokenKey');
     } else {

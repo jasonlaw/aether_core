@@ -1,26 +1,27 @@
 import '../../../aether_core.dart';
 
 class AppHttpClientInterceptor extends Interceptor {
-  final AppHttpClient requester;
-  AppHttpClientInterceptor(this.requester);
   @override
   void onRequest(
       RequestOptions options, RequestInterceptorHandler handler) async {
-    if (!(options.extra['GQL'] ?? false)) {
+    if (!options.extra.hasFlag('GQL')) {
       options.data = await _encodeBody(options.data);
       options.queryParameters = _encodeQuery(options.queryParameters);
     }
-    options.headers.addAll({
-      'timezoneoffset': '${DateTime.now().timeZoneOffset.inHours}',
-      if (Get.locale != null)
-        'languagecode':
-            '${Get.locale!.languageCode}_${Get.locale!.countryCode}',
-      if (App.settings.apiKey.valueIsNotNullOrEmpty)
-        'appkey': App.settings.apiKey(),
-      if (options.method == 'POST') 'post-token': Uuid.newUuid()
-    });
 
-    if (options.extra['LOADING_INDICATOR'] ?? false) {
+    if (!options.extra.hasFlag('EXTERNAL')) {
+      options.headers.addAll({
+        'timezoneoffset': '${DateTime.now().timeZoneOffset.inHours}',
+        if (Get.locale != null)
+          'languagecode':
+              '${Get.locale!.languageCode}_${Get.locale!.countryCode}',
+        if (App.settings.apiKey.valueIsNotNullOrEmpty)
+          'appkey': App.settings.apiKey(),
+        if (options.method == 'POST') 'post-token': Uuid.newUuid()
+      });
+    }
+
+    if (options.extra.hasFlag('LOADING_INDICATOR')) {
       App.showProgressIndicator();
     }
 
@@ -29,15 +30,19 @@ class AppHttpClientInterceptor extends Interceptor {
 
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
-    if (response.requestOptions.extra['GQL'] ?? false) {
+    if (response.requestOptions.extra.hasFlag('GQL')) {
       final data = response.data['data'] as Map<String, dynamic>;
       response.data = data.keys.length == 1 ? data.values.first : data;
     }
 
-    if (response.headers.value('x-refresh-token').isNotNullOrEmpty) {
-      requester.writeRefreshToken(response.headers.value('x-refresh-token'));
+    if (!response.requestOptions.extra.hasFlag('EXTERNAL')) {
+      final refreshToken = response.headers.value('x-refresh-token');
+      if (refreshToken.isNotNullOrEmpty) {
+        AppHttpClient.writeRefreshToken(refreshToken);
+      }
     }
-    if (response.requestOptions.extra['LOADING_INDICATOR'] ?? false) {
+
+    if (response.requestOptions.extra.hasFlag('LOADING_INDICATOR')) {
       App.dismissProgressIndicator();
     }
 
@@ -47,7 +52,7 @@ class AppHttpClientInterceptor extends Interceptor {
   @override
   void onError(DioError err, ErrorInterceptorHandler handler) async {
     if (err.type == DioErrorType.response &&
-        (err.requestOptions.extra['GQL'] ?? false) &&
+        (err.requestOptions.extra.hasFlag('GQL')) &&
         err.response?.data != null) {
       final listError = err.response!.data['errors'];
       if ((listError is List) && listError.isNotEmpty) {
@@ -60,12 +65,11 @@ class AppHttpClientInterceptor extends Interceptor {
       }
     }
 
-    if (!(err.requestOptions.extra['RETRY'] ?? false) &&
+    if (!err.requestOptions.extra.hasFlag('RETRY') &&
         err.response != null &&
         err.response!.isUnauthorized()) {
       if (await renewCredentialToken()) {
         // retry again
-
         final requestOptions = err.requestOptions;
         try {
           requestOptions.extra['RETRY'] = true;
@@ -78,19 +82,17 @@ class AppHttpClientInterceptor extends Interceptor {
                 headers: requestOptions.headers,
               ));
           handler.resolve(response);
-          return;
         } on DioError catch (retryErr) {
-          App.dismissProgressIndicator();
           handler.reject(retryErr);
-          return;
         } on Exception catch (_) {}
       }
     }
 
-    if (err.requestOptions.extra['LOADING_INDICATOR'] ?? false) {
+    if (err.requestOptions.extra.hasFlag('LOADING_INDICATOR')) {
       App.dismissProgressIndicator();
     }
-    handler.next(err);
+
+    if (!handler.isCompleted) handler.next(err);
   }
 
   Future<bool> renewCredentialToken() async {

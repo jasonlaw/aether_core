@@ -9,3 +9,13 @@ extension AetherTypeExtensions on Type {
     return null;
   }
 }
+
+extension AetherMapExtensions on Map<String, dynamic> {
+  bool hasFlag(String name) {
+    try {
+      return this[name] ?? false;
+    } on Exception catch (_) {
+      return false;
+    }
+  }
+}
