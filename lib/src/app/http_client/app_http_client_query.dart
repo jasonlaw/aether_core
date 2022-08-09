@@ -15,8 +15,8 @@ class RestQuery {
 
   RestQuery(this.url, {this.body, this.queryParameters});
 
-  RestQuery external() {
-    _client = AppHttpClient(BaseOptions(extra: {'EXTERNAL': true}));
+  RestQuery external({AppHttpClientBase? client}) {
+    _client = client ?? App.extHttpClient;
     return this;
   }
 
@@ -105,8 +105,8 @@ class GraphQLQuery {
 
   GraphQLQuery(this.name, this.fields, {this.params});
 
-  GraphQLQuery external() {
-    _client = AppHttpClient(BaseOptions(extra: {'EXTERNAL': true}));
+  GraphQLQuery external({AppHttpClientBase? client}) {
+    _client = client ?? App.extHttpClient;
     return this;
   }
 

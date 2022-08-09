@@ -156,8 +156,6 @@ class AppHttpClientBase {
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
   }) {
-    Debug.print(method);
-    Debug.print(path);
     return _mapException(
       () => dio.request(
         path,

@@ -68,6 +68,10 @@ class AppService extends GetxService {
     sendTimeout: App.settings.apiConnectTimeoutInSec() * 1000,
   ));
 
+  late final AppHttpClient extHttpClient = AppHttpClient(BaseOptions(
+    extra: {'EXTERNAL': true},
+  ));
+
   late final AppConnectivity connectivity = AppConnectivity();
 
   /// Use with care, not govern by any management.
