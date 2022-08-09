@@ -12,17 +12,11 @@ class RestQuery {
   Map<String, String>? _headers;
   Map<String, dynamic>? _extra;
   Duration? _timeout;
-  bool _external = false;
 
   RestQuery(this.url, {this.body, this.queryParameters});
 
-  RestQuery use(AppHttpClientBase client) {
-    _client = client;
-    return this;
-  }
-
   RestQuery external() {
-    _external = true;
+    _client = AppHttpClient(BaseOptions(extra: {'EXTERNAL': true}));
     return this;
   }
 
@@ -81,11 +75,7 @@ class RestQuery {
     _headers ??= headers;
     _extra ??= extra;
     _timeout ??= timeout;
-
     _client ??= App.httpClient;
-    if (_external) {
-      _extra = _extra.union({'EXTERNAL': true});
-    }
 
     return await _client!.request(
       method,
@@ -110,19 +100,13 @@ class GraphQLQuery {
   Map<String, String>? _headers;
   Map<String, dynamic>? _extra;
   Duration? _timeout;
-  bool _external = false;
 
   final List<GraphQLQuery> _gqls = [];
 
   GraphQLQuery(this.name, this.fields, {this.params});
 
-  GraphQLQuery use(AppHttpClientBase client) {
-    _client = client;
-    return this;
-  }
-
   GraphQLQuery external() {
-    _external = true;
+    _client = AppHttpClient(BaseOptions(extra: {'EXTERNAL': true}));
     return this;
   }
 
@@ -260,11 +244,7 @@ class GraphQLQuery {
     _headers ??= headers;
     _extra ??= extra;
     _timeout ??= timeout;
-
     _client ??= App.httpClient;
-    if (_external) {
-      _extra = _extra.union({'EXTERNAL': true});
-    }
 
     return await _client!.gql(
       method,

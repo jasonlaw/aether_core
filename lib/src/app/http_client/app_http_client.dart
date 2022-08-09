@@ -14,10 +14,10 @@ part 'app_http_client_params.dart';
 part 'app_http_client_extensions.dart';
 
 class AppHttpClient extends AppHttpClientBase {
-  AppHttpClient() : super(dio: Dio()) {
+  AppHttpClient([BaseOptions? options]) : super(dio: Dio(options)) {
     dio
-      ..options.baseUrl = App.settings.apiBaseUrl()
-      ..options.sendTimeout = App.settings.apiConnectTimeoutInSec() * 1000
+      //..options.baseUrl = App.settings.apiBaseUrl()
+      //..options.sendTimeout = App.settings.apiConnectTimeoutInSec() * 1000
       ..allowSelfSignedCert()
       ..allowWithCredential()
       ..enableCookieManager()

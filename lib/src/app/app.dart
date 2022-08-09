@@ -63,7 +63,10 @@ class AppService extends GetxService {
   //late final GetStorage storage = GetStorage();
   late final Box<String> box = Hive.box<String>('defaultBox');
 
-  late final AppHttpClient httpClient = AppHttpClient();
+  late final AppHttpClient httpClient = AppHttpClient(BaseOptions(
+    baseUrl: App.settings.apiBaseUrl(),
+    sendTimeout: App.settings.apiConnectTimeoutInSec() * 1000,
+  ));
 
   late final AppConnectivity connectivity = AppConnectivity();
 
