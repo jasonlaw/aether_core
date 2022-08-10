@@ -1,3 +1,7 @@
+## 0.6.1
+* Fixed response error message
+* Add Dio debug mode simple logging
+
 ## 0.6.0
 * Connectivity status
 * Replace GetStorage with Hive

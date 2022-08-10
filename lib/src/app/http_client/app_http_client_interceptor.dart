@@ -52,11 +52,12 @@ class AppHttpClientInterceptor extends Interceptor {
   @override
   void onError(DioError err, ErrorInterceptorHandler handler) async {
     if (err.type == DioErrorType.response &&
-        (err.requestOptions.extra.hasFlag('GQL')) &&
-        err.response?.data != null) {
-      final listError = err.response!.data['errors'];
+        err.response?.data != null &&
+        err.requestOptions.extra.hasFlag('GQL')) {
+      final data = err.response?.data!;
+      final listError = data['errors'];
       if ((listError is List) && listError.isNotEmpty) {
-        err.response!.data['errors'] = listError
+        data['errors'] = listError
             .map((e) => {
                   'code': e['extensions']['code']?.toString(),
                   'message': e['message']?.toString()

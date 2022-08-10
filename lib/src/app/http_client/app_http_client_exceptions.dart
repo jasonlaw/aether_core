@@ -31,7 +31,17 @@ class AppHttpClientException<OriginalException extends Exception>
   String toString() {
     final dioError = exception as DioError?;
     if (dioError != null && dioError.response != null) {
-      return 'Error ${dioError.response!.statusCode}: ${dioError.response!.statusMessage}';
+      final response = dioError.response!;
+      final data = response.data;
+
+      if (data is Map) {
+        var message = data['message'];
+        if (message != null && message != "") {
+          return message;
+        }
+      }
+
+      return '${response.statusCode}: ${response.statusMessage}';
     }
     return dioError?.message ?? exception.toString();
   }

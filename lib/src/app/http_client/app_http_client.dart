@@ -1,3 +1,4 @@
+import 'package:dio_logger/dio_logger.dart';
 import 'package:flutter/foundation.dart';
 
 import '../../../aether_core.dart';
@@ -22,6 +23,10 @@ class AppHttpClient extends AppHttpClientBase {
       ..allowWithCredential()
       ..enableCookieManager()
       ..interceptors.add(AppHttpClientInterceptor());
+
+    if (kDebugMode) {
+      dio.interceptors.add(dioLoggerInterceptor);
+    }
   }
 
   static const String refreshTokenKey = 'x-refresh-token';
