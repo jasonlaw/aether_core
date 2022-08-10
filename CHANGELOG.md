@@ -1,6 +1,7 @@
-## 0.5.5
+## 0.6.0
 * Connectivity status
 * Replace GetStorage with Hive
+* Replace GetConnect with Dio
 
 ## 0.5.4
 * Added Field<MediaFile> as default gql field

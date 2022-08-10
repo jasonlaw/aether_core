@@ -183,7 +183,6 @@ class CredentialActions {
       CredentialActions(
         signIn: signIn ?? _signIn,
         signOut: signOut ?? _signOut,
-        //   getRefreshToken: getRefreshToken ?? _getRefreshToken,
         renewCredential: renewCredential ?? _renewCredential,
         getCredential: getCredential ?? _getCredential,
       );
