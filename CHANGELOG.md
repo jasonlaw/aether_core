@@ -1,6 +1,9 @@
+## 0.6.2
+* Added Response.noContent (StatusCode == 204)
+
 ## 0.6.1
 * Fixed response error message
-* Add Dio debug mode simple logging
+* Added Dio debug mode simple logging
 
 ## 0.6.0
 * Connectivity status

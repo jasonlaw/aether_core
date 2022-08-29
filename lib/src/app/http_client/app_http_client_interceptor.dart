@@ -68,7 +68,7 @@ class AppHttpClientInterceptor extends Interceptor {
 
     if (!err.requestOptions.extra.hasFlag('RETRY') &&
         err.response != null &&
-        err.response!.isUnauthorized()) {
+        err.response!.isUnauthorized) {
       if (await renewCredentialToken()) {
         // retry again
         final requestOptions = err.requestOptions;

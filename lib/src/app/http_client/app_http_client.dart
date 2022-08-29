@@ -19,6 +19,7 @@ class AppHttpClient extends AppHttpClientBase {
     dio
       //..options.baseUrl = App.settings.apiBaseUrl()
       //..options.sendTimeout = App.settings.apiConnectTimeoutInSec() * 1000
+      ..options.headers = {'User-Agent': 'aether-flutter'}
       ..allowSelfSignedCert()
       ..allowWithCredential()
       ..enableCookieManager()

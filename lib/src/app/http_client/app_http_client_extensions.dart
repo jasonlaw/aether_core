@@ -11,7 +11,7 @@ extension AppHttpClientResponseExtensions on Response {
     return (data as List).map((item) => createEntity()..load(item)).toList();
   }
 
-  bool isUnauthorized() {
+  bool get isUnauthorized {
     return !extra.hasFlag('RENEW_CREDENTIAL') &&
         ((statusCode == 401) ||
             (extra.hasFlag('GQL') &&
@@ -19,6 +19,8 @@ extension AppHttpClientResponseExtensions on Response {
                 data['errors'] != null &&
                 data['errors'].any((e) => e['code'] == 'UNAUTHORIZED_ACCESS')));
   }
+
+  bool get noContent => statusCode == 204;
 }
 
 extension AppHttpClientQuickApiOnStringExtensions on String {
