@@ -5,6 +5,7 @@ class AppHttpClientInterceptor extends Interceptor {
   void onRequest(
       RequestOptions options, RequestInterceptorHandler handler) async {
     if (!options.extra.hasFlag('GQL')) {
+      options.extra['__data__'] = options.data;
       options.data = await _encodeBody(options.data);
       options.queryParameters = _encodeQuery(options.queryParameters);
     }
@@ -75,7 +76,7 @@ class AppHttpClientInterceptor extends Interceptor {
         try {
           requestOptions.extra['RETRY'] = true;
           final response = await App.httpClient.dio.request(requestOptions.path,
-              data: requestOptions.data,
+              data: requestOptions.extra['__data__'] ?? requestOptions.data,
               queryParameters: requestOptions.queryParameters,
               options: Options(
                 method: requestOptions.method,
