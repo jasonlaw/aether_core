@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:get_storage/get_storage.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../aether_core.dart';
@@ -51,7 +51,8 @@ class AppBuilder {
   Future<AppService> build({String? appName}) async {
     Get.isLogEnable = kDebugMode;
 
-    await GetStorage.init();
+    await Hive.initFlutter();
+    await Hive.openBox<String>('defaultBox');
 
     var appSettings = _appSettings;
 

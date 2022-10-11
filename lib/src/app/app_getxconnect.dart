@@ -38,13 +38,12 @@ class GetxConnect extends GetxHttp {
   // }
 
   final String refreshTokenKey = 'x-refresh-token';
-  String? get refreshToken =>
-      App.storage.read<String>('getxconnect-$refreshTokenKey');
+  String? get refreshToken => App.box.get('getxconnect-$refreshTokenKey');
   void _writeRefreshToken(String? token) {
     if (token == null) {
-      App.storage.remove('getxconnect-$refreshTokenKey');
+      App.box.delete('getxconnect-$refreshTokenKey');
     } else {
-      App.storage.write('getxconnect-$refreshTokenKey', token);
+      App.box.put('getxconnect-$refreshTokenKey', token);
     }
   }
 

@@ -13,7 +13,10 @@ class AppSettings extends Entity {
   late final Field<String> apiBaseUrl = field('ApiBaseUrl');
   late final Field<String> apiKey = field('ApiKey');
   late final Field<int> apiConnectTimeoutInSec =
-      field('ApiConnectTimeoutInSec', defaultValue: 5);
+      field('ApiConnectTimeoutInSec', defaultValue: 10);
+  late final Field<int> apiOfflinePingInSec =
+      field('ApiOfflinePingInSec', defaultValue: 5);
+
   late final Field<String?> appStoreURL = field('AppStoreURL');
 
   // EasyLoading get easyLoading => EasyLoading.instance;

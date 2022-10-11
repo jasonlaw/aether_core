@@ -1,9 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
-import '../../../extensions/extensions.dart';
+import 'package:hive/hive.dart';
 
-import '../../app.dart';
 import 'default_cookie_jar.dart';
 import 'serializable_cookie.dart';
 
@@ -24,6 +23,8 @@ class PersistCookieJar extends DefaultCookieJar {
   PersistCookieJar({this.persistSession = true, bool ignoreExpires = false})
       : super(ignoreExpires: ignoreExpires);
 
+  final cookieBox = Hive.box<String>('defaultBox');
+
   /// Whether persisting the cookies that without "expires" or "max-age"
   /// attribute;
   final bool persistSession;
@@ -42,7 +43,7 @@ class PersistCookieJar extends DefaultCookieJar {
   Future<void> _checkInitialized({bool force = false}) async {
     if (force || !_initialized) {
       // Load domain cookies
-      var str = App.storage.read<String>(_domainsKey);
+      var str = cookieBox.get(_domainsKey);
       if (str != null && str.isNotEmpty) {
         try {
           final Map<String, dynamic> jsonData = json.decode(str);
@@ -75,17 +76,17 @@ class PersistCookieJar extends DefaultCookieJar {
             ..clear()
             ..addAll(cookies);
         } on Exception catch (_) {
-          await App.storage.remove(_domainsKey);
+          await cookieBox.delete(_domainsKey);
         }
       }
 
-      str = App.storage.read(_indexKey);
+      str = cookieBox.get(_indexKey);
       if ((str != null && str.isNotEmpty)) {
         try {
           final list = json.decode(str);
           _hostSet = Set<String>.from(list);
         } on Exception catch (_) {
-          await App.storage.remove(_indexKey);
+          await cookieBox.delete(_indexKey);
         }
       } else {
         _hostSet = <String>{};
@@ -151,13 +152,13 @@ class PersistCookieJar extends DefaultCookieJar {
     await super.delete(uri, withDomainSharedCookie);
     final host = uri.host;
     if (_hostSet.remove(host)) {
-      await App.storage.write(_indexKey, json.encode(_hostSet.toList()));
+      await cookieBox.put(_indexKey, json.encode(_hostSet.toList()));
     }
 
-    await App.storage.remove(host);
+    await cookieBox.delete(host);
 
     if (withDomainSharedCookie) {
-      await App.storage.write(_domainsKey, json.encode(domainCookies));
+      await cookieBox.put(_domainsKey, json.encode(domainCookies));
     }
   }
 
@@ -169,7 +170,7 @@ class PersistCookieJar extends DefaultCookieJar {
     final keys = _hostSet.toList(growable: true)
       ..addAll([_indexKey, _domainsKey]);
 
-    await App.storage.removeAll(keys);
+    await cookieBox.deleteAll(keys);
     _hostSet.clear();
   }
 
@@ -178,25 +179,25 @@ class PersistCookieJar extends DefaultCookieJar {
 
     if (!_hostSet.contains(host)) {
       _hostSet.add(host);
-      App.storage.write(_indexKey, json.encode(_hostSet.toList()));
+      cookieBox.put(_indexKey, json.encode(_hostSet.toList()));
     }
     final cookies = hostCookies[host];
 
     if (cookies != null) {
-      App.storage.write(host, json.encode(_filter(cookies)));
+      cookieBox.put(host, json.encode(_filter(cookies)));
     }
 
     if (withDomainSharedCookie) {
       final filterDomainCookies =
           domainCookies.map((key, value) => MapEntry(key, _filter(value)));
-      App.storage.write(_domainsKey, json.encode(filterDomainCookies));
+      cookieBox.put(_domainsKey, json.encode(filterDomainCookies));
     }
   }
 
   Future<void> _load(Uri uri) async {
     final host = uri.host;
     if (_hostSet.contains(host) && hostCookies[host] == null) {
-      final str = App.storage.read(host);
+      final str = cookieBox.get(host);
 
       if (str != null && str.isNotEmpty) {
         Map<String, Map<String, dynamic>> cookies;
@@ -212,7 +213,7 @@ class PersistCookieJar extends DefaultCookieJar {
           hostCookies[host] =
               cookies.cast<String, Map<String, SerializableCookie>>();
         } on Exception catch (_) {
-          await App.storage.remove(host);
+          await cookieBox.delete(host);
         }
       }
     }

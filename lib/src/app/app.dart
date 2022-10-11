@@ -4,12 +4,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
+import 'package:hive/hive.dart';
 
 import '../entity/entity.dart';
 import '../extensions/extensions.dart';
 import '../services/services.dart';
 import '../utils/utils.dart';
+import 'app_connectivity.dart';
 import 'app_settings.dart';
 import 'appbuilder.dart';
 import 'http/getxhttp.dart';
@@ -19,9 +20,9 @@ export 'package:flutter_easyloading/flutter_easyloading.dart'
     show EasyLoadingIndicatorType;
 export 'package:get/get.dart';
 
+export 'app_connectivity.dart' show ConnectivityResult;
 export 'app_settings.dart';
 export 'appbuilder.dart';
-
 export 'http/getxhttp.dart';
 
 part 'app_credential.dart';
@@ -52,9 +53,10 @@ class AppService extends GetxService {
   final AppSettings settings;
   late final GetxConnect connect = GetxConnect._();
   late final GetxHttp http = GetxHttp();
-  late final GetStorage storage = GetStorage();
-  //late final AppTheme theme = AppTheme();
-  //late final AppTranslations tr = AppTranslations();
+  //late final GetStorage storage = GetStorage();
+  late final box = Hive.box<String>('defaultBox');
+
+  late final AppConnectivity connectivity = AppConnectivity();
 
   AppService({
     required this.appInfo,
@@ -184,13 +186,13 @@ class AppService extends GetxService {
 
   void changeThemeMode(ThemeMode themeMode) {
     _themeMode = themeMode;
-    App.storage.write('App.Theme.Mode', _themeMode.toString().split('.')[1]);
+    App.box.put('App.Theme.Mode', _themeMode.toString().split('.')[1]);
     Get.changeThemeMode(_themeMode);
   }
 
   void restoreThemeMode({ThemeMode defaultMode = ThemeMode.system}) {
     _themeMode = defaultMode;
-    final storedThemeMode = App.storage.read<String>('App.Theme.Mode');
+    final storedThemeMode = App.box.get('App.Theme.Mode');
     try {
       if (storedThemeMode != null && storedThemeMode.isNotEmpty) {
         _themeMode = ThemeMode.values
@@ -198,7 +200,7 @@ class AppService extends GetxService {
       }
     } on Exception catch (_) {
       _themeMode = defaultMode;
-      App.storage.remove('App.Theme.Mode');
+      App.box.delete('App.Theme.Mode');
     }
   }
 
@@ -254,4 +256,10 @@ class AppService extends GetxService {
         barrierLabel: barrierLabel,
         data: data,
       );
+
+  @override
+  void onClose() {
+    AppConnectivity.dispose();
+    Hive.close();
+  }
 }
