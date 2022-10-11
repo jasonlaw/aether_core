@@ -159,5 +159,13 @@ void main() {
           reason: 'No more SystemAdmin role');
       expect(false, identity.isAuthenticated, reason: 'No more authenticated');
     });
+
+    test('utils', () {
+      const data = 'JasonLawLoveProgramming';
+      const key = 'dmlxY29yZTp2MXFjMHJlUEAkJA==';
+      final checksum = Crypto.checkSum(data, signingKey: key);
+      expect('795db58f30f70cc35506cf76b74ed20d52127974fdc2dc94c8fd4eba534f340b',
+          checksum);
+    });
   });
 }

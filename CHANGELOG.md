@@ -1,3 +1,6 @@
+## 0.6.3
+* Fixed dio upload multipart issue
+
 ## 0.6.2
 * Added Response.noContent (StatusCode == 204)
 

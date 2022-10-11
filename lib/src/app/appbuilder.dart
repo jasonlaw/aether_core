@@ -203,8 +203,10 @@ class CredentialActions {
 
   static Future<void> _renewCredential() async {
     try {
-      final response = await '/api/credential/refresh'
-          .api(body: {'refreshToken': App.httpClient.refreshToken}).post(
+      final response = await '/api/credential/refresh'.api(body: {
+        'refreshToken': App.httpClient.refreshToken,
+        'checkSum': Crypto.checkSum(App.httpClient.refreshToken!)
+      }).post(
         extra: {
           'RENEW_CREDENTIAL': true,
         },
