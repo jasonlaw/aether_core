@@ -152,29 +152,29 @@ Future<dynamic> _encodeJson(dynamic payload) async {
       encoded[key] = MultipartFile.fromFileSync(value.file!.path,
           filename: value.file!.name);
     } else if (value is List<MediaFile>) {
-      // encoded[key] = await Future.wait(value
-      //     .map((mediaFile) async => MultipartFile.fromBytes(
-      //         await mediaFile.file!.readAsBytes(),
-      //         filename: mediaFile.file!.name))
-      //     .toList());
-      encoded[key] = value
-          .map((mediaFile) => MultipartFile.fromFileSync(mediaFile.file!.path,
+      encoded[key] = await Future.wait(value
+          .map((mediaFile) async => MultipartFile.fromBytes(
+              await mediaFile.file!.readAsBytes(),
               filename: mediaFile.file!.name))
-          .toList();
+          .toList());
+      // encoded[key] = value
+      //     .map((mediaFile) => MultipartFile.fromFileSync(mediaFile.file!.path,
+      //         filename: mediaFile.file!.name))
+      //     .toList();
     } else if (value is XFile) {
-      // encoded[key] = MultipartFile.fromBytes(await value.readAsBytes(),
-      //     filename: value.name);
-      encoded[key] =
-          MultipartFile.fromFileSync(value.path, filename: value.name);
+      encoded[key] = MultipartFile.fromBytes(await value.readAsBytes(),
+          filename: value.name);
+      // encoded[key] =
+      //     MultipartFile.fromFileSync(value.path, filename: value.name);
     } else if (value is List<XFile>) {
-      // encoded[key] = await Future.wait(value
-      //     .map((file) async => MultipartFile.fromBytes(await file.readAsBytes(),
-      //         filename: file.name))
-      //     .toList());
-      encoded[key] = value
-          .map((file) =>
-              MultipartFile.fromFileSync(file.path, filename: file.name))
-          .toList();
+      encoded[key] = await Future.wait(value
+          .map((file) async => MultipartFile.fromBytes(await file.readAsBytes(),
+              filename: file.name))
+          .toList());
+      // encoded[key] = value
+      //     .map((file) =>
+      //         MultipartFile.fromFileSync(file.path, filename: file.name))
+      //     .toList();
     } else {
       encoded[key] = value;
     }
