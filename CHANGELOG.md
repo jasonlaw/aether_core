@@ -1,3 +1,6 @@
+## 0.6.4
+* New Launcher API to open external app for upgrader
+
 ## 0.6.3
 * Fixed dio upload multipart issue
 

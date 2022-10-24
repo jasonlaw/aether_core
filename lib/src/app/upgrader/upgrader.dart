@@ -4,8 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:version/version.dart';
 
-import '../../services/launcher/launcher.dart';
-import '../app.dart';
+import '../../../aether_core.dart';
 
 /// Signature of callbacks that have no arguments and return bool.
 typedef BoolCallback = bool Function();
@@ -292,7 +291,7 @@ class Upgrader {
       }
     }
 
-    safeLaunchUrl(_appStoreListingURL!);
+    safeLaunchUrl(_appStoreListingURL!, mode: LaunchMode.externalApplication);
   }
 }
 
