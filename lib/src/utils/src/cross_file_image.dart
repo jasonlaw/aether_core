@@ -28,7 +28,8 @@ class XFileImage extends ImageProvider<XFileImage> {
   }
 
   @override
-  ImageStreamCompleter load(XFileImage key, DecoderCallback decode) {
+  ImageStreamCompleter loadBuffer(
+      XFileImage key, DecoderBufferCallback decode) {
     return MultiFrameImageStreamCompleter(
       codec: _loadAsync(key, decode),
       scale: key.scale,
@@ -39,7 +40,8 @@ class XFileImage extends ImageProvider<XFileImage> {
     );
   }
 
-  Future<ui.Codec> _loadAsync(XFileImage key, DecoderCallback decode) async {
+  Future<ui.Codec> _loadAsync(
+      XFileImage key, DecoderBufferCallback decode) async {
     final bytes = await file.readAsBytes();
 
     if (bytes.lengthInBytes == 0) {
@@ -48,7 +50,9 @@ class XFileImage extends ImageProvider<XFileImage> {
       throw StateError('$file is empty and cannot be loaded as an image.');
     }
 
-    return decode(bytes);
+    final buffer = await ui.ImmutableBuffer.fromUint8List(bytes);
+
+    return decode(buffer);
   }
 
   @override
@@ -60,7 +64,7 @@ class XFileImage extends ImageProvider<XFileImage> {
   }
 
   @override
-  int get hashCode => hashValues(file.path, scale);
+  int get hashCode => Object.hash(file.path, scale);
 
   @override
   String toString() =>

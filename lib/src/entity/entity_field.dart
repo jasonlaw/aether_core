@@ -23,14 +23,20 @@ class Field<T> extends FieldBase<T> {
 
   @override
   T? get value {
-    _getDefault() {
-      if (isLoaded) return null;
-      final val = innerDefaultValue();
-      entity.data[name] = val;
-      return val;
-    }
+    // _getDefault() {
+    //   if (isLoaded) return null;
+    //   final val = innerDefaultValue();
+    //   entity.data[name] = val;
+    //   return val;
+    // }
 
-    return entity[name] ?? _getDefault();
+    return entity[name] ??
+        () {
+          if (isLoaded) return null;
+          final val = innerDefaultValue();
+          entity.data[name] = val;
+          return val;
+        }();
   }
 
   set value(T? value) {

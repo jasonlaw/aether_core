@@ -24,11 +24,14 @@ dependencies:
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   
+  # https://pub.dev/packages/connectivity_plus
+  connectivity_plus: ^3.0.2
+
   # https://pub.dev/packages/package_info_plus 
-  package_info_plus: ^2.0.0
+  package_info_plus: ^3.0.2
   
   # https://pub.dev/packages/url_launcher 
-  url_launcher: ^6.1.6
+  url_launcher: ^6.1.7
 
   # https://pub.dev/packages/flutter_easyloading 
   flutter_easyloading: ^3.0.5
@@ -41,9 +44,6 @@ dependencies:
 
   # https://pub.dev/packages/cross_file
   cross_file: ^0.3.3+2
-
-  # https://pub.dev/packages/connectivity_plus
-  connectivity_plus: ^2.3.8
 
   # https://pub.dev/packages/money2
   # money2: ^3.1.2

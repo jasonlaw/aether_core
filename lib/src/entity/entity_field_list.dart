@@ -29,13 +29,12 @@ class ListField<E extends Entity> extends FieldBase<List<E>> {
 
   @override
   List<E> get value {
-    _getDefault() {
-      final val = innerDefaultValue();
-      entity.data[name] = val;
-      return val;
-    }
-
-    return entity[name] ?? _getDefault();
+    return entity[name] ??
+        () {
+          final val = innerDefaultValue();
+          entity.data[name] = val;
+          return val;
+        }();
   }
 
   @override
