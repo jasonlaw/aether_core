@@ -1,3 +1,6 @@
+## 0.6.5
+* Fixed XFileImage deprecated issue
+
 ## 0.6.4
 * New Launcher API to open external app for upgrader
 
