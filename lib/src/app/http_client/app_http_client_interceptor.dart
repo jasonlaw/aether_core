@@ -102,7 +102,7 @@ class AppHttpClientInterceptor extends Interceptor {
     final oldProgressIndicatorLocked = App.progressIndicatorLocked;
     App.progressIndicatorLocked = true;
     try {
-      await App.renewCredential();
+      await App.credential.renewCredential();
     } on Exception catch (_) {
       return false;
     } finally {

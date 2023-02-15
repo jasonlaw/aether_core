@@ -3,16 +3,16 @@ import 'package:flutter/foundation.dart';
 
 import '../../../aether_core.dart';
 import '../../utils/src/enum_util.dart';
-import 'adapters/adapter.dart';
+import 'adapters/http_adapter.dart';
 import 'app_http_client_interceptor.dart';
 
 export 'package:dio/dio.dart';
 
 part 'app_http_client_base.dart';
 part 'app_http_client_exceptions.dart';
-part 'app_http_client_query.dart';
-part 'app_http_client_params.dart';
 part 'app_http_client_extensions.dart';
+part 'app_http_client_params.dart';
+part 'app_http_client_query.dart';
 
 class AppHttpClient extends AppHttpClientBase {
   AppHttpClient([BaseOptions? options]) : super(dio: Dio(options)) {

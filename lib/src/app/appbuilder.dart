@@ -7,7 +7,8 @@ import 'package:package_info_plus/package_info_plus.dart';
 import '../../aether_core.dart';
 
 class AppBuilder {
-  AppBuilder() {
+  final String? appName;
+  AppBuilder({this.appName}) {
     WidgetsFlutterBinding.ensureInitialized();
     Get.isLogEnable = kDebugMode;
     _setDefaultLoading();
@@ -21,6 +22,11 @@ class AppBuilder {
   CredentialActions? _credentialActions;
   void useCredentialActions(CredentialActions actions) {
     _credentialActions = actions;
+  }
+
+  AbstractCredentialService? _credentialService;
+  void useCredentialService(AbstractCredentialService service) {
+    _credentialService = service;
   }
 
   DialogSettings? _dialogSettings;
@@ -48,22 +54,18 @@ class AppBuilder {
   //   _dialogBuilders = builders;
   // }
 
-  Future<AppService> build({String? appName}) async {
+  Future<AppService> build() async {
     Get.isLogEnable = kDebugMode;
 
     await Hive.initFlutter();
     await Hive.openBox<String>('defaultBox');
 
-    var appSettings = _appSettings;
-
-    if (appSettings == null) {
-      appSettings = AppSettings();
-      await AppSettings.loadFiles(appSettings);
-    }
+    var appSettings = _appSettings ?? await AppSettings.loadDefault();
 
     final packageInfo = await PackageInfo.fromPlatform();
 
     final name = (appName ?? packageInfo.appName) + (kDebugMode ? '*' : '');
+
     final appInfo = AppInfo(
       name,
       packageInfo.version,
@@ -79,6 +81,7 @@ class AppBuilder {
     final app = AppService(
       appInfo: appInfo,
       settings: appSettings,
+      credential: _credentialService ?? CredentialService(),
       credentialIdentity: _credentialIdentity,
       credentialActions: _credentialActions,
       notificationSettings: _snackbarSettings ?? const SnackbarSettings(),
@@ -161,27 +164,32 @@ class SnackbarSettings {
 class CredentialActions {
   final Future Function(dynamic)? signIn;
   final Future Function()? signOut;
+  final Future Function(dynamic)? signInTenant;
 
   final Future Function()? renewCredential;
   final Future Function()? getCredential;
 
+  @Deprecated("Use CredentialEndpoints")
   const CredentialActions({
     this.signIn,
+    this.signInTenant,
     this.signOut,
     this.renewCredential,
     this.getCredential,
   });
 
+  @Deprecated("Use CredentialEndpoints")
   static CredentialActions aether({
     Future Function(dynamic)? signIn,
+    Future Function(dynamic)? signInTenant,
     Future Function()? signOut,
-    //Future<String?> Function()? getRefreshToken,
     Future Function()? renewCredential,
     Future Function()? getCredential,
     void Function(Response response)? unauthorizedHandler,
   }) =>
       CredentialActions(
         signIn: signIn ?? _signIn,
+        signInTenant: signInTenant ?? _signInTenant,
         signOut: signOut ?? _signOut,
         renewCredential: renewCredential ?? _renewCredential,
         getCredential: getCredential ?? _getCredential,
@@ -189,6 +197,12 @@ class CredentialActions {
 
   static Future<void> _signIn(dynamic request) async {
     final response = await '/api/credential/signin'.api(body: request).post();
+    App.identity.load(response.data);
+  }
+
+  static Future<void> _signInTenant(dynamic request) async {
+    final response =
+        await '/api/credential/signin/tenant'.api(body: request).post();
     App.identity.load(response.data);
   }
 
@@ -231,21 +245,21 @@ class CredentialActions {
     }
   }
 
-  static Map<String, String> userPass(
-    String username,
-    String password,
-  ) {
-    return {
-      'username': username,
-      'password': password,
-    };
-  }
+  // static Map<String, String> userPass(
+  //   String username,
+  //   String password,
+  // ) {
+  //   return {
+  //     'username': username,
+  //     'password': password,
+  //   };
+  // }
 
-  static Map<String, String> idToken(
-    String idToken,
-  ) {
-    return {
-      'idToken': idToken,
-    };
-  }
+  // static Map<String, String> idToken(
+  //   String idToken,
+  // ) {
+  //   return {
+  //     'idToken': idToken,
+  //   };
+  // }
 }

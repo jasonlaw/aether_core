@@ -9,6 +9,7 @@ import 'package:hive/hive.dart';
 import '../entity/entity.dart';
 import '../extensions/extensions.dart';
 import '../services/services.dart';
+import '../utils/utils.dart';
 import 'app_connectivity.dart';
 import 'app_settings.dart';
 import 'appbuilder.dart';
@@ -33,6 +34,7 @@ export 'appbuilder.dart';
 export 'http_client/app_http_client.dart';
 
 part 'app_credential.dart';
+part 'app_credential_service.dart';
 //part 'app_getxconnect.dart';
 
 const String kSystemPath = 'assets/system';
@@ -49,6 +51,7 @@ AppService get App => Get.find();
 
 class AppService extends GetxService {
   final AppInfo appInfo;
+  final AbstractCredentialService credential;
   final CredentialActions? _credentialActions;
   final DialogSettings? _dialogSettings;
   final SnackbarSettings _snackbarSettings;
@@ -80,6 +83,7 @@ class AppService extends GetxService {
   AppService({
     required this.appInfo,
     required this.settings,
+    required this.credential,
     CredentialIdentity? credentialIdentity,
     CredentialActions? credentialActions,
     DialogSettings? dialogSettings,
@@ -196,13 +200,17 @@ class AppService extends GetxService {
 
   bool progressIndicatorLocked = false;
 
+  @Deprecated("Use App.credentialEndpoints.signIn")
   Future signIn(dynamic request) async =>
       _credentialActions?.signIn?.call(request);
 
+  @Deprecated("Use App.credentialEndpoints.signOut")
   Future signOut() async => _credentialActions?.signOut?.call();
 
+  @Deprecated("Use App.credentialEndpoints.getCredential")
   Future getCredential() async => _credentialActions?.getCredential?.call();
 
+  @Deprecated("Use App.credentialEndpoints.renewCredential")
   Future renewCredential() async => _credentialActions?.renewCredential?.call();
 
   ThemeMode _themeMode = ThemeMode.system;

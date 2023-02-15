@@ -28,6 +28,12 @@ extension AppHttpClientQuickApiOnStringExtensions on String {
     return GraphQLQuery(this, fields, params: params);
   }
 
+  GraphQLQuery gqlFr<T extends Entity>(
+      EntityBuilder<T> source, List Function(T source) fn,
+      {Map<String, dynamic>? params}) {
+    return GraphQLQuery(this, fn(source()), params: params);
+  }
+
   RestQuery api({
     dynamic body,
     Map<String, dynamic>? queryParameters,
@@ -39,6 +45,12 @@ extension AppHttpClientQuickApiOnStringExtensions on String {
 extension AppHttpClientQuickApiOnFieldExtensions on FieldBase {
   GraphQLQuery gql(List<dynamic> fields, {Map<String, dynamic>? params}) {
     return GraphQLQuery(name, fields, params: params);
+  }
+
+  GraphQLQuery gqlFr<T extends Entity>(
+      EntityBuilder<T> source, List Function(T source) fn,
+      {Map<String, dynamic>? params}) {
+    return GraphQLQuery(name, fn(source()), params: params);
   }
 }
 

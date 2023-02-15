@@ -27,34 +27,16 @@ class CredentialIdentity extends Entity {
   }
 
   void signIn(String id, String username, String name, String email,
-      {String? roles}) {
+      {String? tenantId, String? roles}) {
     load({
       'id': id,
       'username': username,
       'name': name,
       'email': email,
+      'tenantId': tenantId,
       'roles': roles,
     });
   }
-
-  // static void _writeRefreshToken(String? token) {
-  //   if (token == null) {
-  //     GetStorage().remove('CredentialIdentity.RefreshToken');
-  //     return;
-  //   }
-  //   GetStorage().write('CredentialIdentity.RefreshToken', token);
-  //   //   print('Write token = $refreshToken');
-  // }
-
-  // String? get refreshToken {
-  //   final token = GetStorage().read<String>('CredentialIdentity.RefreshToken');
-  //   if (token == null || token == '') return null;
-  //   return '$token ${Crypto.checkSum(token)}';
-  // }
-
-  // Future<String?> getRefreshTokenAsync() async {
-  //   return GetStorage().read<String>('CredentialIdentity.RefreshToken');
-  // }
 
   bool hasRoles(Set<String> roles) {
     if (_roles.isEmpty || roles.isEmpty) return false;

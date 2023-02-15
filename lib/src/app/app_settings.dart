@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 import '../../aether_core.dart';
+import 'adapters/adapter.dart';
 
 const String kSettingsFilePath = '$kSystemPath/settings.json';
 const String kSettingsFilePathDebug = '$kSystemPath/settings.debug.json';
@@ -21,7 +22,7 @@ class AppSettings extends Entity {
 
   // EasyLoading get easyLoading => EasyLoading.instance;
 
-  AppSettings() {
+  AppSettings._() {
     final google = field<String>('GooglePlayURL');
     final apple = field<String>('AppleAppStoreURL');
     final huawei = field<String>('HuaweiAppGalleryURL');
@@ -36,6 +37,42 @@ class AppSettings extends Entity {
         });
   }
 
+  static Future<AppSettings> loadDefault() async {
+    var appSettings = AppSettings._();
+    await appSettings._load();
+    return appSettings;
+  }
+
+  Future _load() async {
+    /// Loading a json configuration file from a custom [path] into the current app config./
+    Future loadFromPath(String path) async {
+      final content = await rootBundle.loadString(path);
+      final configAsMap = json.decode(content) as Map<String, dynamic>;
+      load(configAsMap);
+    }
+
+    try {
+      await loadFromPath(kSettingsFilePath);
+    } on Exception catch (_) {
+      return this;
+    }
+
+    if (kStagingMode) {
+      try {
+        await loadFromPath(kSettingsFilePathStaging);
+      } on Exception catch (_) {}
+    }
+
+    if (kDebugMode) {
+      try {
+        await loadFromPath(kSettingsFilePathDebug);
+      } on Exception catch (_) {}
+    }
+
+    postConfigAppSettings(this);
+  }
+
+  @Deprecated("Use AppSettings.loadDefault()")
   static Future loadFiles(AppSettings settings) async {
     /// Loading a json configuration file from a custom [path] into the current app config./
     Future loadFromPath(String path) async {
