@@ -52,11 +52,11 @@ dependencies:
   # https://github.com/flutterchina/cookie_jar
   # https://pub.dev/packages/path_provider
   # https://pub.dev/packages/dio_logger
-  dio: ^4.0.6
+  dio: ^5.0.0
   dio_cookie_manager: ^2.0.0
   cookie_jar: ^3.0.1
   path_provider: ^2.0.12
-  dio_logger: ^4.0.8+8
+  # dio_logger: ^4.0.8+8
   
   
 dev_dependencies:

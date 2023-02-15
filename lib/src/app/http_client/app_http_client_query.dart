@@ -84,7 +84,7 @@ class RestQuery {
       queryParameters: queryParameters,
       options: Options(
         headers: _headers,
-        sendTimeout: _timeout?.inMilliseconds,
+        sendTimeout: _timeout,
         extra: _extra.union({'LOADING_INDICATOR': showLoadingIndicator}),
       ),
     );
@@ -251,7 +251,7 @@ class GraphQLQuery {
       this,
       options: Options(
         headers: _headers,
-        sendTimeout: _timeout?.inMilliseconds,
+        sendTimeout: _timeout,
         extra: _extra.union({'LOADING_INDICATOR': showLoadingIndicator}),
       ),
     );

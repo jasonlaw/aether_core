@@ -52,7 +52,7 @@ class AppHttpClientInterceptor extends Interceptor {
 
   @override
   void onError(DioError err, ErrorInterceptorHandler handler) async {
-    if (err.type == DioErrorType.response &&
+    if (err.type == DioErrorType.badResponse &&
         err.response?.data != null &&
         err.requestOptions.extra.hasFlag('GQL')) {
       final data = err.response?.data!;

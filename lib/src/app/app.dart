@@ -68,7 +68,7 @@ class AppService extends GetxService {
 
   late final AppHttpClient httpClient = AppHttpClient(BaseOptions(
     baseUrl: App.settings.apiBaseUrl(),
-    sendTimeout: App.settings.apiConnectTimeoutInSec() * 1000,
+    sendTimeout: Duration(seconds: App.settings.apiConnectTimeoutInSec()),
   ));
 
   late final AppHttpClient extHttpClient = AppHttpClient(BaseOptions(
