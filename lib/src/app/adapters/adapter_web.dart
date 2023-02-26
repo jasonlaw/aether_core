@@ -12,4 +12,8 @@ void postConfigAppSettings(AppSettings settings) {
     final baseUrl = '$protocol//$host';
     settings.apiBaseUrl(baseUrl);
   }
+  if (kDebugMode) {
+    settings
+        .apiBaseUrl(settings.apiBaseUrl().replaceAll('10.0.2.2', 'localhost'));
+  }
 }

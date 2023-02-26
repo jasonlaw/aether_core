@@ -20,6 +20,7 @@ class AppBuilder {
   }
 
   CredentialActions? _credentialActions;
+  @Deprecated("Use CredentialEndpoints")
   void useCredentialActions(CredentialActions actions) {
     _credentialActions = actions;
   }
@@ -161,6 +162,7 @@ class SnackbarSettings {
   });
 }
 
+@Deprecated("Use CredentialEndpoints")
 class CredentialActions {
   final Future Function(dynamic)? signIn;
   final Future Function()? signOut;

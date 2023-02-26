@@ -28,6 +28,11 @@ class DialogService extends GetxService {
     _dialogBuilders = builders;
   }
 
+  void registerCustomDialogBuilder(dynamic key, DialogBuilder builder) {
+    _dialogBuilders ??= <dynamic, DialogBuilder>{};
+    _dialogBuilders![key] = builder;
+  }
+
   // @Deprecated(
   //     'Prefer to use the StackedServices.navigatorKey instead of using this key. This will be removed in the next major version update for stacked.')
   // get navigatorKey {

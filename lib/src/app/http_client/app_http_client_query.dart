@@ -12,6 +12,7 @@ class RestQuery {
   Map<String, String>? _headers;
   Map<String, dynamic>? _extra;
   Duration? _timeout;
+  ResponseType? _responseType;
 
   RestQuery(this.url, {this.body, this.queryParameters});
 
@@ -27,6 +28,11 @@ class RestQuery {
 
   RestQuery headers(Map<String, String> value) {
     _headers = value;
+    return this;
+  }
+
+  RestQuery responseType(ResponseType responseType) {
+    _responseType = responseType;
     return this;
   }
 
@@ -70,6 +76,7 @@ class RestQuery {
     Map<String, String>? headers,
     Map<String, dynamic>? extra,
     Duration? timeout,
+    Options? options,
     bool showLoadingIndicator = true,
   }) async {
     _headers ??= headers;
@@ -84,6 +91,7 @@ class RestQuery {
       queryParameters: queryParameters,
       options: Options(
         headers: _headers,
+        responseType: _responseType,
         sendTimeout: _timeout,
         extra: _extra.union({'LOADING_INDICATOR': showLoadingIndicator}),
       ),
