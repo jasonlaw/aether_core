@@ -118,7 +118,7 @@ class SnackbarService extends GetxService {
       barBlur: _snackbarConfig?.barBlur,
       isDismissible: _snackbarConfig?.isDismissible ?? true,
       duration: duration,
-      snackPosition: _snackbarConfig?.snackPosition ?? SnackPosition.BOTTOM,
+      snackPosition: _snackbarConfig?.snackPosition ?? SnackPosition.bottom,
       backgroundColor: _snackbarConfig?.backgroundColor, //?? Colors.grey[800],
       margin: _snackbarConfig?.margin ??
           const EdgeInsets.symmetric(horizontal: 10, vertical: 25),

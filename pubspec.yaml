@@ -18,7 +18,8 @@ dependencies:
     sdk: flutter
 
   # https://pub.dev/packages/get 
-  get: ^4.6.5
+  # get: ^4.6.5
+  get: ^5.0.0-release-candidate-3
 
   # https://pub.dev/packages/hive
   hive: ^2.2.3

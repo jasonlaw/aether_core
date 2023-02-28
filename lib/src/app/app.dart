@@ -52,7 +52,6 @@ AppService get App => Get.find();
 class AppService extends GetxService {
   final AppInfo appInfo;
   final AbstractCredentialService credential;
-  final CredentialActions? _credentialActions;
   final DialogSettings? _dialogSettings;
   final SnackbarSettings _snackbarSettings;
   final CredentialIdentity? _credentialIdentity;
@@ -85,11 +84,9 @@ class AppService extends GetxService {
     required this.settings,
     required this.credential,
     CredentialIdentity? credentialIdentity,
-    CredentialActions? credentialActions,
     DialogSettings? dialogSettings,
     required SnackbarSettings notificationSettings,
   })  : _credentialIdentity = credentialIdentity,
-        _credentialActions = credentialActions,
         _dialogSettings = dialogSettings,
         _snackbarSettings = notificationSettings;
 
@@ -199,19 +196,6 @@ class AppService extends GetxService {
   }
 
   bool progressIndicatorLocked = false;
-
-  @Deprecated("Use App.credentialEndpoints.signIn")
-  Future signIn(dynamic request) async =>
-      _credentialActions?.signIn?.call(request);
-
-  @Deprecated("Use App.credentialEndpoints.signOut")
-  Future signOut() async => _credentialActions?.signOut?.call();
-
-  @Deprecated("Use App.credentialEndpoints.getCredential")
-  Future getCredential() async => _credentialActions?.getCredential?.call();
-
-  @Deprecated("Use App.credentialEndpoints.renewCredential")
-  Future renewCredential() async => _credentialActions?.renewCredential?.call();
 
   ThemeMode _themeMode = ThemeMode.system;
   ThemeMode get themeMode => _themeMode;
