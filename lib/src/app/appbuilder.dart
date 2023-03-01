@@ -30,15 +30,20 @@ class AppBuilder {
     _credentialService = service;
   }
 
-  DialogSettings? _dialogSettings;
-  void useDialogSettings(DialogSettings settings) {
-    _dialogSettings = settings;
+  AppDialog? _appDialog;
+  void useAppDialog(AppDialog appDialog) {
+    _appDialog = appDialog;
   }
 
-  SnackbarSettings? _snackbarSettings;
-  void useSnackbarSettings(SnackbarSettings settings) {
-    _snackbarSettings = settings;
-  }
+  // DialogSettings? _dialogSettings;
+  // void useDialogSettings(DialogSettings settings) {
+  //   _dialogSettings = settings;
+  // }
+
+  // SnackbarSettings? _snackbarSettings;
+  // void useSnackbarSettings(SnackbarSettings settings) {
+  //   _snackbarSettings = settings;
+  // }
 
   AppSettings? _appSettings;
   void useAppSettings(AppSettings settings) {
@@ -85,8 +90,9 @@ class AppBuilder {
       credential: _credentialService ?? CredentialService(),
       credentialIdentity: _credentialIdentity,
       credentialActions: _credentialActions,
-      notificationSettings: _snackbarSettings ?? const SnackbarSettings(),
-      dialogSettings: _dialogSettings,
+      dialog: _appDialog ?? AppDialog(),
+      // notificationSettings: _snackbarSettings ?? const SnackbarSettings(),
+      // dialogSettings: _dialogSettings,
     );
 
     Get.put(app);
@@ -130,37 +136,37 @@ class AppInfo {
   }
 }
 
-class DialogSettings {
-  final String? buttonTitle;
-  final String? cancelTitle;
-  final Color? buttonTitleColor;
-  final Color? cancelTitleColor;
-  final DialogPlatform? dialogPlatform;
+// class DialogSettings {
+//   final String? buttonTitle;
+//   final String? cancelTitle;
+//   final Color? buttonTitleColor;
+//   final Color? cancelTitleColor;
+//   final DialogPlatform? dialogPlatform;
 
-  const DialogSettings({
-    this.buttonTitle,
-    this.cancelTitle,
-    this.buttonTitleColor,
-    this.cancelTitleColor,
-    this.dialogPlatform,
-  });
-}
+//   const DialogSettings({
+//     this.buttonTitle,
+//     this.cancelTitle,
+//     this.buttonTitleColor,
+//     this.cancelTitleColor,
+//     this.dialogPlatform,
+//   });
+// }
 
-class SnackbarSettings {
-  final String? errorTitle;
-  final String? infoTitle;
-  final Icon errorIcon; // = const Icon(Icons.error, color: Colors.red);
-  final Icon infoIcon; // = const Icon(Icons.info, color: Colors.blue);
-  final SnackPosition snackPosition; // = SnackPosition.BOTTOM;
+// class SnackbarSettings {
+//   final String? errorTitle;
+//   final String? infoTitle;
+//   final Icon errorIcon; // = const Icon(Icons.error, color: Colors.red);
+//   final Icon infoIcon; // = const Icon(Icons.info, color: Colors.blue);
+//   final SnackPosition snackPosition; // = SnackPosition.BOTTOM;
 
-  const SnackbarSettings({
-    this.errorTitle,
-    this.infoTitle,
-    this.errorIcon = const Icon(Icons.error, color: Colors.red),
-    this.infoIcon = const Icon(Icons.info, color: Colors.blue),
-    this.snackPosition = SnackPosition.BOTTOM,
-  });
-}
+//   const SnackbarSettings({
+//     this.errorTitle,
+//     this.infoTitle,
+//     this.errorIcon = const Icon(Icons.error, color: Colors.red),
+//     this.infoIcon = const Icon(Icons.info, color: Colors.blue),
+//     this.snackPosition = SnackPosition.BOTTOM,
+//   });
+// }
 
 @Deprecated("Use CredentialEndpoints")
 class CredentialActions {
