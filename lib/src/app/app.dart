@@ -34,7 +34,7 @@ export 'appbuilder.dart';
 export 'http_client/app_http_client.dart';
 
 part 'app_credential.dart';
-part 'app_credential_service.dart';
+part 'app_credential_identity.dart';
 part 'app_dialog.dart';
 //part 'app_getxconnect.dart';
 
@@ -52,17 +52,12 @@ AppService get App => Get.find();
 
 class AppService extends GetxService {
   final AppInfo appInfo;
-  final AbstractCredentialService credential;
-  final CredentialIdentity? _credentialIdentity;
+  final AppCredential credential;
   final AppDialog dialog;
 
-  late final CredentialIdentity identity =
-      _credentialIdentity ?? CredentialIdentity();
+  final AppCredentialIdentity identity;
 
   final AppSettings settings;
-  //late final GetxConnect connect = GetxConnect._();
-  //late final GetxHttp http = GetxHttp();
-  //late final GetStorage storage = GetStorage();
   late final Box<String> box = Hive.box<String>('defaultBox');
 
   late final AppHttpClient httpClient = AppHttpClient(BaseOptions(
@@ -83,13 +78,9 @@ class AppService extends GetxService {
     required this.appInfo,
     required this.settings,
     required this.credential,
-    CredentialIdentity? credentialIdentity,
+    required this.identity,
     required this.dialog,
-    // DialogSettings? dialogSettings,
-    // required SnackbarSettings notificationSettings,
-  }) : _credentialIdentity = credentialIdentity;
-  //   _dialogSettings = dialogSettings,
-  //  _snackbarSettings = notificationSettings;
+  });
 
   Future<void> initUpgrader({
     required String updateVersion,

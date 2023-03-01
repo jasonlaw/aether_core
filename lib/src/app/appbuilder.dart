@@ -14,30 +14,20 @@ class AppBuilder {
     _setDefaultLoading();
   }
 
-  CredentialIdentity? _credentialIdentity;
-  void useCredentialIdentity(CredentialIdentity identity) {
-    _credentialIdentity = identity;
+  AppCredentialIdentity? _appCredentialIdentity;
+  void useAppCredentialIdentity(AppCredentialIdentity identity) {
+    _appCredentialIdentity = identity;
   }
 
-  AbstractCredentialService? _credentialService;
-  void useCredentialService(AbstractCredentialService service) {
-    _credentialService = service;
+  AppCredential? _appCredential;
+  void useAppCredential(AppCredential credential) {
+    _appCredential = credential;
   }
 
   AppDialog? _appDialog;
-  void useAppDialog(AppDialog appDialog) {
-    _appDialog = appDialog;
+  void useAppDialog(AppDialog dialog) {
+    _appDialog = dialog;
   }
-
-  // DialogSettings? _dialogSettings;
-  // void useDialogSettings(DialogSettings settings) {
-  //   _dialogSettings = settings;
-  // }
-
-  // SnackbarSettings? _snackbarSettings;
-  // void useSnackbarSettings(SnackbarSettings settings) {
-  //   _snackbarSettings = settings;
-  // }
 
   AppSettings? _appSettings;
   void useAppSettings(AppSettings settings) {
@@ -76,18 +66,14 @@ class AppBuilder {
     final app = AppService(
       appInfo: appInfo,
       settings: appSettings,
-      credential: _credentialService ?? CredentialService(),
-      credentialIdentity: _credentialIdentity,
+      credential: _appCredential ?? AppCredential(),
+      identity: _appCredentialIdentity ?? AppCredentialIdentity(),
       dialog: _appDialog ?? AppDialog(),
-      // notificationSettings: _snackbarSettings ?? const SnackbarSettings(),
-      // dialogSettings: _dialogSettings,
     );
 
     Get.put(app);
     Get.lazyPut(() => DialogService());
     Get.lazyPut(() => SnackbarService());
-
-    // CredentialActions._finalize(_credentialActions);
 
     return app;
   }
@@ -123,38 +109,6 @@ class AppInfo {
     Debug.print('          Package Name : $packageName');
   }
 }
-
-// class DialogSettings {
-//   final String? buttonTitle;
-//   final String? cancelTitle;
-//   final Color? buttonTitleColor;
-//   final Color? cancelTitleColor;
-//   final DialogPlatform? dialogPlatform;
-
-//   const DialogSettings({
-//     this.buttonTitle,
-//     this.cancelTitle,
-//     this.buttonTitleColor,
-//     this.cancelTitleColor,
-//     this.dialogPlatform,
-//   });
-// }
-
-// class SnackbarSettings {
-//   final String? errorTitle;
-//   final String? infoTitle;
-//   final Icon errorIcon; // = const Icon(Icons.error, color: Colors.red);
-//   final Icon infoIcon; // = const Icon(Icons.info, color: Colors.blue);
-//   final SnackPosition snackPosition; // = SnackPosition.BOTTOM;
-
-//   const SnackbarSettings({
-//     this.errorTitle,
-//     this.infoTitle,
-//     this.errorIcon = const Icon(Icons.error, color: Colors.red),
-//     this.infoIcon = const Icon(Icons.info, color: Colors.blue),
-//     this.snackPosition = SnackPosition.BOTTOM,
-//   });
-// }
 
 @Deprecated("Use CredentialEndpoints")
 class CredentialActions {
@@ -240,22 +194,4 @@ class CredentialActions {
       return Future.error(err.toString());
     }
   }
-
-  // static Map<String, String> userPass(
-  //   String username,
-  //   String password,
-  // ) {
-  //   return {
-  //     'username': username,
-  //     'password': password,
-  //   };
-  // }
-
-  // static Map<String, String> idToken(
-  //   String idToken,
-  // ) {
-  //   return {
-  //     'idToken': idToken,
-  //   };
-  // }
 }

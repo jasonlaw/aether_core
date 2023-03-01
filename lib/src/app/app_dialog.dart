@@ -6,7 +6,7 @@ class AppDialog {
     Get.snackbar(
       title ?? 'Error'.tr,
       error.toString().truncate(1000),
-      snackPosition: SnackPosition.BOTTOM,
+      snackPosition: SnackPosition.bottom,
       icon: const Icon(Icons.error, color: Colors.red),
     );
   }
@@ -15,7 +15,7 @@ class AppDialog {
     Get.snackbar(
       title ?? 'Info'.tr,
       info,
-      snackPosition: SnackPosition.BOTTOM,
+      snackPosition: SnackPosition.bottom,
       icon: const Icon(Icons.info, color: Colors.blue),
     );
   }
