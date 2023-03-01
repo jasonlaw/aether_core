@@ -24,15 +24,20 @@ class AppBuilder {
     _credentialService = service;
   }
 
-  DialogSettings? _dialogSettings;
-  void useDialogSettings(DialogSettings settings) {
-    _dialogSettings = settings;
+  AppDialog? _appDialog;
+  void useAppDialog(AppDialog appDialog) {
+    _appDialog = appDialog;
   }
 
-  SnackbarSettings? _snackbarSettings;
-  void useSnackbarSettings(SnackbarSettings settings) {
-    _snackbarSettings = settings;
-  }
+  // DialogSettings? _dialogSettings;
+  // void useDialogSettings(DialogSettings settings) {
+  //   _dialogSettings = settings;
+  // }
+
+  // SnackbarSettings? _snackbarSettings;
+  // void useSnackbarSettings(SnackbarSettings settings) {
+  //   _snackbarSettings = settings;
+  // }
 
   AppSettings? _appSettings;
   void useAppSettings(AppSettings settings) {
@@ -73,8 +78,9 @@ class AppBuilder {
       settings: appSettings,
       credential: _credentialService ?? CredentialService(),
       credentialIdentity: _credentialIdentity,
-      notificationSettings: _snackbarSettings ?? const SnackbarSettings(),
-      dialogSettings: _dialogSettings,
+      dialog: _appDialog ?? AppDialog(),
+      // notificationSettings: _snackbarSettings ?? const SnackbarSettings(),
+      // dialogSettings: _dialogSettings,
     );
 
     Get.put(app);
@@ -118,34 +124,138 @@ class AppInfo {
   }
 }
 
-class DialogSettings {
-  final String? buttonTitle;
-  final String? cancelTitle;
-  final Color? buttonTitleColor;
-  final Color? cancelTitleColor;
-  final DialogPlatform? dialogPlatform;
+// class DialogSettings {
+//   final String? buttonTitle;
+//   final String? cancelTitle;
+//   final Color? buttonTitleColor;
+//   final Color? cancelTitleColor;
+//   final DialogPlatform? dialogPlatform;
 
-  const DialogSettings({
-    this.buttonTitle,
-    this.cancelTitle,
-    this.buttonTitleColor,
-    this.cancelTitleColor,
-    this.dialogPlatform,
+//   const DialogSettings({
+//     this.buttonTitle,
+//     this.cancelTitle,
+//     this.buttonTitleColor,
+//     this.cancelTitleColor,
+//     this.dialogPlatform,
+//   });
+// }
+
+// class SnackbarSettings {
+//   final String? errorTitle;
+//   final String? infoTitle;
+//   final Icon errorIcon; // = const Icon(Icons.error, color: Colors.red);
+//   final Icon infoIcon; // = const Icon(Icons.info, color: Colors.blue);
+//   final SnackPosition snackPosition; // = SnackPosition.BOTTOM;
+
+//   const SnackbarSettings({
+//     this.errorTitle,
+//     this.infoTitle,
+//     this.errorIcon = const Icon(Icons.error, color: Colors.red),
+//     this.infoIcon = const Icon(Icons.info, color: Colors.blue),
+//     this.snackPosition = SnackPosition.BOTTOM,
+//   });
+// }
+
+@Deprecated("Use CredentialEndpoints")
+class CredentialActions {
+  final Future Function(dynamic)? signIn;
+  final Future Function()? signOut;
+  final Future Function(dynamic)? signInTenant;
+
+  final Future Function()? renewCredential;
+  final Future Function()? getCredential;
+
+  @Deprecated("Use CredentialEndpoints")
+  const CredentialActions({
+    this.signIn,
+    this.signInTenant,
+    this.signOut,
+    this.renewCredential,
+    this.getCredential,
   });
-}
 
-class SnackbarSettings {
-  final String? errorTitle;
-  final String? infoTitle;
-  final Icon errorIcon; // = const Icon(Icons.error, color: Colors.red);
-  final Icon infoIcon; // = const Icon(Icons.info, color: Colors.blue);
-  final SnackPosition snackPosition; // = SnackPosition.BOTTOM;
+  @Deprecated("Use CredentialEndpoints")
+  static CredentialActions aether({
+    Future Function(dynamic)? signIn,
+    Future Function(dynamic)? signInTenant,
+    Future Function()? signOut,
+    Future Function()? renewCredential,
+    Future Function()? getCredential,
+    void Function(Response response)? unauthorizedHandler,
+  }) =>
+      CredentialActions(
+        signIn: signIn ?? _signIn,
+        signInTenant: signInTenant ?? _signInTenant,
+        signOut: signOut ?? _signOut,
+        renewCredential: renewCredential ?? _renewCredential,
+        getCredential: getCredential ?? _getCredential,
+      );
 
-  const SnackbarSettings({
-    this.errorTitle,
-    this.infoTitle,
-    this.errorIcon = const Icon(Icons.error, color: Colors.red),
-    this.infoIcon = const Icon(Icons.info, color: Colors.blue),
-    this.snackPosition = SnackPosition.bottom,
-  });
+  static Future<void> _signIn(dynamic request) async {
+    final response = await '/api/credential/signin'.api(body: request).post();
+    App.identity.load(response.data);
+  }
+
+  static Future<void> _signInTenant(dynamic request) async {
+    final response =
+        await '/api/credential/signin/tenant'.api(body: request).post();
+    App.identity.load(response.data);
+  }
+
+  static Future<void> _signOut() async {
+    try {
+      await '/api/credential/signout'.api().post();
+    } on Exception catch (_) {
+    } finally {
+      App.identity.signOut();
+    }
+  }
+
+  static Future<void> _renewCredential() async {
+    try {
+      final response = await '/api/credential/refresh'.api(body: {
+        'refreshToken': App.httpClient.refreshToken,
+        'checkSum': Crypto.checkSum(App.httpClient.refreshToken!)
+      }).post(
+        extra: {
+          'RENEW_CREDENTIAL': true,
+        },
+      );
+      App.identity.load(response.data);
+    } on AppNetworkResponseException catch (_) {
+      App.httpClient.clearIdentityCache();
+      rethrow;
+    }
+  }
+
+  static Future<void> _getCredential() async {
+    try {
+      final response = await '/api/credential'.api().get(
+            timeout: const Duration(seconds: 10),
+          );
+      App.identity.load(response.data);
+    } on AppNetworkResponseException catch (_) {
+      App.httpClient.clearIdentityCache();
+    } on Exception catch (err) {
+      return Future.error(err.toString());
+    }
+  }
+
+  // static Map<String, String> userPass(
+  //   String username,
+  //   String password,
+  // ) {
+  //   return {
+  //     'username': username,
+  //     'password': password,
+  //   };
+  // }
+
+  // static Map<String, String> idToken(
+  //   String idToken,
+  // ) {
+  //   return {
+  //     'idToken': idToken,
+  //   };
+  // }
 }
