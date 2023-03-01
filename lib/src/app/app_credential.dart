@@ -1,56 +1,138 @@
 part of 'app.dart';
 
-class CredentialIdentity extends Entity {
-  late final Field<String> id = field('id');
-  late final Field<String> username = field('username');
-  late final Field<String> name = field('name');
-  late final Field<String> email = field('email');
-  late final Field<String> roles = field('roles');
-  bool get isAuthenticated => id.valueIsNotNullOrEmpty;
-
-  final _roles = <String>{};
-
-  CredentialIdentity() {
-    roles.onLoaded(
-      action: (value) {
-        _roles.clear();
-        if (value.isNotNullOrEmpty) {
-          _roles.addAll(value!
-              .split(',')
-              .map((e) => e.trim())
-              .where((element) => element.isNotEmpty)
-              .toSet());
-        }
-      },
-      reset: _roles.clear,
-    );
+class AppCredential {
+  Future signIn(dynamic request) async {
+    final response = await '/api/credential/signin'.api(body: request).post();
+    App.identity.load(response.data);
   }
 
-  void signIn(String id, String username, String name, String email,
-      {String? tenantId, String? roles}) {
-    load({
-      'id': id,
+  Future signOut() async {
+    try {
+      await '/api/credential/signout'.api().post();
+    } on Exception catch (_) {
+    } finally {
+      App.identity.signOut();
+    }
+  }
+
+  Future renewCredential() async {
+    try {
+      final response = await '/api/credential/refresh'.api(body: {
+        'refreshToken': App.httpClient.refreshToken,
+        'checkSum': Crypto.checkSum(App.httpClient.refreshToken!)
+      }).post(
+        extra: {
+          'RENEW_CREDENTIAL': true,
+        },
+      );
+      App.identity.load(response.data);
+    } on AppNetworkResponseException catch (_) {
+      App.httpClient.clearIdentityCache();
+      rethrow;
+    }
+  }
+
+  //before this is getCredential
+  Future reloadCredential() async {
+    try {
+      final response = await '/api/credential'.api().get(
+            timeout: const Duration(seconds: 10),
+          );
+      App.identity.load(response.data);
+    } on AppNetworkResponseException catch (_) {
+      App.httpClient.clearIdentityCache();
+    } on Exception catch (err) {
+      return Future.error(err.toString());
+    }
+  }
+
+  Future<String> sendVerificationCode(dynamic request) async {
+    final response =
+        await '/api/credential/verificationcode'.api(body: request).post();
+    return response.data!['code'];
+  }
+
+  Future signUp(dynamic request) async {
+    await '/api/credential/signup'.api(body: request).post();
+  }
+
+  Future resetPassword(dynamic request) async {
+    await '/api/credential/resetpassword'.api(body: request).post();
+  }
+
+  static Map<String, String> userPass(
+    String username,
+    String password,
+  ) {
+    return {
       'username': username,
-      'name': name,
-      'email': email,
+      'password': password,
+    };
+  }
+
+  static Map<String, String> idToken(
+    String idToken,
+  ) {
+    return {
+      'idToken': idToken,
+    };
+  }
+
+  static Map<String, String> tenantUserPass(
+    String tenantId,
+    String username,
+    String password,
+  ) {
+    return {'username': username, 'password': password, 'tenantId': tenantId};
+  }
+
+  static Map<String, String> tenantIdToken(
+    String tenantId,
+    String idToken,
+  ) {
+    return {
+      'idToken': idToken,
       'tenantId': tenantId,
-      'roles': roles,
-    });
+    };
   }
 
-  bool hasRoles(Set<String> roles) {
-    if (_roles.isEmpty || roles.isEmpty) return false;
-    return roles.intersection(_roles).containsAll(roles);
+  static Map<String, String> signUpRequest({
+    required String username,
+    required String password,
+    String? name,
+    String? tenantId,
+  }) {
+    return {
+      'username': username,
+      'password': password,
+      if (name != null) 'name': name,
+      if (tenantId != null) 'tenantId': tenantId,
+    };
   }
 
-  bool anyRoles(Set<String> roles) {
-    if (_roles.isEmpty || roles.isEmpty) return false;
-    return roles.intersection(_roles).isNotEmpty;
+  static Map<String, String> resetPasswordRequest({
+    required String username,
+    required String password,
+    String? tenantId,
+  }) {
+    return {
+      'username': username,
+      'password': password,
+      if (tenantId != null) 'tenantId': tenantId,
+    };
   }
 
-  @mustCallSuper
-  void signOut() {
-    App.httpClient.clearIdentityCache();
-    reset();
+  static Map<String, dynamic> verificationCodeRequest({
+    required String emailOrPhone,
+    required String action,
+    String? name,
+    bool validate = false,
+  }) {
+    return {
+      'emailOrPhone': emailOrPhone,
+      'action': action,
+      if (name != null) 'name': name,
+      'validate': validate
+    };
   }
 }

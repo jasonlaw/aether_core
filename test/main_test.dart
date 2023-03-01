@@ -127,7 +127,7 @@ void main() {
     });
 
     test('Entity identity', () {
-      final identity = CredentialIdentity();
+      final identity = AppCredentialIdentity();
       identity.signIn(
         '123',
         'jasonlaw',

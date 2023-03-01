@@ -14,9 +14,9 @@ class AppBuilder {
     _setDefaultLoading();
   }
 
-  CredentialIdentity? _credentialIdentity;
-  void useCredentialIdentity(CredentialIdentity identity) {
-    _credentialIdentity = identity;
+  AppCredentialIdentity? _appCredentialIdentity;
+  void useAppCredentialIdentity(AppCredentialIdentity identity) {
+    _appCredentialIdentity = identity;
   }
 
   CredentialActions? _credentialActions;
@@ -25,14 +25,14 @@ class AppBuilder {
     _credentialActions = actions;
   }
 
-  AbstractCredentialService? _credentialService;
-  void useCredentialService(AbstractCredentialService service) {
-    _credentialService = service;
+  AppCredential? _appCredential;
+  void useAppCredential(AppCredential credential) {
+    _appCredential = credential;
   }
 
   AppDialog? _appDialog;
-  void useAppDialog(AppDialog appDialog) {
-    _appDialog = appDialog;
+  void useAppDialog(AppDialog dialog) {
+    _appDialog = dialog;
   }
 
   // DialogSettings? _dialogSettings;
@@ -87,8 +87,8 @@ class AppBuilder {
     final app = AppService(
       appInfo: appInfo,
       settings: appSettings,
-      credential: _credentialService ?? CredentialService(),
-      credentialIdentity: _credentialIdentity,
+      credential: _appCredential ?? AppCredential(),
+      identity: _appCredentialIdentity ?? AppCredentialIdentity(),
       credentialActions: _credentialActions,
       dialog: _appDialog ?? AppDialog(),
       // notificationSettings: _snackbarSettings ?? const SnackbarSettings(),
