@@ -36,7 +36,6 @@ export 'http_client/app_http_client.dart';
 part 'app_credential.dart';
 part 'app_credential_identity.dart';
 part 'app_dialog.dart';
-//part 'app_getxconnect.dart';
 
 const String kSystemPath = 'assets/system';
 const String kImagesPath = 'assets/images';
@@ -82,6 +81,12 @@ class AppService extends GetxService {
     required this.dialog,
   });
 
+  @override
+  void onClose() {
+    AppConnectivity.dispose();
+    Hive.close();
+  }
+
   Future<void> initUpgrader({
     required String updateVersion,
     bool forceUpdate = false,
@@ -107,55 +112,6 @@ class AppService extends GetxService {
       ),
     );
   }
-
-  @Deprecated('Use App.dialog.showError')
-  void error(dynamic error, {String? title}) {
-    if (error == null) return;
-    dialog.showError(error, title: title);
-  }
-
-  @Deprecated('Use App.dialog.showInfo')
-  void info(String info, {String? title}) => dialog.showInfo(
-        info,
-        title: title,
-      );
-
-  @Deprecated('Use App.dialog.showConfirm')
-  Future<bool> confirm(
-    String question, {
-    String? title,
-    String? buttonTitle,
-    String? cancelButtonTitle,
-  }) async {
-    return dialog.showConfirm(
-      question,
-      title: title,
-      buttonTitle: buttonTitle,
-      cancelButtonTitle: cancelButtonTitle,
-    );
-  }
-
-  // @Deprecated('Use App.dialog.show')
-  // Future<DialogResponse?> dialog({
-  //   String? title,
-  //   String? description,
-  //   String? cancelTitle,
-  //   Color? cancelTitleColor,
-  //   String? buttonTitle,
-  //   Color? buttonTitleColor,
-  //   bool barrierDismissible = false,
-  //   DialogPlatform? dialogPlatform,
-  // }) =>
-  //     _appDialog.show(
-  //       title: title,
-  //       description: description,
-  //       buttonTitle: buttonTitle,
-  //       cancelTitle: cancelTitle,
-  //       buttonTitleColor: buttonTitleColor,
-  //       cancelTitleColor: cancelTitleColor,
-  //       barrierDismissible: barrierDismissible,
-  //       dialogPlatform: dialogPlatform,
-  //     );
 
   bool get isLoading => EasyLoading.isShow;
 
@@ -196,54 +152,5 @@ class AppService extends GetxService {
       _themeMode = defaultMode;
       App.box.delete('App.Theme.Mode');
     }
-  }
-
-  @Deprecated('Use App.dialog.registerCustoms')
-  void registerCustomDialogBuilders(Map<dynamic, DialogBuilder> builders) {
-    dialog.registerCustoms(builders);
-  }
-
-  @Deprecated('Use App.dialog.showCustom')
-  Future<DialogResponse<T>?> customDialog<T, R>({
-    dynamic variant,
-    String? title,
-    String? description,
-    bool hasImage = false,
-    String? imageUrl,
-    bool showIconInMainButton = false,
-    String? mainButtonTitle,
-    bool showIconInSecondaryButton = false,
-    String? secondaryButtonTitle,
-    bool showIconInAdditionalButton = false,
-    String? additionalButtonTitle,
-    bool takesInput = false,
-    Color barrierColor = Colors.black54,
-    bool barrierDismissible = false,
-    String barrierLabel = '',
-    R? data,
-  }) =>
-      dialog.showCustom<T, R>(
-        variant: variant,
-        title: title,
-        description: description,
-        hasImage: hasImage,
-        imageUrl: imageUrl,
-        showIconInMainButton: showIconInMainButton,
-        mainButtonTitle: mainButtonTitle,
-        showIconInSecondaryButton: showIconInSecondaryButton,
-        secondaryButtonTitle: secondaryButtonTitle,
-        showIconInAdditionalButton: showIconInAdditionalButton,
-        additionalButtonTitle: additionalButtonTitle,
-        takesInput: takesInput,
-        barrierColor: barrierColor,
-        barrierDismissible: barrierDismissible,
-        barrierLabel: barrierLabel,
-        data: data,
-      );
-
-  @override
-  void onClose() {
-    AppConnectivity.dispose();
-    Hive.close();
   }
 }
