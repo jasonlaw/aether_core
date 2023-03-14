@@ -1,8 +1,9 @@
-## 0.6.6
+## 0.7.0
 * AppSettings baseUrl will follow the hosting environment in production
 * Added extension gqlFr to simplify defination of fragment
 * Move CredentialActions to CredentialService
 * Bumped dio to 5.0.0, which may introduce some breaking changes
+* Temp fixed the cookie_mgr bug locally
 
 ## 0.6.5
 * Fixed XFileImage deprecated issue
