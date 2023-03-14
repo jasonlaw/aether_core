@@ -19,12 +19,6 @@ class AppBuilder {
     _appCredentialIdentity = identity;
   }
 
-  CredentialActions? _credentialActions;
-  @Deprecated("Use CredentialEndpoints")
-  void useCredentialActions(CredentialActions actions) {
-    _credentialActions = actions;
-  }
-
   AppCredential? _appCredential;
   void useAppCredential(AppCredential credential) {
     _appCredential = credential;
@@ -35,16 +29,6 @@ class AppBuilder {
     _appDialog = dialog;
   }
 
-  // DialogSettings? _dialogSettings;
-  // void useDialogSettings(DialogSettings settings) {
-  //   _dialogSettings = settings;
-  // }
-
-  // SnackbarSettings? _snackbarSettings;
-  // void useSnackbarSettings(SnackbarSettings settings) {
-  //   _snackbarSettings = settings;
-  // }
-
   AppSettings? _appSettings;
   void useAppSettings(AppSettings settings) {
     _appSettings = settings;
@@ -54,11 +38,6 @@ class AppBuilder {
     void Function(EasyLoading easyLoading) configure,
   ) =>
       configure(EasyLoading.instance);
-
-  // Map<dynamic, DialogBuilder>? _dialogBuilders;
-  // void useDialogBuilders(Map<dynamic, DialogBuilder> builders) {
-  //   _dialogBuilders = builders;
-  // }
 
   Future<AppService> build() async {
     Get.isLogEnable = kDebugMode;
@@ -89,17 +68,12 @@ class AppBuilder {
       settings: appSettings,
       credential: _appCredential ?? AppCredential(),
       identity: _appCredentialIdentity ?? AppCredentialIdentity(),
-      credentialActions: _credentialActions,
       dialog: _appDialog ?? AppDialog(),
-      // notificationSettings: _snackbarSettings ?? const SnackbarSettings(),
-      // dialogSettings: _dialogSettings,
     );
 
     Get.put(app);
     Get.lazyPut(() => DialogService());
     Get.lazyPut(() => SnackbarService());
-
-    // CredentialActions._finalize(_credentialActions);
 
     return app;
   }
