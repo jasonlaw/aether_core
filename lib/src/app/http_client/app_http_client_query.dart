@@ -17,7 +17,7 @@ class RestQuery {
   RestQuery(this.url, {this.body, this.queryParameters});
 
   RestQuery external({AppHttpClientBase? client}) {
-    _client = client ?? App.extHttpClient;
+    _client = client ?? App.http;
     return this;
   }
 
@@ -82,7 +82,7 @@ class RestQuery {
     _headers ??= headers;
     _extra ??= extra;
     _timeout ??= timeout;
-    _client ??= App.httpClient;
+    _client ??= App.api;
 
     return await _client!.request(
       method,
@@ -114,7 +114,7 @@ class GraphQLQuery {
   GraphQLQuery(this.name, this.fields, {this.params});
 
   GraphQLQuery external({AppHttpClientBase? client}) {
-    _client = client ?? App.extHttpClient;
+    _client = client ?? App.http;
     return this;
   }
 
@@ -252,7 +252,7 @@ class GraphQLQuery {
     _headers ??= headers;
     _extra ??= extra;
     _timeout ??= timeout;
-    _client ??= App.httpClient;
+    _client ??= App.api;
 
     return await _client!.gql(
       method,

@@ -75,7 +75,7 @@ class AppHttpClientInterceptor extends Interceptor {
         final requestOptions = err.requestOptions;
         try {
           requestOptions.extra['RETRY'] = true;
-          final response = await App.httpClient.dio.request(requestOptions.path,
+          final response = await App.api.dio.request(requestOptions.path,
               data: requestOptions.extra['__data__'] ?? requestOptions.data,
               queryParameters: requestOptions.queryParameters,
               options: Options(
@@ -98,7 +98,7 @@ class AppHttpClientInterceptor extends Interceptor {
   }
 
   Future<bool> renewCredentialToken() async {
-    if (App.httpClient.refreshToken.isNullOrEmpty) return false;
+    if (App.api.refreshToken.isNullOrEmpty) return false;
     final oldProgressIndicatorLocked = App.progressIndicatorLocked;
     App.progressIndicatorLocked = true;
     try {

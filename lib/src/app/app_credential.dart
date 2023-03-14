@@ -18,8 +18,8 @@ class AppCredential {
   Future renewCredential() async {
     try {
       final response = await '/api/credential/refresh'.api(body: {
-        'refreshToken': App.httpClient.refreshToken,
-        'checkSum': Crypto.checkSum(App.httpClient.refreshToken!)
+        'refreshToken': App.api.refreshToken,
+        'checkSum': Crypto.checkSum(App.api.refreshToken!)
       }).post(
         extra: {
           'RENEW_CREDENTIAL': true,
@@ -27,7 +27,7 @@ class AppCredential {
       );
       App.identity.load(response.data);
     } on AppNetworkResponseException catch (_) {
-      App.httpClient.clearIdentityCache();
+      App.api.clearIdentityCache();
       rethrow;
     }
   }
@@ -40,7 +40,7 @@ class AppCredential {
           );
       App.identity.load(response.data);
     } on AppNetworkResponseException catch (_) {
-      App.httpClient.clearIdentityCache();
+      App.api.clearIdentityCache();
     } on Exception catch (err) {
       return Future.error(err.toString());
     }

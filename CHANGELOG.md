@@ -1,3 +1,6 @@
+## 0.7.1
+* Default rest call with json content type
+
 ## 0.7.0
 * AppSettings baseUrl will follow the hosting environment in production
 * Added extension gqlFr to simplify defination of fragment

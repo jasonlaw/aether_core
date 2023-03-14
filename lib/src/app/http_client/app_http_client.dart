@@ -17,9 +17,11 @@ part 'dio_logger_interceptor.dart';
 class AppHttpClient extends AppHttpClientBase {
   AppHttpClient([BaseOptions? options]) : super(dio: Dio(options)) {
     dio
-      //..options.baseUrl = App.settings.apiBaseUrl()
-      //..options.sendTimeout = App.settings.apiConnectTimeoutInSec() * 1000
-      //..options.contentType = Headers.jsonContentType
+      ..options.connectTimeout =
+          Duration(seconds: App.settings.apiConnectTimeoutInSec())
+      ..options.sendTimeout =
+          Duration(seconds: App.settings.apiConnectTimeoutInSec())
+      ..options.contentType = Headers.jsonContentType
       ..options.headers = {'User-Agent': 'aether-flutter'}
       ..allowSelfSignedCert()
       ..allowWithCredential()
@@ -54,4 +56,6 @@ class AppHttpClient extends AppHttpClientBase {
     writeRefreshToken(null);
     dio.clearCookies();
   }
+
+  Interceptors get interceptors => dio.interceptors;
 }
