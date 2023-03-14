@@ -1,15 +1,15 @@
 import 'dart:io';
 
 import 'package:cookie_jar/cookie_jar.dart';
-import 'package:dio/adapter.dart';
-import 'package:dio_cookie_manager/dio_cookie_manager.dart';
+import 'package:dio/io.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../app.dart';
+import '../cookie_mgr.dart';
 
 extension AppHttpDioAdapter on Dio {
   void allowSelfSignedCert() {
-    (httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
+    (httpClientAdapter as IOHttpClientAdapter).onHttpClientCreate =
         (HttpClient client) {
       client.badCertificateCallback =
           (X509Certificate cert, String host, int port) => true;

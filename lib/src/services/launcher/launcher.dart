@@ -10,7 +10,7 @@ Future<void> safeLaunchUrl(String url,
   final uri = Uri.tryParse(url);
   if (uri == null) {
     if (showError) {
-      App.error('Invalid url format.');
+      App.dialog.showError('Invalid url format.');
     }
     return;
   }
@@ -27,9 +27,9 @@ Future<void> safeLaunchUri(Uri uri,
   } on Exception catch (error) {
     if (showError) {
       if (kDebugMode) {
-        App.error(error);
+        App.dialog.showError(error);
       } else {
-        App.error(defaultErrorText ?? error);
+        App.dialog.showError(defaultErrorText ?? error);
       }
     }
   }

@@ -14,29 +14,19 @@ class AppBuilder {
     _setDefaultLoading();
   }
 
-  CredentialIdentity? _credentialIdentity;
-  void useCredentialIdentity(CredentialIdentity identity) {
-    _credentialIdentity = identity;
+  AppCredentialIdentity? _appCredentialIdentity;
+  void useAppCredentialIdentity(AppCredentialIdentity identity) {
+    _appCredentialIdentity = identity;
   }
 
-  CredentialActions? _credentialActions;
-  void useCredentialActions(CredentialActions actions) {
-    _credentialActions = actions;
+  AppCredential? _appCredential;
+  void useAppCredential(AppCredential credential) {
+    _appCredential = credential;
   }
 
-  AbstractCredentialService? _credentialService;
-  void useCredentialService(AbstractCredentialService service) {
-    _credentialService = service;
-  }
-
-  DialogSettings? _dialogSettings;
-  void useDialogSettings(DialogSettings settings) {
-    _dialogSettings = settings;
-  }
-
-  SnackbarSettings? _snackbarSettings;
-  void useSnackbarSettings(SnackbarSettings settings) {
-    _snackbarSettings = settings;
+  AppDialog? _appDialog;
+  void useAppDialog(AppDialog dialog) {
+    _appDialog = dialog;
   }
 
   AppSettings? _appSettings;
@@ -48,11 +38,6 @@ class AppBuilder {
     void Function(EasyLoading easyLoading) configure,
   ) =>
       configure(EasyLoading.instance);
-
-  // Map<dynamic, DialogBuilder>? _dialogBuilders;
-  // void useDialogBuilders(Map<dynamic, DialogBuilder> builders) {
-  //   _dialogBuilders = builders;
-  // }
 
   Future<AppService> build() async {
     Get.isLogEnable = kDebugMode;
@@ -81,18 +66,14 @@ class AppBuilder {
     final app = AppService(
       appInfo: appInfo,
       settings: appSettings,
-      credential: _credentialService ?? CredentialService(),
-      credentialIdentity: _credentialIdentity,
-      credentialActions: _credentialActions,
-      notificationSettings: _snackbarSettings ?? const SnackbarSettings(),
-      dialogSettings: _dialogSettings,
+      credential: _appCredential ?? AppCredential(),
+      identity: _appCredentialIdentity ?? AppCredentialIdentity(),
+      dialog: _appDialog ?? AppDialog(),
     );
 
     Get.put(app);
     Get.lazyPut(() => DialogService());
     Get.lazyPut(() => SnackbarService());
-
-    // CredentialActions._finalize(_credentialActions);
 
     return app;
   }
@@ -129,38 +110,39 @@ class AppInfo {
   }
 }
 
-class DialogSettings {
-  final String? buttonTitle;
-  final String? cancelTitle;
-  final Color? buttonTitleColor;
-  final Color? cancelTitleColor;
-  final DialogPlatform? dialogPlatform;
+// class DialogSettings {
+//   final String? buttonTitle;
+//   final String? cancelTitle;
+//   final Color? buttonTitleColor;
+//   final Color? cancelTitleColor;
+//   final DialogPlatform? dialogPlatform;
 
-  const DialogSettings({
-    this.buttonTitle,
-    this.cancelTitle,
-    this.buttonTitleColor,
-    this.cancelTitleColor,
-    this.dialogPlatform,
-  });
-}
+//   const DialogSettings({
+//     this.buttonTitle,
+//     this.cancelTitle,
+//     this.buttonTitleColor,
+//     this.cancelTitleColor,
+//     this.dialogPlatform,
+//   });
+// }
 
-class SnackbarSettings {
-  final String? errorTitle;
-  final String? infoTitle;
-  final Icon errorIcon; // = const Icon(Icons.error, color: Colors.red);
-  final Icon infoIcon; // = const Icon(Icons.info, color: Colors.blue);
-  final SnackPosition snackPosition; // = SnackPosition.BOTTOM;
+// class SnackbarSettings {
+//   final String? errorTitle;
+//   final String? infoTitle;
+//   final Icon errorIcon; // = const Icon(Icons.error, color: Colors.red);
+//   final Icon infoIcon; // = const Icon(Icons.info, color: Colors.blue);
+//   final SnackPosition snackPosition; // = SnackPosition.BOTTOM;
 
-  const SnackbarSettings({
-    this.errorTitle,
-    this.infoTitle,
-    this.errorIcon = const Icon(Icons.error, color: Colors.red),
-    this.infoIcon = const Icon(Icons.info, color: Colors.blue),
-    this.snackPosition = SnackPosition.BOTTOM,
-  });
-}
+//   const SnackbarSettings({
+//     this.errorTitle,
+//     this.infoTitle,
+//     this.errorIcon = const Icon(Icons.error, color: Colors.red),
+//     this.infoIcon = const Icon(Icons.info, color: Colors.blue),
+//     this.snackPosition = SnackPosition.BOTTOM,
+//   });
+// }
 
+@Deprecated("Use CredentialEndpoints")
 class CredentialActions {
   final Future Function(dynamic)? signIn;
   final Future Function()? signOut;

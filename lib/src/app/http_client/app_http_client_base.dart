@@ -217,14 +217,15 @@ class AppHttpClientBase {
             reason: AppNetworkExceptionReason.canceled,
             exception: exception,
           );
-        case DioErrorType.connectTimeout:
+        case DioErrorType.connectionError:
+        case DioErrorType.connectionTimeout:
         case DioErrorType.receiveTimeout:
         case DioErrorType.sendTimeout:
           throw AppNetworkException(
             reason: AppNetworkExceptionReason.timedOut,
             exception: exception,
           );
-        case DioErrorType.response:
+        case DioErrorType.badResponse:
           // For DioErrorType.response, we are guaranteed to have a
           // response object present on the exception.
           final response = exception.response;
@@ -239,7 +240,7 @@ class AppHttpClientBase {
                 statusCode: response.statusCode,
                 data: response.data,
               );
-        case DioErrorType.other:
+        case DioErrorType.unknown:
         default:
           throw AppHttpClientException(exception: exception);
       }

@@ -34,7 +34,8 @@ export 'appbuilder.dart';
 export 'http_client/app_http_client.dart';
 
 part 'app_credential.dart';
-part 'app_credential_service.dart';
+part 'app_credential_identity.dart';
+part 'app_dialog.dart';
 //part 'app_getxconnect.dart';
 
 const String kSystemPath = 'assets/system';
@@ -51,14 +52,10 @@ AppService get App => Get.find();
 
 class AppService extends GetxService {
   final AppInfo appInfo;
-  final AbstractCredentialService credential;
-  final CredentialActions? _credentialActions;
-  final DialogSettings? _dialogSettings;
-  final SnackbarSettings _snackbarSettings;
-  final CredentialIdentity? _credentialIdentity;
+  final AppCredential credential;
+  final AppDialog dialog;
 
-  late final CredentialIdentity identity =
-      _credentialIdentity ?? CredentialIdentity();
+  final AppCredentialIdentity identity;
 
   final AppSettings settings;
   //late final GetxConnect connect = GetxConnect._();
@@ -68,7 +65,7 @@ class AppService extends GetxService {
 
   late final AppHttpClient httpClient = AppHttpClient(BaseOptions(
     baseUrl: App.settings.apiBaseUrl(),
-    sendTimeout: App.settings.apiConnectTimeoutInSec() * 1000,
+    sendTimeout: Duration(seconds: App.settings.apiConnectTimeoutInSec()),
   ));
 
   late final AppHttpClient extHttpClient = AppHttpClient(BaseOptions(
@@ -84,14 +81,9 @@ class AppService extends GetxService {
     required this.appInfo,
     required this.settings,
     required this.credential,
-    CredentialIdentity? credentialIdentity,
-    CredentialActions? credentialActions,
-    DialogSettings? dialogSettings,
-    required SnackbarSettings notificationSettings,
-  })  : _credentialIdentity = credentialIdentity,
-        _credentialActions = credentialActions,
-        _dialogSettings = dialogSettings,
-        _snackbarSettings = notificationSettings;
+    required this.identity,
+    required this.dialog,
+  });
 
   Future<void> initUpgrader({
     required String updateVersion,
@@ -119,68 +111,54 @@ class AppService extends GetxService {
     );
   }
 
-  /// Error snackbar notification
+  @Deprecated('Use App.dialog.showError')
   void error(dynamic error, {String? title}) {
     if (error == null) return;
-    Get.snackbar(
-      title ?? _snackbarSettings.infoTitle ?? 'Error'.tr,
-      error.toString().truncate(1000),
-      snackPosition: _snackbarSettings.snackPosition,
-      icon: _snackbarSettings.errorIcon,
-    );
+    dialog.showError(error, title: title);
   }
 
-  /// Information snackbar notification
-  void info(String info, {String? title}) => Get.snackbar(
-        title ?? _snackbarSettings.infoTitle ?? 'Info'.tr,
+  @Deprecated('Use App.dialog.showInfo')
+  void info(String info, {String? title}) => dialog.showInfo(
         info,
-        snackPosition: _snackbarSettings.snackPosition,
-        icon: _snackbarSettings.infoIcon,
+        title: title,
       );
 
-  /// Confirmation dialog
+  @Deprecated('Use App.dialog.showConfirm')
   Future<bool> confirm(
     String question, {
     String? title,
     String? buttonTitle,
     String? cancelButtonTitle,
   }) async {
-    final response = await Get.find<DialogService>().showDialog(
+    return dialog.showConfirm(
+      question,
       title: title,
-      description: question,
-      buttonTitle: buttonTitle ?? _dialogSettings?.buttonTitle ?? 'OK'.tr,
-      cancelTitle:
-          cancelButtonTitle ?? _dialogSettings?.cancelTitle ?? 'CANCEL'.tr,
-      buttonTitleColor: _dialogSettings?.buttonTitleColor,
-      cancelTitleColor: _dialogSettings?.cancelTitleColor,
-      dialogPlatform: _dialogSettings?.dialogPlatform,
-      barrierDismissible: true,
+      buttonTitle: buttonTitle,
+      cancelButtonTitle: cancelButtonTitle,
     );
-    return response?.confirmed ?? false;
   }
 
-  /// General dialog
-  Future<DialogResponse?> dialog({
-    String? title,
-    String? description,
-    String? cancelTitle,
-    Color? cancelTitleColor,
-    String? buttonTitle,
-    Color? buttonTitleColor,
-    bool barrierDismissible = false,
-    DialogPlatform? dialogPlatform,
-  }) =>
-      Get.find<DialogService>().showDialog(
-          title: title,
-          description: description,
-          buttonTitle: buttonTitle ?? _dialogSettings?.buttonTitle ?? 'OK'.tr,
-          cancelTitle: cancelTitle ?? _dialogSettings?.cancelTitle,
-          buttonTitleColor:
-              buttonTitleColor ?? _dialogSettings?.buttonTitleColor,
-          cancelTitleColor:
-              cancelTitleColor ?? _dialogSettings?.cancelTitleColor,
-          barrierDismissible: barrierDismissible,
-          dialogPlatform: dialogPlatform ?? _dialogSettings?.dialogPlatform);
+  // @Deprecated('Use App.dialog.show')
+  // Future<DialogResponse?> dialog({
+  //   String? title,
+  //   String? description,
+  //   String? cancelTitle,
+  //   Color? cancelTitleColor,
+  //   String? buttonTitle,
+  //   Color? buttonTitleColor,
+  //   bool barrierDismissible = false,
+  //   DialogPlatform? dialogPlatform,
+  // }) =>
+  //     _appDialog.show(
+  //       title: title,
+  //       description: description,
+  //       buttonTitle: buttonTitle,
+  //       cancelTitle: cancelTitle,
+  //       buttonTitleColor: buttonTitleColor,
+  //       cancelTitleColor: cancelTitleColor,
+  //       barrierDismissible: barrierDismissible,
+  //       dialogPlatform: dialogPlatform,
+  //     );
 
   bool get isLoading => EasyLoading.isShow;
 
@@ -199,19 +177,6 @@ class AppService extends GetxService {
   }
 
   bool progressIndicatorLocked = false;
-
-  @Deprecated("Use App.credentialEndpoints.signIn")
-  Future signIn(dynamic request) async =>
-      _credentialActions?.signIn?.call(request);
-
-  @Deprecated("Use App.credentialEndpoints.signOut")
-  Future signOut() async => _credentialActions?.signOut?.call();
-
-  @Deprecated("Use App.credentialEndpoints.getCredential")
-  Future getCredential() async => _credentialActions?.getCredential?.call();
-
-  @Deprecated("Use App.credentialEndpoints.renewCredential")
-  Future renewCredential() async => _credentialActions?.renewCredential?.call();
 
   ThemeMode _themeMode = ThemeMode.system;
   ThemeMode get themeMode => _themeMode;
@@ -236,22 +201,12 @@ class AppService extends GetxService {
     }
   }
 
+  @Deprecated('Use App.dialog.registerCustoms')
   void registerCustomDialogBuilders(Map<dynamic, DialogBuilder> builders) {
-    Get.find<DialogService>().registerCustomDialogBuilders(builders);
+    dialog.registerCustoms(builders);
   }
 
-  /// Creates a popup with the given widget, a scale animation, and faded background.
-  ///
-  /// The first generic type argument will be the [DialogResponse]
-  /// while the second generic type argument is the [DialogRequest]
-  ///
-  /// e.g.
-  /// ```dart
-  /// await App.customDialog<GenericDialogResponse, GenericDialogRequest>();
-  /// ```
-  ///
-  /// Where [GenericDialogResponse] is a defined model response,
-  /// and [GenericDialogRequest] is the request model.
+  @Deprecated('Use App.dialog.showCustom')
   Future<DialogResponse<T>?> customDialog<T, R>({
     dynamic variant,
     String? title,
@@ -270,7 +225,7 @@ class AppService extends GetxService {
     String barrierLabel = '',
     R? data,
   }) =>
-      Get.find<DialogService>().showCustomDialog<T, R>(
+      dialog.showCustom<T, R>(
         variant: variant,
         title: title,
         description: description,

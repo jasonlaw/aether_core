@@ -1,4 +1,3 @@
-import 'package:dio_logger/dio_logger.dart';
 import 'package:flutter/foundation.dart';
 
 import '../../../aether_core.dart';
@@ -13,12 +12,14 @@ part 'app_http_client_exceptions.dart';
 part 'app_http_client_extensions.dart';
 part 'app_http_client_params.dart';
 part 'app_http_client_query.dart';
+part 'dio_logger_interceptor.dart';
 
 class AppHttpClient extends AppHttpClientBase {
   AppHttpClient([BaseOptions? options]) : super(dio: Dio(options)) {
     dio
       //..options.baseUrl = App.settings.apiBaseUrl()
       //..options.sendTimeout = App.settings.apiConnectTimeoutInSec() * 1000
+      //..options.contentType = Headers.jsonContentType
       ..options.headers = {'User-Agent': 'aether-flutter'}
       ..allowSelfSignedCert()
       ..allowWithCredential()
@@ -26,7 +27,7 @@ class AppHttpClient extends AppHttpClientBase {
       ..interceptors.add(AppHttpClientInterceptor());
 
     if (kDebugMode) {
-      dio.interceptors.add(dioLoggerInterceptor);
+      dio.interceptors.add(LogInterceptor());
     }
   }
 
