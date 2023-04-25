@@ -6,7 +6,11 @@
 
 Aether Core for Flutter
     
-    Application framework for flutter development.    
+    Aether Core is a comprehensive application framework designed specifically for Flutter development. It offers a range of features that can help developers streamline their workflow, including a simplified ORM for managing entities, context-less routing based on the popular Getx package, and built-in support for authentication management within the context.
+    
+    In addition to these features, Aether Core also includes streamlined integration of dialogs and snackbars, making it easy for developers to add these common UI elements to their applications. It also provides seamless integration with the DIO package, allowing developers to easily make REST or GraphQL calls.
+    
+    Overall, Aether Core is a powerful and flexible framework that can help developers create high-quality Flutter applications with ease. By simplifying many of the common tasks involved in application development, it can help developers save time and focus on building out the core functionality of their applications.  
 
 ## Settings files
 Create the following 3 files:
@@ -36,39 +40,30 @@ Example
 ## Building App Service
 Before RunApp, build the AppService via AppBuilder.
 ~~~dart
-final builder = AppBuilder();
+final builder = AppBuilder(appName: 'VIQ Community Admin');
 
 // Customize the credential actions
-builder.useCredentialActions(
-    CredentialActions(
-        signIn: (request) => CredentialManager.login(request),
-        signOut: () => CredentialManager.logout(),
-        refreshCredential: () => CredentialManager.loginRefresh(),
-        getCredential: () => CredentialManager.refreshCredential()),
-  );
+// Extends AppCredential 
+class CustomAppCredential extends AppCredential {
+    ...
+}
+builder.useAppCredential( CustomAppCredential() );
 
 // Customize dialog settings
-builder.useDialogSettings(
-  const DialogSettings(
-    buttonTitleColor: MainTheme,
-  ),
-);
-
-// Customize snackbar settings
-builder.useSnackbarSettings(
-  const SnackbarSettings(
-      errorIcon: Icon(AppIcons.snackbarError, color: Colors.red),
-      infoIcon: Icon(AppIcons.snackbarInfo, color: MainTheme)),
-);
+// Extends AppDialog
+class CustomAppDialog extends AppDialog {
+    ...
+}
+builder.useAppDialog( CustomAppDialog() );
 
 // Build the app service
-await builder.build(appName: 'VIQ Community Admin');
+await builder.build();
 ~~~
 
 ### Dialog, Snackbar and Progress indicator
 ~~~dart
 // Dialog
-App.dialog({String? title, 
+App.dialog.show({String? title, 
             String? description, 
             String? cancelTitle, 
             Color? cancelTitleColor, 
@@ -77,14 +72,14 @@ App.dialog({String? title,
             bool barrierDismissible = false, 
             DialogPlatform? dialogPlatform})
             
-App.confirm(String question, 
+App.dialog.showConfirm(String question, 
             {String? title, 
              String? buttonTitle, 
              String? cancelButtonTitle})
 
 // Notification
-App.info(String info, {String? title})
-App.error(dynamic error, {String? title})
+App.dialog.showInfo(String info, {String? title})
+App.dialog.showError(dynamic error, {String? title})
 
 // Progress indicator
 App.showProgressIndicator({String? status})
@@ -135,7 +130,7 @@ final result = await '/api/login'.api(body: request.data).post(
         timeout: Duration(seconds: 5),
         headers: {"AppToken": request["appToken"]});
 ~~~
-By default it will connect via the **App.connect**. You may override it for external api.
+By default it will connect via the **App.api**. You may override it for external api.
 ~~~dart
 final response = await 'https://oauth2.googleapis.com/token'
           .api(body: {

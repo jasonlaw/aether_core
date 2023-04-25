@@ -32,18 +32,19 @@ class RestBody {
 
   void addField(FieldBase field) {
     if (field is ListField<MediaFile>) {
-      _formDataMode = true;
       final uploads = field.where((e) => e.canUpload).toList();
-      if (uploads.isNotEmpty) _addParam(field.name, uploads);
-      return;
-    }
-    if (field is Field<MediaFile>) {
       _formDataMode = true;
-      if (field.valueIsNull || !field().canUpload) return;
-      _addParam(field.name, field());
-      return;
+      if (uploads.isNotEmpty) {
+        _addParam(field.name, uploads);
+      }
+    } else if (field is Field<MediaFile>) {
+      _formDataMode = true;
+      if (!field.valueIsNull && field().canUpload) {
+        _addParam(field.name, field());
+      }
+    } else {
+      _addParam(field.name, field.value);
     }
-    return _addParam(field.name, field.value);
   }
 
   void addMap(Map<String, dynamic> map) {

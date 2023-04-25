@@ -33,12 +33,6 @@ class DialogService extends GetxService {
     _dialogBuilders![key] = builder;
   }
 
-  // @Deprecated(
-  //     'Prefer to use the StackedServices.navigatorKey instead of using this key. This will be removed in the next major version update for stacked.')
-  // get navigatorKey {
-  //   return Get.key;
-  // }
-
   /// Check if dialog is open
   bool? get isDialogOpen => Get.isDialogOpen;
 

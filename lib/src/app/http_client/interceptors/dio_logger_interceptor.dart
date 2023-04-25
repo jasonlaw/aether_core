@@ -1,5 +1,8 @@
 // ignore_for_file: avoid_print
-part of 'app_http_client.dart';
+//part of '../app_http_client.dart';
+
+import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 
 final dioLoggerInterceptor =
     InterceptorsWrapper(onRequest: (RequestOptions options, handler) {

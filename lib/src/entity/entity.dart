@@ -20,7 +20,6 @@ class Entity {
 
   Map<String, dynamic>? _committedData;
 
-  // @Deprecated('Use field instead')
   Rx<Entity> get rx => _rx ??= Rx<Entity>(this);
   Rx<Entity>? _rx;
 

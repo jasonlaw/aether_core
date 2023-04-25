@@ -5,5 +5,5 @@ class GraphQLEntity<T extends Entity> extends GraphQLQuery {
 
   GraphQLEntity._(String name, this.entity, List<dynamic> query,
       Map<String, dynamic>? params)
-      : super(name, query, params: params);
+      : super(name, query, input: params);
 }

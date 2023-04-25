@@ -1,6 +1,6 @@
 name: aether_core
 description: Aether Core
-version: 0.7.1
+version: 0.8.0
 homepage: https://github.com/jasonlaw/aether_core.git
 
 # The following line prevents the package from being accidentally published to
@@ -25,10 +25,10 @@ dependencies:
   hive_flutter: ^1.1.0
   
   # https://pub.dev/packages/connectivity_plus
-  connectivity_plus: ^3.0.3
+  connectivity_plus: ^3.0.4
 
   # https://pub.dev/packages/package_info_plus 
-  package_info_plus: ^3.0.3
+  package_info_plus: ^3.1.0
   
   # https://pub.dev/packages/url_launcher 
   url_launcher: ^6.1.10
@@ -49,15 +49,14 @@ dependencies:
   # money2: ^3.1.2
 
   # https://pub.dev/packages/dio
+  # https://pub.dev/packages/dio_cookie_manager
   # https://github.com/flutterchina/cookie_jar
   # https://pub.dev/packages/path_provider
-  dio: ^5.0.1
-  # dio_cookie_manager: #^2.1.2
-  #   path: ../cookie_manager
-  cookie_jar: ^3.0.1
-  path_provider: ^2.0.13
-  # dio_logger: ^4.0.8+8
-  
+  dio: ^5.1.1
+  dio_cookie_manager: ^3.0.0
+  cookie_jar: ^4.0.1
+  path_provider: ^2.0.14
+    
   
 dev_dependencies:
   flutter_test:

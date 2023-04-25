@@ -161,7 +161,7 @@ class AppHttpClientBase {
         path,
         data: data,
         queryParameters: queryParameters,
-        options: DioMixin.checkOptions(method, options),
+        options: (options ?? Options())..method = method,
         cancelToken: cancelToken,
         onSendProgress: onSendProgress,
         onReceiveProgress: onReceiveProgress,

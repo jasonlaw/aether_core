@@ -30,7 +30,9 @@ class AppHttpClientException<OriginalException extends Exception>
   @override
   String toString() {
     final dioError = exception as DioError?;
-    if (dioError != null && dioError.response != null) {
+    if (dioError != null &&
+        !dioError.requestOptions.isGQL &&
+        dioError.response != null) {
       final response = dioError.response!;
       final data = response.data;
 
@@ -40,7 +42,6 @@ class AppHttpClientException<OriginalException extends Exception>
           return message;
         }
       }
-
       return '${response.statusCode}: ${response.statusMessage}';
     }
     return dioError?.message ?? exception.toString();

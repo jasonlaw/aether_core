@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:get/get.dart';
+import 'package:get/get.dart' hide Response;
 import 'package:hive/hive.dart';
 
 import '../entity/entity.dart';
@@ -33,9 +33,9 @@ export 'app_settings.dart';
 export 'appbuilder.dart';
 export 'http_client/app_http_client.dart';
 
-part 'app_credential.dart';
-part 'app_credential_identity.dart';
 part 'app_dialog.dart';
+part 'credential.dart';
+part 'credential_service.dart';
 //part 'app_getxconnect.dart';
 
 const String kSystemPath = 'assets/system';
@@ -52,10 +52,12 @@ AppService get App => Get.find();
 
 class AppService extends GetxService {
   final AppInfo appInfo;
-  final AppCredential credential;
+  final CredentialService credentialService;
   final AppDialog dialog;
 
-  final AppCredentialIdentity identity;
+  @Deprecated('Use [credential].')
+  Credential get identity => credential;
+  final Credential credential;
 
   final AppSettings settings;
   //late final GetxConnect connect = GetxConnect._();
@@ -79,8 +81,8 @@ class AppService extends GetxService {
   AppService({
     required this.appInfo,
     required this.settings,
+    required this.credentialService,
     required this.credential,
-    required this.identity,
     required this.dialog,
   });
 
@@ -109,55 +111,6 @@ class AppService extends GetxService {
       ),
     );
   }
-
-  @Deprecated('Use App.dialog.showError')
-  void error(dynamic error, {String? title}) {
-    if (error == null) return;
-    dialog.showError(error, title: title);
-  }
-
-  @Deprecated('Use App.dialog.showInfo')
-  void info(String info, {String? title}) => dialog.showInfo(
-        info,
-        title: title,
-      );
-
-  @Deprecated('Use App.dialog.showConfirm')
-  Future<bool> confirm(
-    String question, {
-    String? title,
-    String? buttonTitle,
-    String? cancelButtonTitle,
-  }) async {
-    return dialog.showConfirm(
-      question,
-      title: title,
-      buttonTitle: buttonTitle,
-      cancelButtonTitle: cancelButtonTitle,
-    );
-  }
-
-  // @Deprecated('Use App.dialog.show')
-  // Future<DialogResponse?> dialog({
-  //   String? title,
-  //   String? description,
-  //   String? cancelTitle,
-  //   Color? cancelTitleColor,
-  //   String? buttonTitle,
-  //   Color? buttonTitleColor,
-  //   bool barrierDismissible = false,
-  //   DialogPlatform? dialogPlatform,
-  // }) =>
-  //     _appDialog.show(
-  //       title: title,
-  //       description: description,
-  //       buttonTitle: buttonTitle,
-  //       cancelTitle: cancelTitle,
-  //       buttonTitleColor: buttonTitleColor,
-  //       cancelTitleColor: cancelTitleColor,
-  //       barrierDismissible: barrierDismissible,
-  //       dialogPlatform: dialogPlatform,
-  //     );
 
   bool get isLoading => EasyLoading.isShow;
 
@@ -199,49 +152,6 @@ class AppService extends GetxService {
       App.box.delete('App.Theme.Mode');
     }
   }
-
-  @Deprecated('Use App.dialog.registerCustoms')
-  void registerCustomDialogBuilders(Map<dynamic, DialogBuilder> builders) {
-    dialog.registerCustoms(builders);
-  }
-
-  @Deprecated('Use App.dialog.showCustom')
-  Future<DialogResponse<T>?> customDialog<T, R>({
-    dynamic variant,
-    String? title,
-    String? description,
-    bool hasImage = false,
-    String? imageUrl,
-    bool showIconInMainButton = false,
-    String? mainButtonTitle,
-    bool showIconInSecondaryButton = false,
-    String? secondaryButtonTitle,
-    bool showIconInAdditionalButton = false,
-    String? additionalButtonTitle,
-    bool takesInput = false,
-    Color barrierColor = Colors.black54,
-    bool barrierDismissible = false,
-    String barrierLabel = '',
-    R? data,
-  }) =>
-      dialog.showCustom<T, R>(
-        variant: variant,
-        title: title,
-        description: description,
-        hasImage: hasImage,
-        imageUrl: imageUrl,
-        showIconInMainButton: showIconInMainButton,
-        mainButtonTitle: mainButtonTitle,
-        showIconInSecondaryButton: showIconInSecondaryButton,
-        secondaryButtonTitle: secondaryButtonTitle,
-        showIconInAdditionalButton: showIconInAdditionalButton,
-        additionalButtonTitle: additionalButtonTitle,
-        takesInput: takesInput,
-        barrierColor: barrierColor,
-        barrierDismissible: barrierDismissible,
-        barrierLabel: barrierLabel,
-        data: data,
-      );
 
   @override
   void onClose() {

@@ -22,7 +22,7 @@ class AppSettings extends Entity {
 
   // EasyLoading get easyLoading => EasyLoading.instance;
 
-  AppSettings._() {
+  AppSettings() {
     final google = field<String>('GooglePlayURL');
     final apple = field<String>('AppleAppStoreURL');
     final huawei = field<String>('HuaweiAppGalleryURL');
@@ -37,13 +37,11 @@ class AppSettings extends Entity {
         });
   }
 
-  static Future<AppSettings> loadDefault() async {
-    var appSettings = AppSettings._();
-    await appSettings._load();
-    return appSettings;
+  static Future<AppSettings> getDefaults() async {
+    return await AppSettings()._loadSystems();
   }
 
-  Future _load() async {
+  Future _loadSystems() async {
     /// Loading a json configuration file from a custom [path] into the current app config./
     Future loadFromPath(String path) async {
       final content = await rootBundle.loadString(path);
@@ -70,35 +68,5 @@ class AppSettings extends Entity {
     }
 
     postConfigAppSettings(this);
-  }
-
-  @Deprecated("Use AppSettings.loadDefault()")
-  static Future loadFiles(AppSettings settings) async {
-    /// Loading a json configuration file from a custom [path] into the current app config./
-    Future loadFromPath(String path) async {
-      final content = await rootBundle.loadString(path);
-      final configAsMap = json.decode(content) as Map<String, dynamic>;
-      settings.load(configAsMap);
-    }
-
-    try {
-      await loadFromPath(kSettingsFilePath);
-    } on Exception catch (_) {
-      return settings;
-    }
-
-    if (kStagingMode) {
-      try {
-        await loadFromPath(kSettingsFilePathStaging);
-      } on Exception catch (_) {}
-    }
-
-    if (kDebugMode) {
-      try {
-        await loadFromPath(kSettingsFilePathDebug);
-      } on Exception catch (_) {}
-    }
-
-    // if (kDebugMode) print(settings.toMap());
   }
 }

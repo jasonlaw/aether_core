@@ -8,12 +8,6 @@ import 'snackbar_config.dart';
 
 /// A service that allows the user to show the snackbar from a ViewModel
 class SnackbarService extends GetxService {
-  // @Deprecated(
-  //     'Prefer to use the StackedServices.navigatorKey instead of using this key. This will be removed in the next major version update for stacked.')
-  // get navigatorKey {
-  //   return Get.key;
-  // }
-
   final Map<dynamic, SnackbarConfig?> _customSnackbarConfigs =
       <dynamic, SnackbarConfig?>{};
 
@@ -31,18 +25,6 @@ class SnackbarService extends GetxService {
   /// Saves the [config] to be used for the [showSnackbar] function
   void registerSnackbarConfig(SnackbarConfig config) =>
       _snackbarConfig = config;
-
-  // /// Saves the [config] against the value of [customData]
-  // @Deprecated(
-  //     'Prefer to use the registerCustomSnackbarConfig() method. Will be removed in future release')
-  // void registerCustomSnackbarconfig({
-  //   required dynamic customData,
-  //   required SnackbarConfig? config,
-  // }) =>
-  //     registerCustomSnackbarConfig(
-  //       variant: customData,
-  //       config: config,
-  //     );
 
   /// Registers a builder that will be used when showing a matching variant value. The builder
   /// function takes in a [String] to display as the title and a `Function` to be used to the

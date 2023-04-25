@@ -127,13 +127,13 @@ void main() {
     });
 
     test('Entity identity', () {
-      final identity = AppCredentialIdentity();
+      final identity = Credential();
       identity.signIn(
         '123',
         'jasonlaw',
-        'Jason Law',
-        'jason.cclaw@gmail.com',
-        tenantId: "XYZ",
+        name: 'Jason Law',
+        email: 'jason.cclaw@gmail.com',
+        phone: '+60101234567',
         roles: 'SystemAdmin,ABC, CDE  ,ABC, ',
       );
 

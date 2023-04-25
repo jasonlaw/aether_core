@@ -60,33 +60,3 @@ class SearchParams extends Entity {
     return data;
   }
 }
-
-// @Deprecated('Use SearchResults2')
-// class SearchResults<T extends Entity> extends Entity {
-//   SearchResults(EntityBuilder<T> createEntity, {required this.searchParams}) {
-//     results.register(createEntity);
-//   }
-
-//   final SearchParams searchParams;
-//   Field<int> get totalCount => field('totalCount');
-//   ListField<T> get results => fieldList('results');
-// }
-
-// extension AetherStringForEntitySearchExtensions on String {
-//   @deprecated
-//   Future<SearchResults<T>> apiSearch<T extends Entity>({
-//     required SearchParams params,
-//     required EntityBuilder<T> createEntity,
-//     Map<String, String>? headers,
-//     Duration? timeout,
-//     bool disableLoadingIndicator = false,
-//   }) async {
-//     final result = await api(query: params.queryData).get(
-//         headers: headers,
-//         timeout: timeout,
-//         disableLoadingIndicator: disableLoadingIndicator);
-//     if (result.hasError) return Future.error(result.errorText);
-//     return SearchResults<T>(createEntity, searchParams: params)
-//       ..load(result.body);
-//   }
-// }

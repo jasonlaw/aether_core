@@ -101,8 +101,6 @@ class SheetRequest<T> extends OverlayRequest<T> {
     String? secondaryButtonTitle,
     String? additionalButtonTitle,
     bool? takesInput,
-    @Deprecated('Prefer to use `data` and pass in a generic type.')
-        dynamic customData,
     T? data,
     dynamic variant,
   }) : super(

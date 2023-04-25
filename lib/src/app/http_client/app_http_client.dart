@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import '../../../aether_core.dart';
 import '../../utils/src/enum_util.dart';
 import 'adapters/http_adapter.dart';
-import 'app_http_client_interceptor.dart';
+import 'interceptors/api_interceptor.dart';
 
 export 'package:dio/dio.dart';
 
@@ -12,7 +12,7 @@ part 'app_http_client_exceptions.dart';
 part 'app_http_client_extensions.dart';
 part 'app_http_client_params.dart';
 part 'app_http_client_query.dart';
-part 'dio_logger_interceptor.dart';
+//part 'interceptors/dio_logger_interceptor.dart';
 
 class AppHttpClient extends AppHttpClientBase {
   AppHttpClient([BaseOptions? options]) : super(dio: Dio(options)) {
@@ -26,10 +26,10 @@ class AppHttpClient extends AppHttpClientBase {
       ..allowSelfSignedCert()
       ..allowWithCredential()
       ..enableCookieManager()
-      ..interceptors.add(AppHttpClientInterceptor());
+      ..interceptors.add(ApiInterceptor());
 
     if (kDebugMode) {
-      dio.interceptors.add(LogInterceptor());
+      dio.interceptors.add(LogInterceptor(requestBody: true));
     }
   }
 
@@ -52,7 +52,7 @@ class AppHttpClient extends AppHttpClientBase {
     }
   }
 
-  void clearIdentityCache() {
+  void clearCredentialCache() {
     writeRefreshToken(null);
     dio.clearCookies();
   }

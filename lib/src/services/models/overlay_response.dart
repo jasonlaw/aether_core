@@ -17,8 +17,6 @@ class OverlayResponse<T> {
 class DialogResponse<T> extends OverlayResponse<T> {
   DialogResponse({
     bool confirmed = false,
-    @Deprecated('Prefer to use `data` and pass in a generic type.')
-        dynamic responseData,
     T? data,
   }) : super(
           confirmed: confirmed,

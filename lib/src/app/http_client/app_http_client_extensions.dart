@@ -1,8 +1,18 @@
 part of 'app_http_client.dart';
 
-extension AppHttpClientResponseNullExtensions on Response? {}
+//extension AppHttpClientResponseNullExtensions on Response? {}
 
-extension AppHttpClientResponseExtensions on Response {
+extension DioRequestOptionsHelper on RequestOptions {
+  bool get isGQL => extra.hasFlag('GQL');
+  bool get isExternal => extra.hasFlag('EXTERNAL');
+  bool get isRenewCredential => extra.hasFlag('RENEW_CREDENTIAL');
+  bool get isLoadingIndicator => extra.hasFlag('LOADING_INDICATOR');
+  bool get isSignOut => extra.hasFlag('SIGN_OUT');
+  bool get isRetry => extra.hasFlag('RETRY');
+  void setRetryFlag() => extra['RETRY'] = true;
+}
+
+extension DioResponseHelper on Response {
   E toEntity<E extends Entity>(EntityBuilder<E> createEntity) {
     return createEntity()..load(data);
   }
@@ -11,13 +21,16 @@ extension AppHttpClientResponseExtensions on Response {
     return (data as List).map((item) => createEntity()..load(item)).toList();
   }
 
+  bool get gqlErrors => requestOptions.isGQL && data['errors'] != null;
+
+  String? get gqlErrorCode => data['errors']?.first?['extensions']?['code'];
+
+  String? get gqlErrorMessage => data['errors']?.first?['message'];
+
   bool get isUnauthorized {
     return !extra.hasFlag('RENEW_CREDENTIAL') &&
         ((statusCode == 401) ||
-            (extra.hasFlag('GQL') &&
-                data != null &&
-                data['errors'] != null &&
-                data['errors'].any((e) => e['code'] == 'UNAUTHORIZED_ACCESS')));
+            (gqlErrors && gqlErrorCode == 'UNAUTHORIZED_ACCESS'));
   }
 
   bool get noContent => statusCode == 204;
@@ -25,13 +38,13 @@ extension AppHttpClientResponseExtensions on Response {
 
 extension AppHttpClientQuickApiOnStringExtensions on String {
   GraphQLQuery gql(List<dynamic> fields, {Map<String, dynamic>? params}) {
-    return GraphQLQuery(this, fields, params: params);
+    return GraphQLQuery(this, fields, input: params);
   }
 
   GraphQLQuery gqlFr<T extends Entity>(
       EntityBuilder<T> source, List Function(T source) fn,
       {Map<String, dynamic>? params}) {
-    return GraphQLQuery(this, fn(source()), params: params);
+    return GraphQLQuery(this, fn(source()), input: params);
   }
 
   RestQuery api({
@@ -44,13 +57,13 @@ extension AppHttpClientQuickApiOnStringExtensions on String {
 
 extension AppHttpClientQuickApiOnFieldExtensions on FieldBase {
   GraphQLQuery gql(List<dynamic> fields, {Map<String, dynamic>? params}) {
-    return GraphQLQuery(name, fields, params: params);
+    return GraphQLQuery(name, fields, input: params);
   }
 
   GraphQLQuery gqlFr<T extends Entity>(
       EntityBuilder<T> source, List Function(T source) fn,
       {Map<String, dynamic>? params}) {
-    return GraphQLQuery(name, fn(source()), params: params);
+    return GraphQLQuery(name, fn(source()), input: params);
   }
 }
 

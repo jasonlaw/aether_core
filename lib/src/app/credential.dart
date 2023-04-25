@@ -1,16 +1,18 @@
 part of 'app.dart';
 
-class AppCredentialIdentity extends Entity {
+class Credential extends Entity {
   late final Field<String> id = field('id');
   late final Field<String> username = field('username');
   late final Field<String> name = field('name');
   late final Field<String> email = field('email');
+  late final Field<String> phone = field('phone');
   late final Field<String> roles = field('roles');
+  //late final Field<String> tenantId = field('tenantId');
   bool get isAuthenticated => id.valueIsNotNullOrEmpty;
 
   final _roles = <String>{};
 
-  AppCredentialIdentity() {
+  Credential() {
     roles.onLoaded(
       action: (value) {
         _roles.clear();
@@ -26,14 +28,15 @@ class AppCredentialIdentity extends Entity {
     );
   }
 
-  void signIn(String id, String username, String name, String email,
-      {String? tenantId, String? roles}) {
+  void signIn(String id, String username,
+      {String? name, String? email, String? phone, String? roles}) {
     load({
       'id': id,
       'username': username,
-      'name': name,
+      'name': name ?? username,
       'email': email,
-      'tenantId': tenantId,
+      'phone': phone,
+      //'tenantId': tenantId,
       'roles': roles,
     });
   }
@@ -50,7 +53,7 @@ class AppCredentialIdentity extends Entity {
 
   @mustCallSuper
   void signOut() {
-    App.api.clearIdentityCache();
+    App.api.clearCredentialCache();
     reset();
   }
 }
